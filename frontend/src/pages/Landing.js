@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Coins, Trophy, Gift, Zap, Users, TrendingUp } from 'lucide-react';
+import LanguageSelector from '../components/LanguageSelector';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -21,7 +22,8 @@ const Landing = () => {
               FREE11
             </span>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            <LanguageSelector variant="ghost" />
             <Button variant="ghost" onClick={() => navigate('/login')} className="text-slate-200 hover:text-white" data-testid="login-btn">
               Login
             </Button>
@@ -37,13 +39,13 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="inline-block">
             <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-6 py-2 mb-6">
-              <span className="text-yellow-400 font-semibold">India's First Consumption Operating System</span>
+              <span className="text-yellow-400 font-semibold">Nobody Will Ever Lose on FREE11 ✨</span>
             </div>
           </div>
           <h1 className="text-6xl md:text-7xl font-black text-white leading-tight">
-            Transform Your
+            Your Time =
             <span className="block bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
-              Time into Real Rewards
+              Free Shopping List
             </span>
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
@@ -127,8 +129,9 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-950/50 backdrop-blur-sm py-8 mt-20">
         <div className="container mx-auto px-4 text-center text-slate-400">
-          <p>© 2025 FREE11.com - The Consumption Operating System for Bharat</p>
-          <p className="text-sm mt-2">Transforming Attention into Consumption</p>
+          <p className="text-lg font-bold text-white mb-2">💯 Nobody Will Ever Lose on FREE11</p>
+          <p>© 2025 FREE11.com - Your Time = Free Shopping List</p>
+          <p className="text-sm mt-2">Available in English, हिंदी, and 6+ Indian Languages</p>
         </div>
       </footer>
     </div>

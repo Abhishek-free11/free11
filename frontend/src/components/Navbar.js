@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Coins, Home, Zap, ShoppingBag, Package, User, LogOut, Shield } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,7 +59,10 @@ const Navbar = () => {
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Language Selector */}
+            <LanguageSelector variant="ghost" />
+            
             {/* Coin Balance */}
             <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-4 py-2 flex items-center gap-2">
               <Coins className="h-5 w-5 text-yellow-400" />
