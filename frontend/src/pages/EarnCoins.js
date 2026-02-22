@@ -7,9 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Coins, Zap, CheckCircle2, Trophy, Sparkles, Gift } from 'lucide-react';
+import { Coins, Zap, CheckCircle2, Trophy, Sparkles, Gift, Dices, Spade } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+import { playCoinSound, playCelebrationSound, playWinSound } from '../utils/sounds';
+import confetti from 'canvas-confetti';
 
 const EarnCoins = () => {
   const { user, updateUser } = useAuth();
