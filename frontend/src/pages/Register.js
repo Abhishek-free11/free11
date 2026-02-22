@@ -36,13 +36,11 @@ const Register = () => {
       <Card className="w-full max-w-md bg-slate-900/50 border-slate-800" data-testid="register-card">
         <CardHeader className="space-y-4 text-center">
           <div className="flex items-center justify-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-600 blur-xl opacity-50"></div>
-              <Coins className="h-12 w-12 text-yellow-400 relative" strokeWidth={2.5} />
-            </div>
-            <span className="text-4xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
-              FREE11
-            </span>
+            <img 
+              src="/app-icon.png" 
+              alt="FREE11" 
+              className="h-16 w-16 rounded-xl"
+            />
           </div>
           <CardTitle className="text-2xl text-white">Join FREE11</CardTitle>
           <CardDescription className="text-slate-400">Create your account and get 50 welcome coins</CardDescription>

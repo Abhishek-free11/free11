@@ -14,13 +14,11 @@ const Landing = () => {
       <nav className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3" data-testid="logo">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-600 blur-xl opacity-50"></div>
-              <Coins className="h-10 w-10 text-yellow-400 relative" strokeWidth={2.5} />
-            </div>
-            <span className="text-3xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
-              FREE11
-            </span>
+            <img 
+              src="/logo.png" 
+              alt="FREE11 Logo" 
+              className="h-12 w-auto"
+            />
           </div>
           <div className="flex gap-3 items-center">
             <LanguageSelector variant="ghost" />

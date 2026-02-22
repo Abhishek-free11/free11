@@ -34,10 +34,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-600 blur-lg opacity-50"></div>
-              <Coins className="h-8 w-8 text-yellow-400 relative" strokeWidth={2.5} />
-            </div>
+            <img 
+              src="/app-icon.png" 
+              alt="FREE11" 
+              className="h-10 w-10 rounded-lg"
+            />
             <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
               FREE11
             </span>
