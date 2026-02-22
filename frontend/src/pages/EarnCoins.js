@@ -50,8 +50,14 @@ const EarnCoins = () => {
     setLoading(true);
     try {
       const response = await api.completeTask(taskId);
+      playCoinSound();
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
       toast.success(response.data.message, {
-        description: `+${response.data.coins_earned} coins`
+        description: `+${response.data.coins_earned} coins 🪙`
       });
       updateUser({ coins_balance: response.data.new_balance });
       fetchTasks();
@@ -102,8 +108,14 @@ const EarnCoins = () => {
       const response = await api.playQuiz(quizAnswers);
       setQuizResult(response.data);
       if (response.data.coins_earned > 0) {
+        playWinSound();
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
         toast.success(`Quiz completed!`, {
-          description: `You scored ${response.data.score_percentage}% and earned ${response.data.coins_earned} coins!`
+          description: `You scored ${response.data.score_percentage}% and earned ${response.data.coins_earned} coins! 🎉`
         });
         updateUser({ coins_balance: response.data.new_balance });
       } else {
@@ -128,8 +140,14 @@ const EarnCoins = () => {
         setSpinResult(response.data);
         setSpinning(false);
         if (response.data.coins_earned > 0) {
+          playCelebrationSound();
+          confetti({
+            particleCount: 80,
+            spread: 60,
+            origin: { y: 0.6 }
+          });
           toast.success(response.data.message, {
-            description: `+${response.data.coins_earned} coins!`
+            description: `+${response.data.coins_earned} coins! 🎉`
           });
           updateUser({ coins_balance: response.data.new_balance });
         } else {
@@ -152,8 +170,14 @@ const EarnCoins = () => {
         setScratchResult(response.data);
         setScratching(false);
         if (response.data.coins_earned > 0) {
+          playCoinSound();
+          confetti({
+            particleCount: 60,
+            spread: 50,
+            origin: { y: 0.6 }
+          });
           toast.success('You won!', {
-            description: `+${response.data.coins_earned} coins!`
+            description: `+${response.data.coins_earned} coins! 💰`
           });
           updateUser({ coins_balance: response.data.new_balance });
         } else {
@@ -192,59 +216,68 @@ const EarnCoins = () => {
           {/* Mini Games Tab */}
           <TabsContent value="games" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Quiz */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all cursor-pointer" onClick={() => setQuizOpen(true)} data-testid="quiz-card">
+              {/* Quiz - Cricket themed */}
+              <Card className="bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all cursor-pointer group" onClick={() => setQuizOpen(true)} data-testid="quiz-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <Trophy className="h-10 w-10 text-yellow-400" />
+                    <div className="relative">
+                      <Trophy className="h-10 w-10 text-yellow-400 group-hover:scale-110 transition-transform" />
+                      <span className="absolute -top-1 -right-1 text-2xl">🏏</span>
+                    </div>
                     <Badge className="bg-yellow-500/20 text-yellow-400">Up to 50 coins</Badge>
                   </div>
-                  <CardTitle className="text-white">Quiz Challenge</CardTitle>
+                  <CardTitle className="text-white">Cricket Quiz Challenge</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Test your knowledge and earn coins
+                    Test your cricket knowledge and earn coins
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold">
-                    Play Now
+                    🏏 Play Now
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Spin Wheel */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-red-500/50 transition-all cursor-pointer" onClick={() => setSpinOpen(true)} data-testid="spin-card">
+              {/* Spin Wheel - RMG themed */}
+              <Card className="bg-slate-900/50 border-slate-800 hover:border-red-500/50 transition-all cursor-pointer group" onClick={() => setSpinOpen(true)} data-testid="spin-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <Gift className="h-10 w-10 text-red-400" />
+                    <div className="relative">
+                      <Gift className="h-10 w-10 text-red-400 group-hover:rotate-12 transition-transform" />
+                      <Dices className="absolute -bottom-1 -right-1 h-5 w-5 text-red-300" />
+                    </div>
                     <Badge className="bg-red-500/20 text-red-400">Daily Spin</Badge>
                   </div>
-                  <CardTitle className="text-white">Spin the Wheel</CardTitle>
+                  <CardTitle className="text-white">Lucky Spin Wheel</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Spin once per day for rewards
+                    Spin once per day for instant rewards
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-bold">
-                    Spin Now
+                    🎰 Spin Now
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Scratch Card */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-blue-500/50 transition-all cursor-pointer" onClick={() => setScratchOpen(true)} data-testid="scratch-card">
+              {/* Scratch Card - Cards themed */}
+              <Card className="bg-slate-900/50 border-slate-800 hover:border-blue-500/50 transition-all cursor-pointer group" onClick={() => setScratchOpen(true)} data-testid="scratch-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <Sparkles className="h-10 w-10 text-blue-400" />
+                    <div className="relative">
+                      <Sparkles className="h-10 w-10 text-blue-400 group-hover:scale-110 transition-transform" />
+                      <Spade className="absolute -bottom-1 -right-1 h-5 w-5 text-blue-300" />
+                    </div>
                     <Badge className="bg-blue-500/20 text-blue-400">3x Daily</Badge>
                   </div>
-                  <CardTitle className="text-white">Scratch Card</CardTitle>
+                  <CardTitle className="text-white">Golden Scratch Card</CardTitle>
                   <CardDescription className="text-slate-400">
                     Instant win prizes, 3 attempts daily
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-bold">
-                    Scratch Now
+                    🃏 Scratch Now
                   </Button>
                 </CardContent>
               </Card>
