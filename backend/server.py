@@ -1,15 +1,18 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from typing import List, Optional, Dict
 import uuid
-from datetime import datetime, timezone
-
+from datetime import datetime, timezone, timedelta
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+import random
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -17,58 +20,763 @@ load_dotenv(ROOT_DIR / '.env')
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'free11_db')]
 
-# Create the main app without a prefix
-app = FastAPI()
+# JWT Configuration
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
-# Create a router with the /api prefix
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+
+# Create the main app
+app = FastAPI(title="FREE11 API")
 api_router = APIRouter(prefix="/api")
 
+# ==================== MODELS ====================
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
+class User(BaseModel):
+    model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    email: EmailStr
+    name: str
+    password_hash: Optional[str] = None
+    google_id: Optional[str] = None
+    coins_balance: int = 0
+    level: int = 1
+    xp: int = 0
+    streak_days: int = 0
+    last_checkin: Optional[str] = None
+    total_earned: int = 0
+    total_redeemed: int = 0
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class UserCreate(BaseModel):
+    email: EmailStr
+    name: str
+    password: str
 
-# Add your routes to the router instead of directly to app
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: Dict
+
+class CoinTransaction(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    amount: int
+    type: str  # earned, spent, bonus
+    description: str
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class Product(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    category: str
+    coin_price: int
+    image_url: str
+    stock: int
+    brand: str
+    active: bool = True
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class ProductCreate(BaseModel):
+    name: str
+    description: str
+    category: str
+    coin_price: int
+    image_url: str
+    stock: int
+    brand: str
+
+class Redemption(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    product_id: str
+    product_name: str
+    coins_spent: int
+    status: str = "pending"  # pending, confirmed, shipped, delivered
+    order_date: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    delivery_address: Optional[str] = None
+
+class RedemptionCreate(BaseModel):
+    product_id: str
+    delivery_address: Optional[str] = None
+
+class Activity(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    activity_type: str  # checkin, task, quiz, spin, scratch
+    coins_earned: int
+    details: Optional[Dict] = None
+    completed_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class Achievement(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    achievement_type: str
+    title: str
+    description: str
+    earned_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class QuizSubmission(BaseModel):
+    answers: List[int]  # List of selected answer indices
+
+class TaskComplete(BaseModel):
+    task_id: str
+
+# ==================== HELPER FUNCTIONS ====================
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if user is None:
+        raise credentials_exception
+    return User(**user)
+
+async def add_coins(user_id: str, amount: int, transaction_type: str, description: str):
+    """Add coins to user balance and record transaction"""
+    # Update user balance
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$inc": {"coins_balance": amount, "total_earned": amount, "xp": amount},
+            "$set": {"level": calculate_level(await get_user_xp(user_id) + amount)}
+        }
+    )
+    
+    # Record transaction
+    transaction = CoinTransaction(
+        user_id=user_id,
+        amount=amount,
+        type=transaction_type,
+        description=description
+    )
+    await db.coin_transactions.insert_one(transaction.model_dump())
+    
+    return transaction
+
+async def spend_coins(user_id: str, amount: int, description: str):
+    """Spend coins from user balance"""
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if user['coins_balance'] < amount:
+        raise HTTPException(status_code=400, detail="Insufficient coins")
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$inc": {"coins_balance": -amount, "total_redeemed": amount}}
+    )
+    
+    transaction = CoinTransaction(
+        user_id=user_id,
+        amount=-amount,
+        type="spent",
+        description=description
+    )
+    await db.coin_transactions.insert_one(transaction.model_dump())
+
+async def get_user_xp(user_id: str):
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    return user.get('xp', 0) if user else 0
+
+def calculate_level(xp: int):
+    """Calculate user level based on XP"""
+    if xp < 100:
+        return 1
+    elif xp < 500:
+        return 2
+    elif xp < 1500:
+        return 3
+    elif xp < 5000:
+        return 4
+    else:
+        return 5
+
+# ==================== AUTH ROUTES ====================
+
+@api_router.post("/auth/register", response_model=Token)
+async def register(user_data: UserCreate):
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create new user
+    user = User(
+        email=user_data.email,
+        name=user_data.name,
+        password_hash=get_password_hash(user_data.password),
+        coins_balance=50  # Welcome bonus
+    )
+    
+    await db.users.insert_one(user.model_dump())
+    
+    # Create welcome transaction
+    await add_coins(user.id, 50, "bonus", "Welcome bonus")
+    
+    # Create access token
+    access_token = create_access_token(data={"sub": user.id})
+    
+    user_dict = user.model_dump()
+    user_dict.pop('password_hash', None)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user_dict
+    }
+
+@api_router.post("/auth/login", response_model=Token)
+async def login(user_data: UserLogin):
+    user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
+    if not user or not verify_password(user_data.password, user.get('password_hash', '')):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    access_token = create_access_token(data={"sub": user['id']})
+    
+    user.pop('password_hash', None)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
+
+@api_router.get("/auth/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    user_dict = current_user.model_dump()
+    user_dict.pop('password_hash', None)
+    return user_dict
+
+# ==================== COINS ROUTES ====================
+
+@api_router.get("/coins/balance")
+async def get_balance(current_user: User = Depends(get_current_user)):
+    return {"coins_balance": current_user.coins_balance}
+
+@api_router.get("/coins/transactions")
+async def get_transactions(current_user: User = Depends(get_current_user)):
+    transactions = await db.coin_transactions.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("timestamp", -1).limit(50).to_list(50)
+    return transactions
+
+@api_router.post("/coins/checkin")
+async def daily_checkin(current_user: User = Depends(get_current_user)):
+    today = datetime.now(timezone.utc).date().isoformat()
+    
+    if current_user.last_checkin == today:
+        raise HTTPException(status_code=400, detail="Already checked in today")
+    
+    # Calculate streak
+    yesterday = (datetime.now(timezone.utc).date() - timedelta(days=1)).isoformat()
+    new_streak = current_user.streak_days + 1 if current_user.last_checkin == yesterday else 1
+    
+    # Calculate reward (increases with streak)
+    base_reward = 10
+    streak_bonus = min(new_streak * 5, 50)  # Max 50 bonus
+    total_reward = base_reward + streak_bonus
+    
+    # Update user
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"last_checkin": today, "streak_days": new_streak}}
+    )
+    
+    # Add coins
+    transaction = await add_coins(
+        current_user.id,
+        total_reward,
+        "earned",
+        f"Daily check-in (Day {new_streak})"
+    )
+    
+    # Record activity
+    activity = Activity(
+        user_id=current_user.id,
+        activity_type="checkin",
+        coins_earned=total_reward,
+        details={"streak": new_streak}
+    )
+    await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "message": "Check-in successful!",
+        "coins_earned": total_reward,
+        "streak_days": new_streak,
+        "new_balance": current_user.coins_balance + total_reward
+    }
+
+# ==================== GAME ROUTES ====================
+
+@api_router.post("/games/quiz")
+async def play_quiz(submission: QuizSubmission, current_user: User = Depends(get_current_user)):
+    # Quiz questions (hardcoded for POC)
+    correct_answers = [0, 2, 1, 3, 0]  # Correct answer indices
+    
+    # Calculate score
+    correct_count = sum(1 for i, ans in enumerate(submission.answers) if i < len(correct_answers) and ans == correct_answers[i])
+    total_questions = len(correct_answers)
+    score_percentage = (correct_count / total_questions) * 100
+    
+    # Calculate reward based on score
+    coins_earned = int(correct_count * 10)
+    
+    if coins_earned > 0:
+        transaction = await add_coins(
+            current_user.id,
+            coins_earned,
+            "earned",
+            f"Quiz completed ({correct_count}/{total_questions} correct)"
+        )
+        
+        activity = Activity(
+            user_id=current_user.id,
+            activity_type="quiz",
+            coins_earned=coins_earned,
+            details={"score": score_percentage, "correct": correct_count, "total": total_questions}
+        )
+        await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "correct_count": correct_count,
+        "total_questions": total_questions,
+        "score_percentage": score_percentage,
+        "coins_earned": coins_earned,
+        "new_balance": current_user.coins_balance + coins_earned
+    }
+
+@api_router.post("/games/spin")
+async def spin_wheel(current_user: User = Depends(get_current_user)):
+    # Check if already played today
+    today = datetime.now(timezone.utc).date().isoformat()
+    last_spin = await db.activities.find_one(
+        {"user_id": current_user.id, "activity_type": "spin"},
+        {"_id": 0},
+        sort=[("completed_at", -1)]
+    )
+    
+    if last_spin:
+        last_spin_date = datetime.fromisoformat(last_spin['completed_at']).date().isoformat()
+        if last_spin_date == today:
+            raise HTTPException(status_code=400, detail="Already spun today! Come back tomorrow.")
+    
+    # Random reward (weighted)
+    rewards = [5, 10, 15, 20, 25, 50, 100, 0]
+    weights = [25, 30, 20, 15, 5, 3, 1, 1]  # % probability
+    coins_earned = random.choices(rewards, weights=weights)[0]
+    
+    if coins_earned > 0:
+        transaction = await add_coins(
+            current_user.id,
+            coins_earned,
+            "earned",
+            f"Spin the wheel"
+        )
+    
+    activity = Activity(
+        user_id=current_user.id,
+        activity_type="spin",
+        coins_earned=coins_earned,
+        details={"reward": coins_earned}
+    )
+    await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "coins_earned": coins_earned,
+        "new_balance": current_user.coins_balance + coins_earned,
+        "message": "Better luck next time!" if coins_earned == 0 else f"Congratulations! You won {coins_earned} coins!"
+    }
+
+@api_router.post("/games/scratch")
+async def scratch_card(current_user: User = Depends(get_current_user)):
+    # Check daily limit
+    today = datetime.now(timezone.utc).date().isoformat()
+    scratch_count = await db.activities.count_documents({
+        "user_id": current_user.id,
+        "activity_type": "scratch",
+        "completed_at": {"$gte": today}
+    })
+    
+    if scratch_count >= 3:
+        raise HTTPException(status_code=400, detail="Daily scratch card limit reached (3/day)")
+    
+    # Random reward
+    rewards = [0, 5, 10, 15, 20, 50]
+    weights = [40, 30, 15, 10, 4, 1]
+    coins_earned = random.choices(rewards, weights=weights)[0]
+    
+    if coins_earned > 0:
+        await add_coins(
+            current_user.id,
+            coins_earned,
+            "earned",
+            f"Scratch card"
+        )
+    
+    activity = Activity(
+        user_id=current_user.id,
+        activity_type="scratch",
+        coins_earned=coins_earned,
+        details={"reward": coins_earned, "attempt": scratch_count + 1}
+    )
+    await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "coins_earned": coins_earned,
+        "new_balance": current_user.coins_balance + coins_earned,
+        "attempts_left": 2 - scratch_count
+    }
+
+# ==================== TASKS ROUTES ====================
+
+@api_router.get("/tasks")
+async def get_tasks(current_user: User = Depends(get_current_user)):
+    # Get completed tasks today
+    today = datetime.now(timezone.utc).date().isoformat()
+    completed_tasks = await db.activities.find({
+        "user_id": current_user.id,
+        "activity_type": "task",
+        "completed_at": {"$gte": today}
+    }, {"_id": 0}).to_list(100)
+    
+    completed_task_ids = [task['details']['task_id'] for task in completed_tasks if task.get('details')]
+    
+    # Available tasks
+    tasks = [
+        {"id": "task_1", "title": "Watch Brand Video", "description": "Watch a 30-second brand video", "coins": 5, "type": "video"},
+        {"id": "task_2", "title": "Complete Survey", "description": "Share your opinion (2 mins)", "coins": 15, "type": "survey"},
+        {"id": "task_3", "title": "Share FREE11", "description": "Share FREE11 on social media", "coins": 20, "type": "share"},
+        {"id": "task_4", "title": "Browse Products", "description": "Browse at least 5 products", "coins": 10, "type": "browse"},
+        {"id": "task_5", "title": "Update Profile", "description": "Complete your profile information", "coins": 25, "type": "profile"},
+    ]
+    
+    for task in tasks:
+        task['completed'] = task['id'] in completed_task_ids
+    
+    return tasks
+
+@api_router.post("/tasks/complete")
+async def complete_task(task_data: TaskComplete, current_user: User = Depends(get_current_user)):
+    # Check if already completed today
+    today = datetime.now(timezone.utc).date().isoformat()
+    existing = await db.activities.find_one({
+        "user_id": current_user.id,
+        "activity_type": "task",
+        "details.task_id": task_data.task_id,
+        "completed_at": {"$gte": today}
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="Task already completed today")
+    
+    # Task rewards
+    task_rewards = {
+        "task_1": 5,
+        "task_2": 15,
+        "task_3": 20,
+        "task_4": 10,
+        "task_5": 25
+    }
+    
+    coins_earned = task_rewards.get(task_data.task_id, 0)
+    
+    if coins_earned > 0:
+        await add_coins(
+            current_user.id,
+            coins_earned,
+            "earned",
+            f"Task completed: {task_data.task_id}"
+        )
+        
+        activity = Activity(
+            user_id=current_user.id,
+            activity_type="task",
+            coins_earned=coins_earned,
+            details={"task_id": task_data.task_id}
+        )
+        await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "message": "Task completed!",
+        "coins_earned": coins_earned,
+        "new_balance": current_user.coins_balance + coins_earned
+    }
+
+# ==================== PRODUCTS ROUTES ====================
+
+@api_router.get("/products")
+async def get_products(category: Optional[str] = None):
+    query = {"active": True}
+    if category and category != "all":
+        query["category"] = category
+    
+    products = await db.products.find(query, {"_id": 0}).to_list(100)
+    return products
+
+@api_router.get("/products/{product_id}")
+async def get_product(product_id: str):
+    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
+
+@api_router.post("/products", response_model=Product)
+async def create_product(product: ProductCreate, current_user: User = Depends(get_current_user)):
+    # Simple admin check (in production, use proper role-based access)
+    product_obj = Product(**product.model_dump())
+    await db.products.insert_one(product_obj.model_dump())
+    return product_obj
+
+# ==================== REDEMPTIONS ROUTES ====================
+
+@api_router.post("/redemptions")
+async def create_redemption(redemption_data: RedemptionCreate, current_user: User = Depends(get_current_user)):
+    # Get product
+    product = await db.products.find_one({"id": redemption_data.product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Check if user has enough coins
+    if current_user.coins_balance < product['coin_price']:
+        raise HTTPException(status_code=400, detail=f"Insufficient coins. Need {product['coin_price']}, have {current_user.coins_balance}")
+    
+    # Check stock
+    if product['stock'] <= 0:
+        raise HTTPException(status_code=400, detail="Product out of stock")
+    
+    # Spend coins
+    await spend_coins(current_user.id, product['coin_price'], f"Redeemed: {product['name']}")
+    
+    # Update stock
+    await db.products.update_one(
+        {"id": redemption_data.product_id},
+        {"$inc": {"stock": -1}}
+    )
+    
+    # Create redemption
+    redemption = Redemption(
+        user_id=current_user.id,
+        product_id=product['id'],
+        product_name=product['name'],
+        coins_spent=product['coin_price'],
+        delivery_address=redemption_data.delivery_address
+    )
+    await db.redemptions.insert_one(redemption.model_dump())
+    
+    # Check for first redemption achievement
+    redemption_count = await db.redemptions.count_documents({"user_id": current_user.id})
+    if redemption_count == 1:
+        achievement = Achievement(
+            user_id=current_user.id,
+            achievement_type="first_redemption",
+            title="First Purchase!",
+            description="Completed your first redemption"
+        )
+        await db.achievements.insert_one(achievement.model_dump())
+    
+    return {
+        "message": "Redemption successful!",
+        "redemption": redemption.model_dump(),
+        "new_balance": current_user.coins_balance - product['coin_price']
+    }
+
+@api_router.get("/redemptions")
+async def get_redemptions(current_user: User = Depends(get_current_user)):
+    redemptions = await db.redemptions.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("order_date", -1).to_list(100)
+    return redemptions
+
+@api_router.get("/redemptions/all")
+async def get_all_redemptions():
+    """Admin endpoint to get all redemptions"""
+    redemptions = await db.redemptions.find({}, {"_id": 0}).sort("order_date", -1).to_list(1000)
+    return redemptions
+
+# ==================== USER ROUTES ====================
+
+@api_router.get("/user/stats")
+async def get_user_stats(current_user: User = Depends(get_current_user)):
+    activities_count = await db.activities.count_documents({"user_id": current_user.id})
+    redemptions_count = await db.redemptions.count_documents({"user_id": current_user.id})
+    achievements = await db.achievements.find({"user_id": current_user.id}, {"_id": 0}).to_list(100)
+    
+    return {
+        "user": current_user.model_dump(),
+        "activities_count": activities_count,
+        "redemptions_count": redemptions_count,
+        "achievements": achievements
+    }
+
+@api_router.get("/leaderboard")
+async def get_leaderboard():
+    users = await db.users.find(
+        {},
+        {"_id": 0, "id": 1, "name": 1, "total_earned": 1, "level": 1}
+    ).sort("total_earned", -1).limit(10).to_list(10)
+    return users
+
+# ==================== ADMIN ROUTES ====================
+
+@api_router.get("/admin/analytics")
+async def get_analytics():
+    total_users = await db.users.count_documents({})
+    total_redemptions = await db.redemptions.count_documents({})
+    total_products = await db.products.count_documents({"active": True})
+    
+    # Total coins in circulation
+    pipeline = [
+        {"$group": {"_id": None, "total_coins": {"$sum": "$coins_balance"}}}
+    ]
+    result = await db.users.aggregate(pipeline).to_list(1)
+    total_coins = result[0]['total_coins'] if result else 0
+    
+    return {
+        "total_users": total_users,
+        "total_redemptions": total_redemptions,
+        "total_products": total_products,
+        "total_coins_in_circulation": total_coins
+    }
+
+# ==================== SEED DATA ====================
+
+@api_router.post("/seed-products")
+async def seed_products():
+    """Seed database with sample products"""
+    sample_products = [
+        {
+            "name": "iPhone 15 Pro",
+            "description": "Latest Apple iPhone with A17 Pro chip",
+            "category": "electronics",
+            "coin_price": 50000,
+            "image_url": "https://images.unsplash.com/photo-1696446702281-1af638e15d2e?w=400",
+            "stock": 5,
+            "brand": "Apple"
+        },
+        {
+            "name": "Samsung Galaxy S24",
+            "description": "Flagship Android smartphone",
+            "category": "electronics",
+            "coin_price": 45000,
+            "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400",
+            "stock": 10,
+            "brand": "Samsung"
+        },
+        {
+            "name": "Amazon Gift Card ₹500",
+            "description": "Shop anything on Amazon",
+            "category": "vouchers",
+            "coin_price": 500,
+            "image_url": "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=400",
+            "stock": 100,
+            "brand": "Amazon"
+        },
+        {
+            "name": "Swiggy Voucher ₹200",
+            "description": "Order your favorite food",
+            "category": "vouchers",
+            "coin_price": 200,
+            "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
+            "stock": 200,
+            "brand": "Swiggy"
+        },
+        {
+            "name": "Nike Air Max Shoes",
+            "description": "Premium running shoes",
+            "category": "fashion",
+            "coin_price": 8000,
+            "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+            "stock": 50,
+            "brand": "Nike"
+        },
+        {
+            "name": "Sony Headphones WH-1000XM5",
+            "description": "Industry-leading noise cancellation",
+            "category": "electronics",
+            "coin_price": 25000,
+            "image_url": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400",
+            "stock": 20,
+            "brand": "Sony"
+        },
+        {
+            "name": "Grocery Bundle - ₹1000",
+            "description": "Essential groceries for your home",
+            "category": "groceries",
+            "coin_price": 1000,
+            "image_url": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400",
+            "stock": 500,
+            "brand": "BigBasket"
+        },
+        {
+            "name": "Levi's Jeans",
+            "description": "Classic denim jeans",
+            "category": "fashion",
+            "coin_price": 3500,
+            "image_url": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
+            "stock": 100,
+            "brand": "Levi's"
+        }
+    ]
+    
+    for product_data in sample_products:
+        product = Product(**product_data)
+        # Check if exists
+        existing = await db.products.find_one({"name": product.name})
+        if not existing:
+            await db.products.insert_one(product.model_dump())
+    
+    return {"message": f"Seeded {len(sample_products)} products"}
+
+# ==================== ROOT ====================
+
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "FREE11 API - Transform Your Time into Real Rewards! 🪙"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
-
-# Include the router in the main app
+# Include router
 app.include_router(api_router)
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -77,7 +785,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
+# Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
