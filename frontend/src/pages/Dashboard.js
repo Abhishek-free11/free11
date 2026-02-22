@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Coins, Zap, Gift, Trophy, TrendingUp, Calendar, Flame } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+import { playCelebrationSound } from '../utils/sounds';
+import confetti from 'canvas-confetti';
 
 const Dashboard = () => {
   const { user, updateUser } = useAuth();
@@ -49,8 +51,14 @@ const Dashboard = () => {
     setCheckinLoading(true);
     try {
       const response = await api.dailyCheckin();
+      playCelebrationSound();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
       toast.success(`🎉 ${response.data.message}`, {
-        description: `Streak: ${response.data.streak_days} days | +${response.data.coins_earned} coins`
+        description: `🔥 Streak: ${response.data.streak_days} days | +${response.data.coins_earned} coins`
       });
       updateUser({ 
         coins_balance: response.data.new_balance,
