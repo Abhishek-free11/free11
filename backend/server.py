@@ -771,7 +771,7 @@ async def seed_products():
 
 @api_router.get("/")
 async def root():
-    return {"message": "FREE11 API - Transform Your Time into Real Rewards! 🪙"}
+    return {"message": "FREE11 API - Everything here is free, except your time! 🪙"}
 
 # Include router
 app.include_router(api_router)

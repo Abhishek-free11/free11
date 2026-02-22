@@ -1,6 +1,6 @@
 # FREE11 - The Consumption Operating System for Bharat 🪙
 
-Transform Your Time into Real Rewards!
+Everything here is free, except your time!
 
 ## 🌟 Overview
 

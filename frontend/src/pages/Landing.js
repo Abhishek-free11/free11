@@ -47,7 +47,7 @@ const Landing = () => {
             </span>
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Play games, complete tasks, earn FREE11 Coins, and redeem real products. No purchase required. No withdrawal hassles. Just pure value.
+            Everything here is free, except your time! Play games, complete tasks, earn FREE11 Coins, and redeem real products.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
             <Button size="lg" onClick={() => navigate('/register')} className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold text-lg px-8 py-6" data-testid="hero-cta-btn">
