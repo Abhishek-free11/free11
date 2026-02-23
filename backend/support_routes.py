@@ -96,12 +96,20 @@ FAQ_DATABASE = {
             "keywords": ["order", "status", "track", "where"]
         },
         "voucher not received": {
-            "response": "If you haven't received your voucher, please check: 1) Your email spam folder 2) Allow up to 24 hours for processing. If still missing, I'll create a support ticket for you.",
-            "keywords": ["voucher", "not received", "missing", "didn't get"]
+            "response": "I'm sorry your voucher hasn't arrived yet. Let me help:\n\n1. **Check email spam folder** - Vouchers are sent to your registered email\n2. **Allow up to 24 hours** - Some vouchers take time to process\n3. **Check 'My Vouchers' tab** - Your voucher code may already be there\n\nIf still missing after 24 hours, please share your **Order ID** and I'll create a support ticket for immediate investigation.",
+            "keywords": ["voucher", "not received", "missing", "didn't get", "haven't received", "where is my voucher", "no voucher"]
+        },
+        "redeemed but not received": {
+            "response": "I understand you redeemed but didn't receive your voucher. This can happen due to:\n\n• **Processing delay** - Allow 15-30 minutes\n• **Email delivery** - Check spam/promotions folder\n• **System error** - Our team can investigate\n\n**To help you faster, please provide:**\n1. Your Order ID or Redemption ID\n2. Product name you redeemed\n3. When you made the redemption\n\nI'll look up your delivery status right away.",
+            "keywords": ["redeemed", "not received", "no code", "didn't arrive", "waiting"]
         },
         "how to redeem": {
             "response": "To redeem your coins: 1) Go to the Redeem section 2) Browse available rewards 3) Select a product you can afford 4) Click 'Redeem' and confirm. Your voucher will be delivered to your email!",
             "keywords": ["how", "redeem", "use coins", "get rewards"]
+        },
+        "voucher code not working": {
+            "response": "If your voucher code isn't working:\n\n1. **Check expiry date** - Codes expire, check the date in 'My Vouchers'\n2. **Copy correctly** - Some codes are case-sensitive\n3. **Minimum purchase** - Some vouchers have minimum order requirements\n4. **Already used** - Each code works only once\n\nIf none of these apply, share your Order ID and I'll investigate.",
+            "keywords": ["code not working", "invalid code", "voucher error", "can't use"]
         }
     },
     "account": {
