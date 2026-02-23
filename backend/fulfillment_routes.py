@@ -19,9 +19,6 @@ import os
 import logging
 import asyncio
 
-# Import from server.py
-from server import db, get_current_user, User
-
 logger = logging.getLogger(__name__)
 
 fulfillment_router = APIRouter(prefix="/fulfillment", tags=["Fulfillment"])
