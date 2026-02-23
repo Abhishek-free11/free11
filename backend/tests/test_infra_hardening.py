@@ -18,14 +18,9 @@ import sys
 API_BASE = os.environ.get("API_URL", "http://localhost:8001/api")
 TEST_TIMEOUT = 30  # seconds per request
 
-# ==================== FIXTURES ====================
+# ==================== HELPER FUNCTIONS ====================
 
-@pytest.fixture
-def api_url():
-    return API_BASE
-
-@pytest.fixture
-async def test_user(api_url):
+async def create_test_user(api_url):
     """Create a test user for load testing"""
     async with aiohttp.ClientSession() as session:
         email = f"loadtest_{uuid.uuid4().hex[:8]}@test.com"
@@ -53,8 +48,7 @@ async def test_user(api_url):
                     "user_id": data.get("user", {}).get("id")
                 }
 
-@pytest.fixture
-async def test_brand(api_url):
+async def create_test_brand(api_url):
     """Create a test brand for load testing"""
     async with aiohttp.ClientSession() as session:
         email = f"loadtest_brand_{uuid.uuid4().hex[:8]}@company.com"
