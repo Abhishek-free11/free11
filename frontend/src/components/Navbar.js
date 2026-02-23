@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Coins, Home, Zap, ShoppingBag, Package, User, LogOut, Shield } from 'lucide-react';
+import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import {
   DropdownMenu,
@@ -19,11 +19,12 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Demand Rail hierarchy: Cricket (Skill) > Boosters > Shop
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: Home },
-    { path: '/cricket', label: 'Cricket', icon: () => <span className="text-lg mr-1">🏏</span> },
-    { path: '/earn', label: 'Earn', icon: Zap },
-    { path: '/shop', label: 'Shop', icon: ShoppingBag },
+    { path: '/dashboard', label: 'Home', icon: Home },
+    { path: '/cricket', label: 'Predict', icon: Target, highlight: true }, // SKILL - Primary
+    { path: '/earn', label: 'Boost', icon: Zap }, // BOOSTERS - Secondary
+    { path: '/shop', label: 'Redeem', icon: ShoppingBag },
     { path: '/orders', label: 'Orders', icon: Package },
   ];
 
