@@ -37,6 +37,47 @@ const Dashboard = () => {
   const [checkinLoading, setCheckinLoading] = useState(false);
   const [canCheckin, setCanCheckin] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
+
+  // Check tutorial status on mount
+  useEffect(() => {
+    const checkTutorialStatus = async () => {
+      try {
+        const response = await api.getTutorialStatus();
+        if (!response.data.tutorial_completed) {
+          setShowTutorial(true);
+          setIsFirstTimeUser(true);
+        }
+      } catch (error) {
+        console.error('Error checking tutorial status:', error);
+      }
+    };
+    checkTutorialStatus();
+  }, []);
+
+  const handleTutorialComplete = async () => {
+    try {
+      await api.completeTutorial();
+      setShowTutorial(false);
+      toast.success('Welcome to FREE11! 🎉', {
+        description: 'Start predicting to earn coins and unlock real rewards.'
+      });
+    } catch (error) {
+      console.error('Error completing tutorial:', error);
+      setShowTutorial(false);
+    }
+  };
+
+  const handleTutorialSkip = async () => {
+    try {
+      await api.completeTutorial();
+      setShowTutorial(false);
+    } catch (error) {
+      console.error('Error skipping tutorial:', error);
+      setShowTutorial(false);
+    }
+  };
 
   const fetchDashboardData = useCallback(async () => {
     try {
