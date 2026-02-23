@@ -174,7 +174,7 @@ class TestIdempotency:
     """Test: No duplicate vouchers even on double-click/retry"""
     
     @pytest.mark.asyncio
-    async def test_double_click_prevention(self, api_url):
+    async def test_double_click_prevention(self):
         """Simulate double-click on redemption button"""
         # This tests the idempotency at the API level
         async with aiohttp.ClientSession() as session:
@@ -185,7 +185,7 @@ class TestIdempotency:
             async def check_status():
                 try:
                     async with session.get(
-                        f"{api_url}/fulfillment/providers/status",
+                        f"{API_BASE}/fulfillment/providers/status",
                         timeout=aiohttp.ClientTimeout(total=10)
                     ) as resp:
                         return {"status": resp.status}
@@ -205,11 +205,11 @@ class TestFailureSimulation:
     """Test: Provider down → retries + visible failures"""
     
     @pytest.mark.asyncio
-    async def test_provider_health_check(self, api_url):
+    async def test_provider_health_check(self):
         """Verify provider health endpoint returns expected structure"""
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{api_url}/fulfillment/providers/status"
+                f"{API_BASE}/fulfillment/providers/status"
             ) as resp:
                 assert resp.status == 200
                 data = await resp.json()
@@ -230,7 +230,7 @@ class TestFailureSimulation:
                     assert info["health_status"] == "healthy", f"Provider {name} should be healthy"
     
     @pytest.mark.asyncio
-    async def test_failure_rate_below_threshold(self, api_url):
+    async def test_failure_rate_below_threshold(self):
         """Verify failure rate is below acceptable threshold"""
         async with aiohttp.ClientSession() as session:
             # Make 20 health check requests
@@ -238,7 +238,7 @@ class TestFailureSimulation:
             for _ in range(20):
                 try:
                     async with session.get(
-                        f"{api_url}/fulfillment/providers/status",
+                        f"{API_BASE}/fulfillment/providers/status",
                         timeout=aiohttp.ClientTimeout(total=5)
                     ) as resp:
                         results.append(resp.status == 200)
@@ -254,15 +254,17 @@ class TestAuditTrail:
     """Test: Full delivery auditability"""
     
     @pytest.mark.asyncio
-    async def test_audit_endpoint_structure(self, api_url, test_user):
+    async def test_audit_endpoint_structure(self):
         """Verify audit endpoint returns expected fields"""
+        test_user = await create_test_user(API_BASE)
+        
         if not test_user.get("token"):
             pytest.skip("Could not create test user")
         
         async with aiohttp.ClientSession() as session:
             # Get pending fulfillments (admin endpoint)
             async with session.get(
-                f"{api_url}/fulfillment/admin/pending",
+                f"{API_BASE}/fulfillment/admin/pending",
                 headers={"Authorization": f"Bearer {test_user['token']}"}
             ) as resp:
                 # This should work or return empty (depends on auth)
@@ -278,7 +280,7 @@ class TestMonitoring:
     """Test: Alerts if delivery failure rate > X%"""
     
     @pytest.mark.asyncio
-    async def test_system_responds_under_stress(self, api_url):
+    async def test_system_responds_under_stress(self):
         """System should remain responsive under concurrent load"""
         async with aiohttp.ClientSession() as session:
             start = time.time()
@@ -287,7 +289,7 @@ class TestMonitoring:
             async def hit_endpoint(endpoint):
                 try:
                     async with session.get(
-                        f"{api_url}/{endpoint}",
+                        f"{API_BASE}/{endpoint}",
                         timeout=aiohttp.ClientTimeout(total=10)
                     ) as resp:
                         return {"endpoint": endpoint, "status": resp.status, "time": time.time() - start}
@@ -316,14 +318,16 @@ class TestSandboxMode:
     """Test: ROAS dashboards cannot be misread in sandbox mode"""
     
     @pytest.mark.asyncio
-    async def test_sandbox_indicators(self, api_url, test_brand):
+    async def test_sandbox_indicators(self):
         """Verify sandbox mode indicators are present"""
+        test_brand = await create_test_brand(API_BASE)
+        
         if not test_brand.get("token"):
             pytest.skip("Could not create test brand")
         
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{api_url}/brand/dashboard",
+                f"{API_BASE}/brand/dashboard",
                 headers={"Authorization": f"Bearer {test_brand['token']}"}
             ) as resp:
                 if resp.status != 200:
@@ -351,8 +355,10 @@ class TestRegulatoryHygiene:
     """Test: No CPM/CTR/impressions language in Brand Portal"""
     
     @pytest.mark.asyncio
-    async def test_no_banned_terms_in_api(self, api_url, test_brand):
+    async def test_no_banned_terms_in_api(self):
         """Verify API responses don't contain banned terminology"""
+        test_brand = await create_test_brand(API_BASE)
+        
         if not test_brand.get("token"):
             pytest.skip("Could not create test brand")
         
@@ -361,7 +367,7 @@ class TestRegulatoryHygiene:
         async with aiohttp.ClientSession() as session:
             # Check dashboard
             async with session.get(
-                f"{api_url}/brand/dashboard",
+                f"{API_BASE}/brand/dashboard",
                 headers={"Authorization": f"Bearer {test_brand['token']}"}
             ) as resp:
                 if resp.status == 200:
@@ -376,7 +382,7 @@ class TestRegulatoryHygiene:
             
             # Check analytics
             async with session.get(
-                f"{api_url}/brand/analytics",
+                f"{API_BASE}/brand/analytics",
                 headers={"Authorization": f"Bearer {test_brand['token']}"}
             ) as resp:
                 if resp.status == 200:
