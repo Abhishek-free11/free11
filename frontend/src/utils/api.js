@@ -39,10 +39,13 @@ export const api = {
 
   // User
   getUserStats: () => axios.get(`${API}/user/stats`, { headers: getAuthHeader() }),
+  getDemandProgress: () => axios.get(`${API}/user/demand-progress`, { headers: getAuthHeader() }),
+  getUserBadges: () => axios.get(`${API}/user/badges`, { headers: getAuthHeader() }),
   getLeaderboard: () => axios.get(`${API}/leaderboard`),
 
   // Admin
   getAnalytics: () => axios.get(`${API}/admin/analytics`, { headers: getAuthHeader() }),
+  getBrandRoas: () => axios.get(`${API}/admin/brand-roas`, { headers: getAuthHeader() }),
 
   // ==================== CRICKET APIs ====================
   // Matches
