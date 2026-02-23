@@ -76,7 +76,7 @@
 ```
 Hey [Name]!
 
-You're invited to try FREE11 — a simple but powerful Social Entertainment Sports Platform where your correct calls get you real products for free.
+You're invited to try FREE11 — Make the right calls. Get real products.
 
 🏏 What you'll do:
 - Call ball-by-ball outcomes during IPL matches
