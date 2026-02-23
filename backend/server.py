@@ -777,6 +777,19 @@ async def root():
 # Include router
 app.include_router(api_router)
 
+# Import and include additional routers
+# Add backend directory to path for imports
+sys.path.insert(0, str(ROOT_DIR))
+
+from cricket_routes import cricket_router
+from gift_card_routes import gift_card_router
+from ads_routes import ads_router
+
+# Include additional routers under /api prefix
+app.include_router(cricket_router, prefix="/api")
+app.include_router(gift_card_router, prefix="/api")
+app.include_router(ads_router, prefix="/api")
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
