@@ -35,7 +35,6 @@ const Cricket = () => {
   const [myPredictions, setMyPredictions] = useState({ ball_predictions: [], match_predictions: [], stats: {} });
   const [leaderboard, setLeaderboard] = useState([]);
   const [predictDialogOpen, setPredictDialogOpen] = useState(false);
-  const [correctPredictionCount, setCorrectPredictionCount] = useState(0);
 
   // Ball prediction outcomes
   const BALL_OUTCOMES = [
