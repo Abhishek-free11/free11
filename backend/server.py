@@ -356,6 +356,32 @@ async def get_me(current_user: User = Depends(get_current_user)):
     user_dict.pop('password_hash', None)
     return user_dict
 
+# ==================== TUTORIAL ROUTES ====================
+
+@api_router.get("/user/tutorial-status")
+async def get_tutorial_status(current_user: User = Depends(get_current_user)):
+    """Check if user has completed the first-time tutorial"""
+    user = await db.users.find_one({"id": current_user.id}, {"_id": 0, "tutorial_completed": 1})
+    return {"tutorial_completed": user.get("tutorial_completed", False) if user else False}
+
+@api_router.post("/user/complete-tutorial")
+async def complete_tutorial(current_user: User = Depends(get_current_user)):
+    """Mark the first-time tutorial as completed"""
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"tutorial_completed": True, "tutorial_completed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    return {"success": True, "message": "Tutorial marked as completed"}
+
+@api_router.post("/user/reset-tutorial")
+async def reset_tutorial(current_user: User = Depends(get_current_user)):
+    """Reset the tutorial so it shows again (for replay from Profile → Help)"""
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"tutorial_completed": False}}
+    )
+    return {"success": True, "message": "Tutorial reset - will show on next dashboard visit"}
+
 # ==================== COINS ROUTES ====================
 
 @api_router.get("/coins/balance")
