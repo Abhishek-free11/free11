@@ -202,7 +202,7 @@ async def revoke_invite(code: str, request: RevokeInviteRequest, user = Depends(
 
 
 @beta_router.post("/admin/invites/pause")
-async def pause_all_invites(user: dict = Depends(get_current_user)):
+async def pause_all_invites(user = Depends(get_current_user)):
     """Pause all active invites (emergency brake)"""
     result = await db.beta_invites.update_many(
         {"is_active": True, "is_revoked": False},
