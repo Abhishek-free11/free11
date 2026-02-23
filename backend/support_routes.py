@@ -305,9 +305,9 @@ async def get_chat_suggestions():
         "greeting": "Hi! I'm your FREE11 support assistant. How can I help you today?",
         "suggestions": [
             "Check my order status",
+            "I redeemed but didn't receive my voucher",
             "How do coins work?",
             "How do I redeem rewards?",
-            "Join or create a clan",
             "Talk to support"
         ]
     }
