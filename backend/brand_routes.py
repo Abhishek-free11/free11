@@ -188,28 +188,15 @@ async def register_brand(data: BrandRegisterRequest):
         "note": "Your account is pending verification. You'll receive access within 24-48 hours."
     }
 
-import logging
-logger = logging.getLogger(__name__)
-
 @brand_router.post("/auth/login")
 async def login_brand(data: BrandLoginRequest):
     """Brand portal login"""
-    logger.info(f"Brand login attempt for: {data.email}")
     brand = await db.brand_accounts.find_one({"email": data.email})
     
     if not brand:
-        logger.warning(f"Brand not found: {data.email}")
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    logger.info(f"Brand found: {brand.get('brand_name')}, checking password...")
-    try:
-        is_valid = pwd_context.verify(data.password, brand["password_hash"])
-        logger.info(f"Password verification result: {is_valid}")
-    except Exception as e:
-        logger.error(f"Password verification error: {e}")
-        is_valid = False
-    
-    if not is_valid:
+    if not pwd_context.verify(data.password, brand["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     if not brand.get("is_active"):
