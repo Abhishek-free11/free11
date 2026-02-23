@@ -136,10 +136,61 @@ const Register = () => {
                 data-testid="password-input"
               />
             </div>
+            
+            {/* Beta Invite Code Field */}
+            {betaRequired && (
+              <div className="space-y-2">
+                <Label htmlFor="invite" className="text-slate-200 flex items-center gap-2">
+                  <Ticket className="h-4 w-4" />
+                  Invite Code
+                  <span className="text-red-400 text-xs">(Required for beta)</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="invite"
+                    type="text"
+                    placeholder="FREE11-XXXXXXXX"
+                    value={inviteCode}
+                    onChange={(e) => {
+                      const code = e.target.value.toUpperCase();
+                      setInviteCode(code);
+                      if (code.length >= 10) {
+                        validateInviteCode(code);
+                      } else {
+                        setInviteValid(null);
+                      }
+                    }}
+                    className={`bg-slate-800 border-slate-700 text-white pr-10 ${
+                      inviteValid === true ? 'border-green-500' : 
+                      inviteValid === false ? 'border-red-500' : ''
+                    }`}
+                    data-testid="invite-code-input"
+                  />
+                  {inviteChecking && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <div className="h-4 w-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                  {!inviteChecking && inviteValid === true && (
+                    <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+                  )}
+                  {!inviteChecking && inviteValid === false && (
+                    <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-red-500" />
+                  )}
+                </div>
+                {inviteValid === false && (
+                  <p className="text-xs text-red-400">Invalid or expired invite code</p>
+                )}
+                {inviteValid === true && (
+                  <p className="text-xs text-green-400">Valid invite code!</p>
+                )}
+              </div>
+            )}
+            
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold"
-              disabled={loading}
+              disabled={loading || (betaRequired && !inviteValid)}
               data-testid="submit-btn"
             >
               {loading ? 'Creating account...' : 'Sign Up & Get 50 Coins'}
