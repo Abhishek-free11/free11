@@ -1232,6 +1232,8 @@ from leaderboards_routes import leaderboards_router
 from fulfillment_routes import fulfillment_router
 from support_routes import support_router
 from brand_routes import brand_router
+from beta_routes import beta_router
+from reports_routes import reports_router
 from email_service import EmailService
 
 # Initialize email service
