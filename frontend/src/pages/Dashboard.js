@@ -223,31 +223,58 @@ const Dashboard = () => {
                         onError={(e) => e.target.src = 'https://via.placeholder.com/80'}
                       />
                       {demandProgress.next_reward.progress >= 100 && (
-                        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-bounce">
                           Ready!
                         </div>
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="font-bold text-white text-lg mb-2">{demandProgress.next_reward.name}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <p className="font-bold text-white text-lg">{demandProgress.next_reward.name}</p>
+                        {/* Milestone badges */}
+                        {demandProgress.next_reward.progress >= 50 && demandProgress.next_reward.progress < 80 && (
+                          <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">
+                            Halfway there!
+                          </span>
+                        )}
+                        {demandProgress.next_reward.progress >= 80 && demandProgress.next_reward.progress < 100 && (
+                          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full animate-pulse">
+                            Almost unlocked!
+                          </span>
+                        )}
+                        {demandProgress.next_reward.progress >= 100 && (
+                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                            Ready to claim! 🎉
+                          </span>
+                        )}
+                      </div>
                       
                       {/* Enhanced Progress Bar */}
                       <div className="relative mb-2">
                         <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500 ease-out relative"
+                            className={`h-full rounded-full transition-all duration-500 ease-out relative ${
+                              demandProgress.next_reward.progress >= 100 
+                                ? 'bg-gradient-to-r from-green-400 to-emerald-300 animate-pulse' 
+                                : 'bg-gradient-to-r from-green-500 to-emerald-400'
+                            }`}
                             style={{ width: `${Math.min(demandProgress.next_reward.progress, 100)}%` }}
                           >
-                            <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                            {demandProgress.next_reward.progress < 100 && (
+                              <div className="absolute inset-0 bg-white/10" />
+                            )}
                           </div>
                         </div>
-                        {/* Milestone markers */}
-                        <div className="absolute top-0 left-1/4 h-4 w-0.5 bg-slate-600" />
-                        <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-slate-600" />
-                        <div className="absolute top-0 left-3/4 h-4 w-0.5 bg-slate-600" />
+                        {/* Milestone markers with labels */}
+                        <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-slate-600" title="50%">
+                          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">50%</span>
+                        </div>
+                        <div className="absolute top-0 left-[80%] h-4 w-0.5 bg-slate-600" title="80%">
+                          <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">80%</span>
+                        </div>
                       </div>
                       
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mt-5">
                         <p className="text-sm font-bold text-green-400">
                           {Math.round(demandProgress.next_reward.progress)}% Complete
                         </p>
