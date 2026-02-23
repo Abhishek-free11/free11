@@ -73,7 +73,7 @@ const Register = () => {
     try {
       await register(email, name, password, inviteCode || null);
       toast.success('🎉 Welcome! You got 50 FREE coins!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Registration failed');
     } finally {
