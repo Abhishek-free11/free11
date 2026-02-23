@@ -81,8 +81,10 @@ class TestLoadRedemptions:
     """Load test: 1,000 redemptions without manual ops"""
     
     @pytest.mark.asyncio
-    async def test_bulk_redemptions(self, api_url, test_user):
+    async def test_bulk_redemptions(self):
         """Simulate 100 concurrent redemptions (scaled down for test)"""
+        test_user = await create_test_user(API_BASE)
+        
         if not test_user.get("token"):
             pytest.skip("Could not create test user")
         
@@ -92,7 +94,7 @@ class TestLoadRedemptions:
             try:
                 # Get products first
                 async with session.get(
-                    f"{api_url}/products",
+                    f"{API_BASE}/products",
                     headers={"Authorization": f"Bearer {test_user['token']}"}
                 ) as resp:
                     products = await resp.json()
@@ -104,7 +106,7 @@ class TestLoadRedemptions:
                 
                 # Attempt redemption (will fail due to coins, but tests the flow)
                 async with session.post(
-                    f"{api_url}/products/{product['id']}/redeem",
+                    f"{API_BASE}/products/{product['id']}/redeem",
                     headers={"Authorization": f"Bearer {test_user['token']}"},
                     json={"delivery_address": f"Test Address {idx}"},
                     timeout=aiohttp.ClientTimeout(total=TEST_TIMEOUT)
@@ -138,8 +140,10 @@ class TestLoadRedemptions:
         assert successful >= 80, f"Expected at least 80% success rate, got {successful}%"
 
     @pytest.mark.asyncio
-    async def test_redemption_rate_limit(self, api_url, test_user):
+    async def test_redemption_rate_limit(self):
         """Test system handles rapid requests without crashing"""
+        test_user = await create_test_user(API_BASE)
+        
         if not test_user.get("token"):
             pytest.skip("Could not create test user")
         
@@ -149,7 +153,7 @@ class TestLoadRedemptions:
                 start = time.time()
                 try:
                     async with session.get(
-                        f"{api_url}/products",
+                        f"{API_BASE}/products",
                         headers={"Authorization": f"Bearer {test_user['token']}"},
                         timeout=aiohttp.ClientTimeout(total=5)
                     ) as resp:
