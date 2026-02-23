@@ -739,25 +739,139 @@ async def get_analytics():
 
 @api_router.post("/seed-products")
 async def seed_products():
-    """Seed database with sample products"""
+    """Seed database with brand-funded products including impulse rewards"""
+    # Clear existing products for fresh seed
+    await db.products.delete_many({})
+    
     sample_products = [
+        # ============ IMPULSE REWARDS (₹10-₹50) - Entry tier ============
         {
-            "name": "iPhone 15 Pro",
-            "description": "Latest Apple iPhone with A17 Pro chip",
-            "category": "electronics",
-            "coin_price": 50000,
-            "image_url": "https://images.unsplash.com/photo-1696446702281-1af638e15d2e?w=400",
-            "stock": 5,
-            "brand": "Apple"
+            "name": "Mobile Recharge ₹10",
+            "description": "Instant mobile recharge for any operator",
+            "category": "recharge",
+            "coin_price": 10,
+            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
+            "stock": 1000,
+            "brand": "Jio/Airtel",
+            "brand_id": "telecom_partner",
+            "campaign_id": "ipl2026_recharge",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
         },
         {
-            "name": "Samsung Galaxy S24",
-            "description": "Flagship Android smartphone",
-            "category": "electronics",
-            "coin_price": 45000,
-            "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400",
-            "stock": 10,
-            "brand": "Samsung"
+            "name": "Mobile Recharge ₹20",
+            "description": "Instant mobile recharge for any operator",
+            "category": "recharge",
+            "coin_price": 20,
+            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
+            "stock": 1000,
+            "brand": "Jio/Airtel",
+            "brand_id": "telecom_partner",
+            "campaign_id": "ipl2026_recharge",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
+        },
+        {
+            "name": "Mobile Recharge ₹50",
+            "description": "Instant mobile recharge for any operator",
+            "category": "recharge",
+            "coin_price": 50,
+            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
+            "stock": 500,
+            "brand": "Jio/Airtel",
+            "brand_id": "telecom_partner",
+            "campaign_id": "ipl2026_recharge",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
+        },
+        {
+            "name": "Cafe Coffee Day ₹50",
+            "description": "Coffee or snack at any CCD outlet",
+            "category": "food",
+            "coin_price": 50,
+            "image_url": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
+            "stock": 200,
+            "brand": "CCD",
+            "brand_id": "ccd_india",
+            "campaign_id": "ipl2026_ccd",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
+        },
+        {
+            "name": "Netflix 1-Week Trial",
+            "description": "Stream unlimited shows for 7 days",
+            "category": "ott",
+            "coin_price": 30,
+            "image_url": "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=400",
+            "stock": 300,
+            "brand": "Netflix",
+            "brand_id": "netflix_india",
+            "campaign_id": "ipl2026_ott",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
+        },
+        {
+            "name": "Hotstar 3-Day Pass",
+            "description": "Watch IPL matches live!",
+            "category": "ott",
+            "coin_price": 25,
+            "image_url": "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=400",
+            "stock": 500,
+            "brand": "Disney+ Hotstar",
+            "brand_id": "hotstar_india",
+            "campaign_id": "ipl2026_hotstar",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1,
+            "is_limited_drop": True
+        },
+        # ============ MID-TIER REWARDS (₹100-₹500) ============
+        {
+            "name": "Swiggy Voucher ₹100",
+            "description": "Order your favorite food",
+            "category": "food",
+            "coin_price": 100,
+            "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
+            "stock": 300,
+            "brand": "Swiggy",
+            "brand_id": "swiggy_india",
+            "campaign_id": "ipl2026_food",
+            "funded_by_brand": True,
+            "fulfillment_type": "qcomm",
+            "min_level_required": 1
+        },
+        {
+            "name": "Swiggy Voucher ₹200",
+            "description": "Order your favorite food",
+            "category": "food",
+            "coin_price": 200,
+            "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
+            "stock": 200,
+            "brand": "Swiggy",
+            "brand_id": "swiggy_india",
+            "campaign_id": "ipl2026_food",
+            "funded_by_brand": True,
+            "fulfillment_type": "qcomm",
+            "min_level_required": 2
+        },
+        {
+            "name": "Amazon Gift Card ₹100",
+            "description": "Shop anything on Amazon",
+            "category": "vouchers",
+            "coin_price": 100,
+            "image_url": "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=400",
+            "stock": 200,
+            "brand": "Amazon",
+            "brand_id": "amazon_india",
+            "campaign_id": "ipl2026_amazon",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 1
         },
         {
             "name": "Amazon Gift Card ₹500",
@@ -766,63 +880,107 @@ async def seed_products():
             "coin_price": 500,
             "image_url": "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=400",
             "stock": 100,
-            "brand": "Amazon"
+            "brand": "Amazon",
+            "brand_id": "amazon_india",
+            "campaign_id": "ipl2026_amazon",
+            "funded_by_brand": True,
+            "fulfillment_type": "direct",
+            "min_level_required": 2
         },
         {
-            "name": "Swiggy Voucher ₹200",
-            "description": "Order your favorite food",
-            "category": "vouchers",
+            "name": "Grocery Bundle ₹200",
+            "description": "Essential groceries delivered home",
+            "category": "groceries",
             "coin_price": 200,
-            "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
-            "stock": 200,
-            "brand": "Swiggy"
+            "image_url": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400",
+            "stock": 300,
+            "brand": "BigBasket",
+            "brand_id": "bigbasket_india",
+            "campaign_id": "ipl2026_grocery",
+            "funded_by_brand": True,
+            "fulfillment_type": "qcomm",
+            "min_level_required": 2
         },
+        # ============ PREMIUM REWARDS (₹1000+) - Higher tiers ============
         {
-            "name": "Nike Air Max Shoes",
-            "description": "Premium running shoes",
-            "category": "fashion",
-            "coin_price": 8000,
-            "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+            "name": "Flipkart Voucher ₹1000",
+            "description": "Shop electronics, fashion & more",
+            "category": "vouchers",
+            "coin_price": 1000,
+            "image_url": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400",
             "stock": 50,
-            "brand": "Nike"
+            "brand": "Flipkart",
+            "brand_id": "flipkart_india",
+            "campaign_id": "ipl2026_flipkart",
+            "funded_by_brand": True,
+            "fulfillment_type": "ondc_bap",
+            "min_level_required": 3
         },
         {
-            "name": "Sony Headphones WH-1000XM5",
+            "name": "Nike Running Shoes",
+            "description": "Premium athletic footwear",
+            "category": "fashion",
+            "coin_price": 5000,
+            "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+            "stock": 30,
+            "brand": "Nike",
+            "brand_id": "nike_india",
+            "campaign_id": "ipl2026_sports",
+            "funded_by_brand": True,
+            "fulfillment_type": "d2c",
+            "min_level_required": 4
+        },
+        {
+            "name": "Sony WH-1000XM5",
             "description": "Industry-leading noise cancellation",
             "category": "electronics",
-            "coin_price": 25000,
+            "coin_price": 15000,
             "image_url": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400",
-            "stock": 20,
-            "brand": "Sony"
+            "stock": 10,
+            "brand": "Sony",
+            "brand_id": "sony_india",
+            "campaign_id": "ipl2026_electronics",
+            "funded_by_brand": True,
+            "fulfillment_type": "d2c",
+            "min_level_required": 4
         },
         {
-            "name": "Grocery Bundle - ₹1000",
-            "description": "Essential groceries for your home",
-            "category": "groceries",
-            "coin_price": 1000,
-            "image_url": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400",
-            "stock": 500,
-            "brand": "BigBasket"
+            "name": "Samsung Galaxy S24",
+            "description": "Flagship Android smartphone",
+            "category": "electronics",
+            "coin_price": 35000,
+            "image_url": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400",
+            "stock": 5,
+            "brand": "Samsung",
+            "brand_id": "samsung_india",
+            "campaign_id": "ipl2026_electronics",
+            "funded_by_brand": True,
+            "fulfillment_type": "d2c",
+            "min_level_required": 5,
+            "is_limited_drop": True
         },
         {
-            "name": "Levi's Jeans",
-            "description": "Classic denim jeans",
-            "category": "fashion",
-            "coin_price": 3500,
-            "image_url": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
-            "stock": 100,
-            "brand": "Levi's"
+            "name": "iPhone 15 Pro",
+            "description": "Latest Apple iPhone with A17 Pro chip",
+            "category": "electronics",
+            "coin_price": 50000,
+            "image_url": "https://images.unsplash.com/photo-1696446702281-1af638e15d2e?w=400",
+            "stock": 3,
+            "brand": "Apple",
+            "brand_id": "apple_india",
+            "campaign_id": "ipl2026_electronics",
+            "funded_by_brand": True,
+            "fulfillment_type": "d2c",
+            "min_level_required": 5,
+            "is_limited_drop": True
         }
     ]
     
     for product_data in sample_products:
         product = Product(**product_data)
-        # Check if exists
-        existing = await db.products.find_one({"name": product.name})
-        if not existing:
-            await db.products.insert_one(product.model_dump())
+        await db.products.insert_one(product.model_dump())
     
-    return {"message": f"Seeded {len(sample_products)} products"}
+    return {"message": f"Seeded {len(sample_products)} brand-funded products with impulse rewards"}
 
 # ==================== ROOT ====================
 
