@@ -185,48 +185,76 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Demand Progress - Next Reward */}
-          <Card className="bg-gradient-to-br from-green-500/10 to-emerald-600/10 border-green-500/30 lg:col-span-2">
+          {/* ENHANCED: Demand Progress - Next Reward (More Prominent) */}
+          <Card className="bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-teal-500/10 border-2 border-green-500/40 lg:col-span-2 shadow-lg shadow-green-500/10">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
+              {/* Header with coins balance prominently displayed */}
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Target className="h-5 w-5 text-green-400" />
+                  <h3 className="text-xl font-black text-white flex items-center gap-2">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <Target className="h-6 w-6 text-green-400" />
+                    </div>
                     Progress to Next Reward
                   </h3>
-                  <p className="text-sm text-slate-400">Unlock real goods through skill</p>
+                  <p className="text-sm text-slate-400 mt-1">Unlock real goods through skill</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-3xl font-black text-yellow-400">{user?.coins_balance || 0}</p>
+                <div className="text-right bg-slate-900/50 px-4 py-3 rounded-xl border border-yellow-500/20">
+                  <p className="text-4xl font-black text-yellow-400">{user?.coins_balance || 0}</p>
                   <p className="text-xs text-slate-400">coins available</p>
                 </div>
               </div>
               
               {demandProgress?.next_reward ? (
-                <div className="bg-slate-900/50 rounded-lg p-4">
-                  <div className="flex items-center gap-4">
-                    <img 
-                      src={demandProgress.next_reward.image_url} 
-                      alt={demandProgress.next_reward.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                      onError={(e) => e.target.src = 'https://via.placeholder.com/64'}
-                    />
+                <div className="bg-slate-900/60 rounded-xl p-5 border border-slate-700/50">
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                      <img 
+                        src={demandProgress.next_reward.image_url} 
+                        alt={demandProgress.next_reward.name}
+                        className="w-20 h-20 rounded-xl object-cover border-2 border-green-500/30"
+                        onError={(e) => e.target.src = 'https://via.placeholder.com/80'}
+                      />
+                      {demandProgress.next_reward.progress >= 100 && (
+                        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          Ready!
+                        </div>
+                      )}
+                    </div>
                     <div className="flex-1">
-                      <p className="font-bold text-white">{demandProgress.next_reward.name}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Progress value={demandProgress.next_reward.progress} className="h-2 flex-1" />
-                        <span className="text-sm text-green-400 font-medium">
-                          {Math.round(demandProgress.next_reward.progress)}%
-                        </span>
+                      <p className="font-bold text-white text-lg mb-2">{demandProgress.next_reward.name}</p>
+                      
+                      {/* Enhanced Progress Bar */}
+                      <div className="relative mb-2">
+                        <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500 ease-out relative"
+                            style={{ width: `${Math.min(demandProgress.next_reward.progress, 100)}%` }}
+                          >
+                            <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                          </div>
+                        </div>
+                        {/* Milestone markers */}
+                        <div className="absolute top-0 left-1/4 h-4 w-0.5 bg-slate-600" />
+                        <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-slate-600" />
+                        <div className="absolute top-0 left-3/4 h-4 w-0.5 bg-slate-600" />
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {demandProgress.next_reward.coins_needed > 0 
-                          ? `${demandProgress.next_reward.coins_needed} coins to go`
-                          : 'Ready to redeem!'}
-                      </p>
+                      
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-bold text-green-400">
+                          {Math.round(demandProgress.next_reward.progress)}% Complete
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          {demandProgress.next_reward.coins_needed > 0 
+                            ? <span className="text-yellow-400 font-medium">{demandProgress.next_reward.coins_needed} coins to go</span>
+                            : <span className="text-green-400 font-bold">Ready to redeem! 🎉</span>}
+                        </p>
+                      </div>
                     </div>
                     <Button 
                       onClick={() => navigate('/shop')}
+                      disabled={demandProgress.next_reward.coins_needed > 0}
+                      size="lg"
                       disabled={demandProgress.next_reward.coins_needed > 0}
                       className="bg-green-500 hover:bg-green-600 text-white"
                     >
