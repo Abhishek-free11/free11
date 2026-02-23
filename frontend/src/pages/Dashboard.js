@@ -149,6 +149,22 @@ const Dashboard = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-6" data-testid="dashboard-page">
         
+        {/* Beta Program Banner */}
+        <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🧪</span>
+              <div>
+                <p className="text-yellow-400 font-medium text-sm">You're in the FREE11 Beta</p>
+                <p className="text-slate-400 text-xs">
+                  Thanks for testing early! Things may break. 
+                  <a href="/support" className="text-blue-400 hover:underline ml-1">Report issues →</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         {/* PRORGA Disclaimer Banner */}
         <div className="mb-6 p-3 bg-slate-800/50 border border-slate-700 rounded-lg text-center">
           <p className="text-xs text-slate-400">
