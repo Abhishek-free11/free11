@@ -68,24 +68,24 @@ const Landing = () => {
             <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
               <Zap className="h-7 w-7 text-yellow-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Earn FREE11 Coins</h3>
-            <p className="text-slate-400">Play skill-based games, complete daily tasks, and maintain streaks to earn coins.</p>
+            <h3 className="text-xl font-bold text-white mb-2">Call the Action</h3>
+            <p className="text-slate-400">Make ball-by-ball calls during live IPL matches. Get coins for correct calls.</p>
           </Card>
 
           <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-red-500/50 transition-all">
             <div className="bg-gradient-to-br from-red-500/20 to-pink-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
               <Gift className="h-7 w-7 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Redeem Real Products</h3>
-            <p className="text-slate-400">Exchange coins for electronics, vouchers, groceries, fashion, and more.</p>
+            <h3 className="text-xl font-bold text-white mb-2">Get Real Products</h3>
+            <p className="text-slate-400">Use coins for Swiggy, Amazon, Netflix vouchers and more. No cash. No betting.</p>
           </Card>
 
           <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-blue-500/50 transition-all">
             <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
               <Trophy className="h-7 w-7 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Level Up & Compete</h3>
-            <p className="text-slate-400">Climb the leaderboard, unlock achievements, and earn exclusive rewards.</p>
+            <h3 className="text-xl font-bold text-white mb-2">Skill Drives Rewards</h3>
+            <p className="text-slate-400">Your accuracy determines your rank. Better calls = more rewards.</p>
           </Card>
         </div>
       </section>
@@ -95,9 +95,9 @@ const Landing = () => {
         <h2 className="text-4xl font-black text-center text-white mb-16">How It Works</h2>
         <div className="grid md:grid-cols-4 gap-8">
           {[
-            { step: '1', title: 'Sign Up Free', desc: 'Get 50 welcome coins instantly', icon: Users, color: 'yellow' },
-            { step: '2', title: 'Play & Earn', desc: 'Complete tasks and play games', icon: Zap, color: 'red' },
-            { step: '3', title: 'Browse Shop', desc: 'Choose from thousands of products', icon: Gift, color: 'blue' },
+            { step: '1', title: 'Join Beta', desc: 'Use your invite code to sign up', icon: Users, color: 'yellow' },
+            { step: '2', title: 'Make Calls', desc: 'Call ball-by-ball during live matches', icon: Zap, color: 'red' },
+            { step: '3', title: 'Get Coins', desc: 'Correct calls earn FREE11 Coins', icon: Gift, color: 'blue' },
             { step: '4', title: 'Redeem & Enjoy', desc: 'Get products delivered to you', icon: TrendingUp, color: 'yellow' }
           ].map((item) => (
             <div key={item.step} className="text-center space-y-4">
