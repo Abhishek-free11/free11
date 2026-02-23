@@ -158,11 +158,20 @@ Tap "Support" anytime to report issues.
 **Current:** Support page accessible via navbar
 **Recommended:** Add floating feedback button on all pages (post-beta polish)
 
-### WhatsApp Group Rules
-- Founder monitors daily
-- No promises on timelines
-- "Thanks for the feedback, noted" acknowledgment
+### WhatsApp Group Guardrails
+- **Keep group small** (Wave 1 only, max 50 members)
+- **Moderated by founder** - daily check-ins
+- No feature promises or timelines
+- Standard acknowledgment: "Thanks for the feedback, noted"
 - Escalate blockers to agent immediately
+- **No public invite link** - direct adds only
+
+### Exit Survey (Day 7 + Day 14)
+Key questions:
+1. "What confused you the most?"
+2. "Did you complete a redemption? If not, why?"
+3. "Would you recommend FREE11 to a cricket fan friend?"
+4. "Any moment where you thought this was betting/gambling?"
 
 ---
 
