@@ -37,21 +37,21 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="inline-block">
             <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-6 py-2 mb-6">
-              <span className="text-yellow-400 font-semibold">Nobody Will Ever Lose on FREE11 ✨</span>
+              <span className="text-yellow-400 font-semibold">IPL 2026 Beta is Live 🏏</span>
             </div>
           </div>
           <h1 className="text-6xl md:text-7xl font-black text-white leading-tight">
-            Your Time =
-            <span className="block bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
-              Free Shopping List
+            Make the right calls.
+            <span className="block bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 bg-clip-text text-transparent">
+              Get real products.
             </span>
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Everything here is free, except your time! Play games, complete tasks, earn FREE11 Coins, and redeem real products.
+            Call ball-by-ball outcomes during IPL matches. Earn FREE11 Coins for correct calls. Use coins for vouchers, recharges, and more.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
             <Button size="lg" onClick={() => navigate('/register')} className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold text-lg px-8 py-6" data-testid="hero-cta-btn">
-              Start Earning Now
+              Join Beta
               <Coins className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="border-slate-700 text-slate-200 hover:bg-slate-800 text-lg px-8 py-6">
