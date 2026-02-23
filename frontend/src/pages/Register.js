@@ -150,16 +150,16 @@ const Register = () => {
             {/* Beta Invite Code Field */}
             {betaRequired && (
               <div className="space-y-2">
-                <Label htmlFor="invite" className="text-slate-200 flex items-center gap-2">
+                <Label htmlFor="invite" className="text-slate-200 text-sm flex items-center gap-2">
                   <Ticket className="h-4 w-4" />
                   Invite Code
-                  <span className="text-red-400 text-xs">(Required for beta)</span>
+                  <span className="text-red-400 text-xs">(Required)</span>
                 </Label>
                 <div className="relative">
                   <Input
                     id="invite"
                     type="text"
-                    placeholder="FREE11-XXXXXXXX"
+                    placeholder="BETA01"
                     value={inviteCode}
                     onChange={(e) => {
                       const code = e.target.value.toUpperCase();
@@ -170,7 +170,7 @@ const Register = () => {
                         setInviteValid(null);
                       }
                     }}
-                    className={`bg-slate-800 border-slate-700 text-white pr-10 ${
+                    className={`bg-slate-800 border-slate-700 text-white pr-10 h-11 ${
                       inviteValid === true ? 'border-green-500' : 
                       inviteValid === false ? 'border-red-500' : ''
                     }`}
