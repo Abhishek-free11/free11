@@ -278,39 +278,63 @@ class ProviderFactory:
 # ==================== FULFILLMENT SERVICE ====================
 
 class FulfillmentService:
-    """Main fulfillment orchestration service"""
+    """Main fulfillment orchestration service with idempotency and retry logic"""
+    
+    @staticmethod
+    async def check_idempotency(order_id: str) -> Optional[Dict[str, Any]]:
+        """Check if this order has already been fulfilled (idempotency check)"""
+        existing = await db.fulfillments.find_one({
+            "order_id": order_id,
+            "status": {"$in": [FulfillmentStatus.DELIVERED, FulfillmentStatus.PROCESSING]}
+        })
+        return existing
     
     @staticmethod
     async def process_redemption(order_id: str, user_id: str, user_email: str, 
-                                  product: dict) -> FulfillmentRecord:
-        """Process a redemption and create fulfillment record"""
+                                  product: dict, user_name: str = None) -> FulfillmentRecord:
+        """Process a redemption and create fulfillment record with idempotency"""
+        
+        # IDEMPOTENCY CHECK: Prevent duplicate voucher delivery
+        existing = await FulfillmentService.check_idempotency(order_id)
+        if existing:
+            logger.warning(f"Idempotency check failed: Order {order_id} already exists with status {existing['status']}")
+            raise HTTPException(
+                status_code=409,
+                detail=f"Order {order_id} has already been processed (status: {existing['status']})"
+            )
         
         # Determine provider from product
         brand = product.get("brand", "").lower()
+        product_name = product.get("name", "").lower()
         provider = VoucherProvider.GENERIC
         
-        if "amazon" in brand:
+        if "amazon" in brand or "amazon" in product_name:
             provider = VoucherProvider.AMAZON
-        elif "swiggy" in brand:
+        elif "swiggy" in brand or "swiggy" in product_name:
             provider = VoucherProvider.SWIGGY
-        elif "flipkart" in brand:
+        elif "flipkart" in brand or "flipkart" in product_name:
             provider = VoucherProvider.FLIPKART
-        elif "netflix" in brand:
+        elif "netflix" in brand or "netflix" in product_name:
             provider = VoucherProvider.NETFLIX
-        elif "spotify" in brand:
+        elif "spotify" in brand or "spotify" in product_name:
             provider = VoucherProvider.SPOTIFY
         
-        # Create fulfillment record
+        # Create fulfillment record with idempotency key
+        idempotency_key = f"{order_id}:{user_id}:{product.get('id', '')}"
+        
         record = FulfillmentRecord(
             order_id=order_id,
             user_id=user_id,
             user_email=user_email,
+            user_name=user_name,
             product_id=product.get("id", ""),
             product_name=product.get("name", ""),
             provider=provider,
             amount=product.get("value", product.get("cost", 0)),
             brand_id=product.get("brand_id"),
-            campaign_id=product.get("campaign_id")
+            campaign_id=product.get("campaign_id"),
+            idempotency_key=idempotency_key,
+            last_delivery_status="pending"
         )
         
         # Save initial record
@@ -319,21 +343,51 @@ class FulfillmentService:
         return record
     
     @staticmethod
-    async def execute_fulfillment(fulfillment_id: str) -> Dict[str, Any]:
-        """Execute the actual voucher generation"""
+    async def execute_fulfillment(fulfillment_id: str, is_retry: bool = False) -> Dict[str, Any]:
+        """Execute the actual voucher generation with full audit trail"""
         
         record = await db.fulfillments.find_one({"id": fulfillment_id})
         if not record:
             raise HTTPException(status_code=404, detail="Fulfillment record not found")
+        
+        # Check retry limit
+        attempt_count = record.get("delivery_attempt_count", 0)
+        if attempt_count >= MAX_RETRY_ATTEMPTS and not record.get("admin_override_used"):
+            logger.error(f"Max retry attempts reached for {fulfillment_id}")
+            return {
+                "success": False, 
+                "error": "Maximum delivery attempts reached",
+                "attempts": attempt_count
+            }
+        
+        # IDEMPOTENCY: Don't process already delivered vouchers
+        if record.get("status") == FulfillmentStatus.DELIVERED:
+            logger.warning(f"Attempted to re-deliver already delivered voucher {fulfillment_id}")
+            return {
+                "success": True,
+                "already_delivered": True,
+                "voucher_code": record.get("voucher_code")
+            }
+        
+        current_attempt = attempt_count + 1
+        attempt_timestamp = datetime.now(timezone.utc).isoformat()
         
         # Update status to processing
         await db.fulfillments.update_one(
             {"id": fulfillment_id},
             {"$set": {
                 "status": FulfillmentStatus.PROCESSING,
-                "updated_at": datetime.now(timezone.utc).isoformat()
+                "delivery_attempt_count": current_attempt,
+                "updated_at": attempt_timestamp
             }}
         )
+        
+        attempt_record = {
+            "attempt_number": current_attempt,
+            "timestamp": attempt_timestamp,
+            "is_retry": is_retry,
+            "status": "processing"
+        }
         
         try:
             # Get provider and generate voucher
@@ -341,41 +395,182 @@ class FulfillmentService:
             result = await provider.generate_voucher(record["amount"], record["order_id"])
             
             if result.get("success"):
-                # Update with voucher details
+                delivery_timestamp = datetime.now(timezone.utc).isoformat()
+                
+                # Update attempt record
+                attempt_record["status"] = "success"
+                attempt_record["provider_id"] = result.get("provider_id")
+                attempt_record["completed_at"] = delivery_timestamp
+                
+                # Update with voucher details and audit trail
+                update_data = {
+                    "status": FulfillmentStatus.DELIVERED,
+                    "voucher_code": result.get("voucher_code"),
+                    "voucher_pin": result.get("voucher_pin"),
+                    "voucher_url": result.get("voucher_url"),
+                    "expiry_date": result.get("expiry_date"),
+                    "delivered_at": delivery_timestamp,
+                    "delivery_timestamp_utc": delivery_timestamp,
+                    "delivery_provider_id": result.get("provider_id"),
+                    "last_delivery_status": "delivered",
+                    "last_failure_reason": None,
+                    "last_failure_code": None,
+                    "provider_response": result,
+                    "updated_at": delivery_timestamp
+                }
+                
                 await db.fulfillments.update_one(
                     {"id": fulfillment_id},
-                    {"$set": {
-                        "status": FulfillmentStatus.DELIVERED,
-                        "voucher_code": result.get("voucher_code"),
-                        "voucher_pin": result.get("voucher_pin"),
-                        "voucher_url": result.get("voucher_url"),
-                        "expiry_date": result.get("expiry_date"),
-                        "delivered_at": datetime.now(timezone.utc).isoformat(),
-                        "provider_response": result,
-                        "updated_at": datetime.now(timezone.utc).isoformat()
-                    }}
+                    {
+                        "$set": update_data,
+                        "$push": {"delivery_history": attempt_record}
+                    }
                 )
                 
-                # TODO: Send email notification
+                # Send email notification
+                try:
+                    from email_service import EmailService
+                    email_result = await EmailService.send_voucher_delivered(
+                        user_email=record["user_email"],
+                        user_name=record.get("user_name"),
+                        user_id=record["user_id"],
+                        order_id=record["order_id"],
+                        fulfillment_id=fulfillment_id,
+                        product_name=record["product_name"],
+                        voucher_code=result.get("voucher_code"),
+                        voucher_pin=result.get("voucher_pin"),
+                        expiry_date=result.get("expiry_date")
+                    )
+                    
+                    # Update email status
+                    await db.fulfillments.update_one(
+                        {"id": fulfillment_id},
+                        {"$set": {
+                            "email_sent": email_result.get("success", False),
+                            "email_sent_at": datetime.now(timezone.utc).isoformat() if email_result.get("success") else None,
+                            "email_log_id": email_result.get("email_log_id")
+                        }}
+                    )
+                except Exception as email_error:
+                    logger.error(f"Failed to send delivery email for {fulfillment_id}: {str(email_error)}")
+                
                 logger.info(f"Voucher delivered for order {record['order_id']}: {result.get('voucher_code')}")
                 
-                return {"success": True, "voucher_code": result.get("voucher_code")}
+                return {
+                    "success": True, 
+                    "voucher_code": result.get("voucher_code"),
+                    "attempt": current_attempt,
+                    "provider_id": result.get("provider_id")
+                }
             else:
                 raise Exception(result.get("error", "Provider returned failure"))
                 
         except Exception as e:
-            # Update failure status
+            error_str = str(e)
+            failure_timestamp = datetime.now(timezone.utc).isoformat()
+            
+            # Determine failure reason
+            failure_code = FailureReason.UNKNOWN
+            if "timeout" in error_str.lower():
+                failure_code = FailureReason.TIMEOUT
+            elif "rate" in error_str.lower():
+                failure_code = FailureReason.RATE_LIMITED
+            elif "unavailable" in error_str.lower():
+                failure_code = FailureReason.PROVIDER_UNAVAILABLE
+            elif "balance" in error_str.lower():
+                failure_code = FailureReason.INSUFFICIENT_BALANCE
+            else:
+                failure_code = FailureReason.PROVIDER_ERROR
+            
+            # Update attempt record
+            attempt_record["status"] = "failed"
+            attempt_record["error"] = error_str
+            attempt_record["failure_code"] = failure_code.value
+            attempt_record["completed_at"] = failure_timestamp
+            
+            # Determine if retry is possible
+            can_retry = current_attempt < MAX_RETRY_ATTEMPTS
+            new_status = FulfillmentStatus.RETRY_SCHEDULED if can_retry else FulfillmentStatus.FAILED
+            
+            # Update failure status with full audit trail
             await db.fulfillments.update_one(
                 {"id": fulfillment_id},
-                {"$set": {
-                    "status": FulfillmentStatus.FAILED,
-                    "last_error": str(e),
-                    "delivery_attempts": record.get("delivery_attempts", 0) + 1,
-                    "updated_at": datetime.now(timezone.utc).isoformat()
-                }}
+                {
+                    "$set": {
+                        "status": new_status,
+                        "last_error": error_str,
+                        "last_failure_reason": error_str,
+                        "last_failure_code": failure_code.value,
+                        "last_delivery_status": "failed",
+                        "delivery_attempts": current_attempt,
+                        "updated_at": failure_timestamp
+                    },
+                    "$push": {"delivery_history": attempt_record}
+                }
             )
-            logger.error(f"Fulfillment failed for {fulfillment_id}: {str(e)}")
-            return {"success": False, "error": str(e)}
+            
+            # Send failure email if max retries reached
+            if not can_retry:
+                try:
+                    from email_service import EmailService
+                    await EmailService.send_voucher_failed(
+                        user_email=record["user_email"],
+                        user_name=record.get("user_name"),
+                        user_id=record["user_id"],
+                        order_id=record["order_id"],
+                        fulfillment_id=fulfillment_id,
+                        product_name=record["product_name"]
+                    )
+                except Exception as email_error:
+                    logger.error(f"Failed to send failure email for {fulfillment_id}: {str(email_error)}")
+            else:
+                # Send retry notification
+                try:
+                    from email_service import EmailService
+                    await EmailService.send_voucher_retry(
+                        user_email=record["user_email"],
+                        user_name=record.get("user_name"),
+                        user_id=record["user_id"],
+                        order_id=record["order_id"],
+                        fulfillment_id=fulfillment_id,
+                        product_name=record["product_name"],
+                        attempt_number=current_attempt
+                    )
+                except Exception as email_error:
+                    logger.error(f"Failed to send retry email for {fulfillment_id}: {str(email_error)}")
+            
+            logger.error(f"Fulfillment failed for {fulfillment_id}: {error_str}")
+            
+            return {
+                "success": False, 
+                "error": error_str,
+                "failure_code": failure_code.value,
+                "attempt": current_attempt,
+                "can_retry": can_retry,
+                "retries_remaining": MAX_RETRY_ATTEMPTS - current_attempt
+            }
+    
+    @staticmethod
+    async def schedule_retry(fulfillment_id: str, delay_seconds: int = None):
+        """Schedule a retry with delay"""
+        record = await db.fulfillments.find_one({"id": fulfillment_id})
+        if not record:
+            return
+        
+        attempt_count = record.get("delivery_attempt_count", 0)
+        if attempt_count >= MAX_RETRY_ATTEMPTS:
+            return
+        
+        # Use exponential backoff delay
+        if delay_seconds is None:
+            delay_seconds = RETRY_DELAY_SECONDS[min(attempt_count, len(RETRY_DELAY_SECONDS) - 1)]
+        
+        logger.info(f"Scheduling retry for {fulfillment_id} in {delay_seconds} seconds")
+        
+        # In production, use a proper task queue like Celery
+        # For now, use asyncio delay (not ideal for production)
+        await asyncio.sleep(delay_seconds)
+        await FulfillmentService.execute_fulfillment(fulfillment_id, is_retry=True)
 
 # ==================== API ROUTES ====================
 
