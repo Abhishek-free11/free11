@@ -840,6 +840,78 @@ async def get_leaderboard():
     
     return result
 
+# ==================== FAQ ROUTES ====================
+
+@api_router.get("/faq")
+async def get_faq():
+    """
+    Get FAQ items for the platform
+    Includes PRORGA-compliant coin policy information
+    """
+    faq_items = [
+        {
+            "id": "coin-policy",
+            "question": "What are FREE11 Coins and can I withdraw them?",
+            "answer": "FREE11 Coins are non-withdrawable reward tokens redeemable only for goods/services. No cash. No betting. Brand-funded rewards.",
+            "category": "coins",
+            "priority": 1
+        },
+        {
+            "id": "how-to-earn",
+            "question": "How do I earn FREE11 Coins?",
+            "answer": "You earn coins primarily through cricket predictions. Make accurate predictions to earn more coins! You can also boost your earnings with daily check-ins, mini-games, and completing tasks.",
+            "category": "earning",
+            "priority": 2
+        },
+        {
+            "id": "redemption",
+            "question": "How do I redeem my coins?",
+            "answer": "Visit the Redeem section to browse available rewards. Select a product, confirm your order, and we'll process your redemption. All rewards are brand-funded and delivered digitally or physically based on the product.",
+            "category": "redemption",
+            "priority": 3
+        },
+        {
+            "id": "skill-levels",
+            "question": "What are skill levels and how do I progress?",
+            "answer": "Your skill level (Rookie → Amateur → Pro → Expert → Legend) reflects your prediction accuracy and engagement. Higher levels unlock premium rewards and exclusive drops!",
+            "category": "progression",
+            "priority": 4
+        },
+        {
+            "id": "brand-funded",
+            "question": "What does 'Brand-funded' mean?",
+            "answer": "All rewards on FREE11 are funded by our brand partners. This means you're getting real products and vouchers from brands like Amazon, Swiggy, Netflix, and more - at no cost to you!",
+            "category": "rewards",
+            "priority": 5
+        },
+        {
+            "id": "coin-expiry",
+            "question": "Do my coins expire?",
+            "answer": "Coins remain active as long as you maintain regular activity on the platform. Extended inactivity (60+ days) may result in coin expiry warnings. Stay active and keep predicting!",
+            "category": "coins",
+            "priority": 6
+        },
+        {
+            "id": "leaderboard",
+            "question": "How is the leaderboard ranked?",
+            "answer": "Our leaderboard ranks users by prediction SKILL (accuracy and streaks), not by total coins. This ensures the best predictors rise to the top!",
+            "category": "progression",
+            "priority": 7
+        },
+        {
+            "id": "legal-safe",
+            "question": "Is FREE11 legal and safe?",
+            "answer": "Yes! FREE11 is a skill-based rewards platform, not a gambling app. Our coin system is fully compliant with Indian regulations - coins cannot be purchased, withdrawn, or transferred. It's 100% safe and legal.",
+            "category": "legal",
+            "priority": 8
+        }
+    ]
+    
+    return {
+        "items": faq_items,
+        "disclaimer": "FREE11 Coins are non-withdrawable reward tokens redeemable only for goods/services. No cash. No betting. Brand-funded rewards."
+    }
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/analytics")
