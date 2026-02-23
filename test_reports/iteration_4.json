@@ -1,0 +1,70 @@
+{
+  "summary": "Phase 2 Clans & Leaderboards testing complete. Backend: All 19 tests passed (100%). Frontend: Both /clans and /leaderboards pages load correctly with proper skill-based metrics and guardrails in place.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_clans_leaderboards.py",
+    "/app/test_reports/pytest/clans_leaderboards_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_clans_leaderboards.py"
+  ],
+  "success_rate": {
+    "backend": "100% (19/19 tests passed)",
+    "frontend": "100% (Clans page, Leaderboards page, all tabs, duels section working)"
+  },
+  "test_credentials": {
+    "Level2_user": {
+      "email": "cricket@free11.com",
+      "password": "cricket123",
+      "level": 2,
+      "can_create_clans": true
+    },
+    "Level1_test_users": "Multiple test users created during tests (test_level1_*.free11.com)"
+  },
+  "seed_data_creation": "Created clan [MMAV] Mumbai Mavericks during testing. Created multiple duels for testing.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Phase 2 Clans & Leaderboards fully tested. Key routes: /api/clans/* (create, list, join, leave, my, leaderboard), /api/leaderboards/* (global, weekly, streak, profile, duels). Frontend pages: /clans and /leaderboards. User cricket@free11.com is Level 2 and leader of clan [MMAV] Mumbai Mavericks. Guardrails verified: No coin totals on leaderboards/profiles, Level 2+ required for clan creation, duels reward badges not coins.",
+  "features_tested": {
+    "backend": {
+      "GET /api/clans/list": "PASS - Returns list of public clans with skill metrics",
+      "POST /api/clans/create (Level 2)": "PASS - Level 2 users can create clans",
+      "POST /api/clans/create (Level 1)": "PASS - Level 1 users rejected with 403",
+      "POST /api/clans/join": "PASS - Any user can join public clan",
+      "GET /api/clans/my": "PASS - Returns user's clan info with members",
+      "GET /api/leaderboards/global": "PASS - Skill-based rankings, no coins",
+      "GET /api/leaderboards/weekly": "PASS - Weekly rankings with week_start",
+      "GET /api/leaderboards/streak": "PASS - Streak-based rankings",
+      "GET /api/leaderboards/profile/{user_id}": "PASS - Public profile WITHOUT coins",
+      "POST /api/leaderboards/duels/challenge": "PASS - Creates duel, mentions 'no coins at stake'",
+      "GET /api/clans/challenges/available": "PASS - Skill-based challenges only"
+    },
+    "frontend": {
+      "/clans page": "PASS - Shows clan info, members, leaderboard tab, challenges tab",
+      "/leaderboards page": "PASS - Shows Global, Weekly, Streaks tabs",
+      "Duels section": "PASS - Visible on leaderboards with 'winner gets badges' message",
+      "Activity Feed": "PASS - Shows clan updates with skill metrics"
+    },
+    "guardrails": {
+      "No coin totals on leaderboards": "VERIFIED - Response excludes coins_balance, total_earned, total_redeemed",
+      "No coin totals on public profiles": "VERIFIED - /api/leaderboards/profile explicitly excludes coin fields",
+      "Level 2+ for clan creation": "VERIFIED - Level 1 users get 403 error",
+      "Duels badge-based, no coins": "VERIFIED - Duel response says 'no coins at stake', 'winner gets badges'",
+      "Skill-based ranking messaging": "VERIFIED - Leaderboards page shows 'accuracy and streaks matter, not coins'"
+    }
+  },
+  "mocked_apis_verified": {
+    "cricket_prediction_data": "MOCKED - Ball predictions are simulated",
+    "leaderboard_data": "DEPENDS ON USER PREDICTIONS - Currently empty since no real predictions made"
+  }
+}
