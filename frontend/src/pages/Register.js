@@ -162,7 +162,7 @@ const Register = () => {
                     placeholder="BETA01"
                     value={inviteCode}
                     onChange={(e) => {
-                      const code = e.target.value.toUpperCase();
+                      const code = e.target.value.toUpperCase().replace(/\s/g, '');
                       setInviteCode(code);
                       if (code.length >= 5) {
                         validateInviteCode(code);
