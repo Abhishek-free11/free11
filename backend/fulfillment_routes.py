@@ -579,7 +579,7 @@ async def get_fulfillment_status(
     order_id: str,
     current_user: User = Depends(get_current_user)
 ):
-    """Get fulfillment status for an order"""
+    """Get fulfillment status for an order with full audit trail"""
     record = await db.fulfillments.find_one(
         {"order_id": order_id, "user_id": current_user.id},
         {"_id": 0, "provider_response": 0}
@@ -597,7 +597,11 @@ async def get_fulfillment_status(
         "voucher_url": record.get("voucher_url") if record["status"] == "delivered" else None,
         "expiry_date": record.get("expiry_date"),
         "delivered_at": record.get("delivered_at"),
-        "created_at": record.get("created_at")
+        "created_at": record.get("created_at"),
+        # Audit trail (user-safe subset)
+        "delivery_attempts": record.get("delivery_attempt_count", 0),
+        "last_status": record.get("last_delivery_status"),
+        "email_sent": record.get("email_sent", False)
     }
 
 @fulfillment_router.get("/my-vouchers")
@@ -623,36 +627,118 @@ async def retry_fulfillment(
     background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user)
 ):
-    """Retry a failed fulfillment"""
+    """Retry a failed fulfillment (user-initiated)"""
     record = await db.fulfillments.find_one({"id": fulfillment_id, "user_id": current_user.id})
     
     if not record:
         raise HTTPException(status_code=404, detail="Fulfillment not found")
     
-    if record["status"] not in [FulfillmentStatus.FAILED, FulfillmentStatus.PENDING]:
+    if record["status"] not in [FulfillmentStatus.FAILED, FulfillmentStatus.PENDING, FulfillmentStatus.RETRY_SCHEDULED]:
         raise HTTPException(status_code=400, detail="Can only retry failed or pending fulfillments")
     
-    if record.get("delivery_attempts", 0) >= 3:
+    if record.get("delivery_attempt_count", 0) >= MAX_RETRY_ATTEMPTS:
         raise HTTPException(status_code=400, detail="Maximum retry attempts reached. Please contact support.")
     
     # Queue retry
-    background_tasks.add_task(FulfillmentService.execute_fulfillment, fulfillment_id)
+    background_tasks.add_task(FulfillmentService.execute_fulfillment, fulfillment_id, True)
     
-    return {"message": "Retry queued", "fulfillment_id": fulfillment_id}
+    return {
+        "message": "Retry queued",
+        "fulfillment_id": fulfillment_id,
+        "attempt_number": record.get("delivery_attempt_count", 0) + 1
+    }
 
 # ==================== ADMIN ROUTES ====================
 
 @fulfillment_router.get("/admin/pending")
-async def get_pending_fulfillments(current_user: User = Depends(get_current_user)):
+async def get_pending_fulfillments(
+    current_user: User = Depends(get_current_user),
+    include_failed: bool = True
+):
     """Get all pending fulfillments (admin only)"""
-    # TODO: Add proper admin check
+    statuses = [FulfillmentStatus.PENDING, FulfillmentStatus.RETRY_SCHEDULED]
+    if include_failed:
+        statuses.append(FulfillmentStatus.FAILED)
     
     pending = await db.fulfillments.find(
-        {"status": {"$in": [FulfillmentStatus.PENDING, FulfillmentStatus.FAILED]}},
+        {"status": {"$in": statuses}},
         {"_id": 0}
     ).sort("created_at", 1).limit(100).to_list(100)
     
-    return {"pending_fulfillments": pending, "count": len(pending)}
+    # Stats
+    stats = {
+        "pending": await db.fulfillments.count_documents({"status": FulfillmentStatus.PENDING}),
+        "retry_scheduled": await db.fulfillments.count_documents({"status": FulfillmentStatus.RETRY_SCHEDULED}),
+        "failed": await db.fulfillments.count_documents({"status": FulfillmentStatus.FAILED}),
+        "delivered_today": await db.fulfillments.count_documents({
+            "status": FulfillmentStatus.DELIVERED,
+            "delivered_at": {"$gte": datetime.now(timezone.utc).replace(hour=0, minute=0, second=0).isoformat()}
+        })
+    }
+    
+    return {"pending_fulfillments": pending, "count": len(pending), "stats": stats}
+
+@fulfillment_router.get("/admin/audit/{fulfillment_id}")
+async def get_fulfillment_audit(
+    fulfillment_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get full audit trail for a fulfillment (admin only)
+    Answers: Was voucher X actually delivered, when, via which provider, and what failed if not?
+    """
+    record = await db.fulfillments.find_one(
+        {"id": fulfillment_id},
+        {"_id": 0}
+    )
+    
+    if not record:
+        raise HTTPException(status_code=404, detail="Fulfillment not found")
+    
+    # Get email logs for this fulfillment
+    email_logs = await db.email_logs.find(
+        {"fulfillment_id": fulfillment_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(10)
+    
+    return {
+        "fulfillment": {
+            "id": record["id"],
+            "order_id": record["order_id"],
+            "user_id": record["user_id"],
+            "user_email": record["user_email"],
+            "product_name": record["product_name"],
+            "amount": record["amount"],
+            "provider": record["provider"]
+        },
+        "delivery_status": {
+            "current_status": record["status"],
+            "last_delivery_status": record.get("last_delivery_status"),
+            "delivered_at": record.get("delivery_timestamp_utc"),
+            "delivery_provider_id": record.get("delivery_provider_id"),
+            "voucher_code": record.get("voucher_code"),
+            "voucher_delivered": record["status"] == FulfillmentStatus.DELIVERED
+        },
+        "failure_info": {
+            "last_failure_reason": record.get("last_failure_reason"),
+            "last_failure_code": record.get("last_failure_code"),
+            "delivery_attempt_count": record.get("delivery_attempt_count", 0),
+            "max_retries_reached": record.get("delivery_attempt_count", 0) >= MAX_RETRY_ATTEMPTS
+        },
+        "admin_actions": {
+            "override_allowed": record.get("admin_override_allowed", True),
+            "override_used": record.get("admin_override_used", False),
+            "override_by": record.get("admin_override_by"),
+            "override_at": record.get("admin_override_at")
+        },
+        "delivery_history": record.get("delivery_history", []),
+        "email_notifications": email_logs,
+        "timestamps": {
+            "created_at": record.get("created_at"),
+            "updated_at": record.get("updated_at"),
+            "delivered_at": record.get("delivered_at")
+        }
+    }
 
 @fulfillment_router.post("/admin/process/{fulfillment_id}")
 async def admin_process_fulfillment(
@@ -661,14 +747,56 @@ async def admin_process_fulfillment(
     current_user: User = Depends(get_current_user)
 ):
     """Manually process a fulfillment (admin only)"""
-    background_tasks.add_task(FulfillmentService.execute_fulfillment, fulfillment_id)
+    background_tasks.add_task(FulfillmentService.execute_fulfillment, fulfillment_id, False)
     return {"message": "Processing queued", "fulfillment_id": fulfillment_id}
+
+@fulfillment_router.post("/admin/retry/{fulfillment_id}")
+async def admin_retry_fulfillment(
+    fulfillment_id: str,
+    background_tasks: BackgroundTasks,
+    force: bool = False,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Admin retry a failed fulfillment (with optional force override)
+    Use force=True to retry even after max attempts
+    """
+    record = await db.fulfillments.find_one({"id": fulfillment_id})
+    
+    if not record:
+        raise HTTPException(status_code=404, detail="Fulfillment not found")
+    
+    if record["status"] == FulfillmentStatus.DELIVERED:
+        raise HTTPException(status_code=400, detail="Cannot retry delivered fulfillment")
+    
+    # Force override allows retrying even after max attempts
+    if force and record.get("delivery_attempt_count", 0) >= MAX_RETRY_ATTEMPTS:
+        await db.fulfillments.update_one(
+            {"id": fulfillment_id},
+            {"$set": {
+                "admin_override_used": True,
+                "admin_override_by": current_user.id,
+                "admin_override_at": datetime.now(timezone.utc).isoformat(),
+                "delivery_attempt_count": 0,  # Reset attempts for force retry
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    
+    # Queue retry
+    background_tasks.add_task(FulfillmentService.execute_fulfillment, fulfillment_id, True)
+    
+    return {
+        "message": "Admin retry queued",
+        "fulfillment_id": fulfillment_id,
+        "force_override": force
+    }
 
 @fulfillment_router.post("/admin/manual-fulfill/{fulfillment_id}")
 async def manual_fulfill(
     fulfillment_id: str,
     voucher_code: str,
     voucher_pin: Optional[str] = None,
+    expiry_date: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
     """Manually fulfill with a voucher code (admin only)"""
@@ -676,19 +804,145 @@ async def manual_fulfill(
     if not record:
         raise HTTPException(status_code=404, detail="Fulfillment not found")
     
+    # IDEMPOTENCY: Don't allow manual fulfill if already delivered
+    if record["status"] == FulfillmentStatus.DELIVERED:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Fulfillment already delivered with code: {record.get('voucher_code')}"
+        )
+    
+    delivery_timestamp = datetime.now(timezone.utc).isoformat()
+    
     await db.fulfillments.update_one(
         {"id": fulfillment_id},
-        {"$set": {
-            "status": FulfillmentStatus.DELIVERED,
-            "voucher_code": voucher_code,
-            "voucher_pin": voucher_pin,
-            "delivered_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-            "provider_response": {"manual": True, "fulfilled_by": current_user.id}
-        }}
+        {
+            "$set": {
+                "status": FulfillmentStatus.DELIVERED,
+                "voucher_code": voucher_code,
+                "voucher_pin": voucher_pin,
+                "expiry_date": expiry_date,
+                "delivered_at": delivery_timestamp,
+                "delivery_timestamp_utc": delivery_timestamp,
+                "delivery_provider_id": f"MANUAL-{current_user.id[:8]}",
+                "last_delivery_status": "delivered",
+                "admin_override_used": True,
+                "admin_override_by": current_user.id,
+                "admin_override_at": delivery_timestamp,
+                "updated_at": delivery_timestamp,
+                "provider_response": {"manual": True, "fulfilled_by": current_user.id}
+            },
+            "$push": {"delivery_history": {
+                "attempt_number": "manual",
+                "timestamp": delivery_timestamp,
+                "status": "success",
+                "provider_id": f"MANUAL-{current_user.id[:8]}",
+                "admin_id": current_user.id,
+                "is_manual": True
+            }}
+        }
     )
     
+    # Send email notification
+    try:
+        from email_service import EmailService
+        await EmailService.send_voucher_delivered(
+            user_email=record["user_email"],
+            user_name=record.get("user_name"),
+            user_id=record["user_id"],
+            order_id=record["order_id"],
+            fulfillment_id=fulfillment_id,
+            product_name=record["product_name"],
+            voucher_code=voucher_code,
+            voucher_pin=voucher_pin,
+            expiry_date=expiry_date
+        )
+    except Exception as e:
+        logger.error(f"Failed to send email after manual fulfill: {str(e)}")
+    
     return {"message": "Manually fulfilled", "voucher_code": voucher_code}
+
+@fulfillment_router.get("/admin/failed")
+async def get_failed_fulfillments(
+    current_user: User = Depends(get_current_user),
+    days: int = 7
+):
+    """Get all failed fulfillments for ops review"""
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    
+    failed = await db.fulfillments.find(
+        {
+            "status": FulfillmentStatus.FAILED,
+            "created_at": {"$gte": cutoff}
+        },
+        {"_id": 0, "provider_response": 0}
+    ).sort("created_at", -1).limit(200).to_list(200)
+    
+    # Group by failure reason
+    failure_summary = {}
+    for f in failed:
+        reason = f.get("last_failure_code", "unknown")
+        if reason not in failure_summary:
+            failure_summary[reason] = 0
+        failure_summary[reason] += 1
+    
+    return {
+        "failed_fulfillments": failed,
+        "count": len(failed),
+        "failure_summary": failure_summary,
+        "period_days": days
+    }
+
+@fulfillment_router.get("/admin/export/csv")
+async def export_fulfillments_csv(
+    current_user: User = Depends(get_current_user),
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    status: Optional[str] = None
+):
+    """Export fulfillments for reconciliation (CSV-ready JSON)"""
+    query = {}
+    
+    if start_date:
+        query["created_at"] = {"$gte": start_date}
+    if end_date:
+        if "created_at" in query:
+            query["created_at"]["$lte"] = end_date
+        else:
+            query["created_at"] = {"$lte": end_date}
+    if status:
+        query["status"] = status
+    
+    fulfillments = await db.fulfillments.find(
+        query,
+        {
+            "_id": 0,
+            "id": 1,
+            "order_id": 1,
+            "user_email": 1,
+            "product_name": 1,
+            "amount": 1,
+            "provider": 1,
+            "status": 1,
+            "voucher_code": 1,
+            "delivery_provider_id": 1,
+            "delivery_timestamp_utc": 1,
+            "delivery_attempt_count": 1,
+            "last_failure_reason": 1,
+            "created_at": 1,
+            "delivered_at": 1
+        }
+    ).sort("created_at", -1).limit(10000).to_list(10000)
+    
+    return {
+        "export_date": datetime.now(timezone.utc).isoformat(),
+        "total_records": len(fulfillments),
+        "filters": {
+            "start_date": start_date,
+            "end_date": end_date,
+            "status": status
+        },
+        "data": fulfillments
+    }
 
 # ==================== PROVIDER STATUS ====================
 
@@ -704,13 +958,69 @@ async def get_providers_status():
             statuses[provider.value] = {
                 "name": instance.get_provider_name(),
                 "available": balance.get("available", False),
-                "is_mocked": balance.get("is_mocked", False)
+                "is_mocked": balance.get("is_mocked", False),
+                "health_status": balance.get("health_status", "unknown"),
+                "last_check": balance.get("last_check")
             }
         except Exception as e:
             statuses[provider.value] = {
                 "name": provider.value,
                 "available": False,
+                "health_status": "error",
                 "error": str(e)
             }
     
     return {"providers": statuses}
+
+@fulfillment_router.get("/admin/providers/health")
+async def get_providers_health(current_user: User = Depends(get_current_user)):
+    """Admin view of voucher provider health with recent performance"""
+    statuses = {}
+    
+    for provider in VoucherProvider:
+        # Get recent fulfillment stats for this provider
+        total_24h = await db.fulfillments.count_documents({
+            "provider": provider.value,
+            "created_at": {"$gte": (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()}
+        })
+        
+        delivered_24h = await db.fulfillments.count_documents({
+            "provider": provider.value,
+            "status": FulfillmentStatus.DELIVERED,
+            "delivered_at": {"$gte": (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()}
+        })
+        
+        failed_24h = await db.fulfillments.count_documents({
+            "provider": provider.value,
+            "status": FulfillmentStatus.FAILED,
+            "updated_at": {"$gte": (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()}
+        })
+        
+        instance = ProviderFactory.get_provider(provider)
+        try:
+            balance = await instance.check_balance()
+            
+            success_rate = (delivered_24h / total_24h * 100) if total_24h > 0 else 100
+            
+            statuses[provider.value] = {
+                "name": instance.get_provider_name(),
+                "available": balance.get("available", False),
+                "is_mocked": balance.get("is_mocked", False),
+                "health_status": balance.get("health_status", "unknown"),
+                "performance_24h": {
+                    "total_requests": total_24h,
+                    "delivered": delivered_24h,
+                    "failed": failed_24h,
+                    "success_rate_percent": round(success_rate, 1)
+                },
+                "last_check": balance.get("last_check")
+            }
+        except Exception as e:
+            statuses[provider.value] = {
+                "name": provider.value,
+                "available": False,
+                "health_status": "error",
+                "error": str(e)
+            }
+    
+    return {"providers": statuses, "checked_at": datetime.now(timezone.utc).isoformat()}
