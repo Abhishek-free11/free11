@@ -16,15 +16,15 @@ const API = process.env.REACT_APP_BACKEND_URL || '';
 
 // Brand API helper
 const brandApi = {
-  login: (email, password) => axios.post(`${API}/brand/auth/login`, { email, password }),
-  getMe: (token) => axios.get(`${API}/brand/auth/me`, { headers: { Authorization: `Bearer ${token}` } }),
-  getDashboard: (token) => axios.get(`${API}/brand/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
-  getAnalytics: (token, days = 30) => axios.get(`${API}/brand/analytics?days=${days}`, { headers: { Authorization: `Bearer ${token}` } }),
-  getCampaigns: (token) => axios.get(`${API}/brand/campaigns`, { headers: { Authorization: `Bearer ${token}` } }),
-  getProducts: (token) => axios.get(`${API}/brand/products`, { headers: { Authorization: `Bearer ${token}` } }),
-  getRedemptions: (token) => axios.get(`${API}/brand/redemptions`, { headers: { Authorization: `Bearer ${token}` } }),
-  createCampaign: (token, data) => axios.post(`${API}/brand/campaigns`, data, { headers: { Authorization: `Bearer ${token}` } }),
-  createProduct: (token, data) => axios.post(`${API}/brand/products`, data, { headers: { Authorization: `Bearer ${token}` } }),
+  login: (email, password) => axios.post(`${API}/api/brand/auth/login`, { email, password }),
+  getMe: (token) => axios.get(`${API}/api/brand/auth/me`, { headers: { Authorization: `Bearer ${token}` } }),
+  getDashboard: (token) => axios.get(`${API}/api/brand/dashboard`, { headers: { Authorization: `Bearer ${token}` } }),
+  getAnalytics: (token, days = 30) => axios.get(`${API}/api/brand/analytics?days=${days}`, { headers: { Authorization: `Bearer ${token}` } }),
+  getCampaigns: (token) => axios.get(`${API}/api/brand/campaigns`, { headers: { Authorization: `Bearer ${token}` } }),
+  getProducts: (token) => axios.get(`${API}/api/brand/products`, { headers: { Authorization: `Bearer ${token}` } }),
+  getRedemptions: (token) => axios.get(`${API}/api/brand/redemptions`, { headers: { Authorization: `Bearer ${token}` } }),
+  createCampaign: (token, data) => axios.post(`${API}/api/brand/campaigns`, data, { headers: { Authorization: `Bearer ${token}` } }),
+  createProduct: (token, data) => axios.post(`${API}/api/brand/products`, data, { headers: { Authorization: `Bearer ${token}` } }),
 };
 
 const BrandPortal = () => {
