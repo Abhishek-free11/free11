@@ -33,13 +33,13 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800" data-testid="login-card">
-        <CardHeader className="space-y-4 text-center">
+      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800 mx-4" data-testid="login-card">
+        <CardHeader className="space-y-3 text-center px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">
             <img 
               src="/app-icon.png" 
               alt="FREE11" 
-              className="h-16 w-16 rounded-xl"
+              className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl"
             />
           </div>
           <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
