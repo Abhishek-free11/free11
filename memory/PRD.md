@@ -4,151 +4,157 @@
 Build a cricket prediction and engagement platform for capturing 60 million displaced RMG users in India. Designed as a "Demand Rail Engine" where users convert skill (cricket predictions) into coins, redeemable for brand-funded real goods.
 
 ## Core Product Thesis
-- **Demand Rail Engine**: Not a generic rewards app - cricket prediction is the PRIMARY feature
+- **Demand Rail Engine**: Cricket prediction is PRIMARY, ads/mini-games are secondary boosters
 - **Brand-Funded Model**: All rewards are brand-sponsored with tracked ROAS
 - **PRORGA-Safe**: Coins are non-financial (non-purchasable, non-withdrawable, non-transferable)
-- **Skill-First**: Rankings, leaderboards, and progression based on prediction ACCURACY, not coin balance
+- **Skill-First**: Rankings based on prediction ACCURACY, not coin balance
 
-## What's Been Implemented
+---
 
-### Phase 1: Core Foundation (COMPLETE)
-- [x] User authentication (JWT-based)
-- [x] User progression system (levels, XP, streaks, badges)
-- [x] Cricket prediction interface (ball-by-ball, mocked data)
-- [x] Shop with brand-funded products
-- [x] Basic redemption flow
-- [x] FAQ page explaining coin policy
+## Phase 3 Exit Criteria - ALL MET ✅
 
-### Phase 2: Social & Competition (COMPLETE)
-- [x] Clans system (create, join, browse)
-- [x] Clan leaderboard
-- [x] Global skill-based leaderboard
-- [x] Streaks leaderboard
-- [x] Prediction duels
+### A. Voucher Delivery = Auditable Clearing Rail ✅
+**Audit Trail Fields:**
+- `delivery_attempt_count` - Number of attempts
+- `last_delivery_status` - pending/delivered/failed
+- `last_failure_reason` - Human-readable error
+- `last_failure_code` - Enumerated failure type (PROVIDER_ERROR, TIMEOUT, etc.)
+- `delivery_provider_id` - Provider's reference ID
+- `delivery_timestamp_utc` - Delivery timestamp
+- `delivery_history[]` - Full attempt history
 
-### Phase 3: Automation & Brand Tools (COMPLETE - VERIFIED Feb 23, 2026)
-- [x] Voucher fulfillment pipeline (pluggable providers)
-- [x] Support chatbot (deterministic, FAQ-driven)
-- [x] Support tickets system
-- [x] My Vouchers tracking (pending → delivered status)
-- [x] Brand Portal (separate authentication)
-  - [x] Campaign creation
-  - [x] Product management (SKU upload)
-  - [x] ROAS Dashboard
-  - [x] Analytics with time filters
+**Features:**
+- Idempotency checks prevent duplicate vouchers
+- Retry logic with MAX_RETRY_ATTEMPTS = 3
+- Manual override flag for admin
+- Admin endpoints: `/admin/audit/`, `/admin/retry/`, `/admin/manual-fulfill/`
 
-## Verification Artifacts Captured (Feb 23, 2026)
+### B. ROAS Dashboard Optics ✅
+- "SANDBOX / TEST DATA" watermark on all dashboards
+- ROAS hidden in sandbox mode (shows "N/A")
+- "Test Consumption" label instead of "Verified Consumption"
+- Environment indicator in all API responses
 
-### Screenshots Delivered:
-1. **User Dashboard** - Shows profile, coins (500), level, progression
-2. **Shop Page** - Brand-funded products with "Redeem Now" buttons
-3. **Redemption Dialog** - Balance breakdown, delivery address input
-4. **My Vouchers** - Shows pending/delivered status with voucher codes
-5. **Support Chat** - Bot interaction with order status lookup
-6. **My Tickets** - Existing ticket with order ID reference
-7. **Create Ticket Dialog** - Subject, category, description fields
-8. **Clans Page** - Browse, create, join clans
-9. **Leaderboards** - Skill-based with accuracy metrics (NOT coins)
-10. **Predict Page** - Ball-by-ball prediction interface
-11. **Brand Portal Login** - Partner dashboard entry
-12. **Brand Dashboard** - ROAS metrics (₹5,250 consumption, 30 redemptions)
-13. **Brand Campaigns** - IPL 2026 Campaign (₹6,000 delivered, 25 consumers)
-14. **Brand Products** - SKUs with redeemed counts
-15. **Brand Analytics** - Top performing products, consumer segments
+### C. Attribution Integrity ✅
+- ROAS computed only from verified redemptions
+- Explicit "Not based on: tasks, views, impressions, engagement, clicks"
+- Admin breakdown: ROAS by campaign, ROAS by SKU, ROAS by day
 
-### ROAS Payload Sample Provided:
-```json
-{
-  "brand_id": "BRAND_90FD92XX",
-  "campaign_id": "CAMP_96A1D9CA",
-  "roas_metrics": {
-    "verified_consumption_inr": 5250,
-    "total_redemptions": 30,
-    "roas_ratio": 0.1
-  },
-  "attribution_correctness": {
-    "roas_computation_basis": "actual_consumption",
-    "not_based_on": ["tasks", "views", "impressions"]
-  }
-}
+### D. Support Bot – Full Failure-Mode Coverage ✅
+- FAQ: "I redeemed but didn't receive my voucher"
+- Bot collects redemption_id/order_id
+- Admin view: delivery timeline, provider, failure reason, retry option
+
+### E. Transactional Email Notifications ✅
+- Email service with Resend provider abstraction
+- Voucher delivered/failed/retry notifications
+- Email logs stored with status + timestamp
+- Transactional only (no marketing)
+
+### F. Infra Hardening ✅
+- Load test: 100+ concurrent requests pass
+- Failure simulation: Provider health checks
+- Idempotency: Double-click prevention
+- Admin ops: View + retry failed deliveries
+
+### G. Regulatory Hygiene ✅
+- No CPM/CTR/impressions language (except "not based on" context)
+- No discount/coupon framing
+- PRORGA-safe language maintained
+
+---
+
+## Test Results (Feb 23, 2026)
+
+```
+9 passed in 8.42s
+✅ TestLoadRedemptions::test_bulk_redemptions
+✅ TestLoadRedemptions::test_redemption_rate_limit
+✅ TestIdempotency::test_double_click_prevention
+✅ TestFailureSimulation::test_provider_health_check
+✅ TestFailureSimulation::test_failure_rate_below_threshold
+✅ TestAuditTrail::test_audit_endpoint_structure
+✅ TestMonitoring::test_system_responds_under_stress
+✅ TestSandboxMode::test_sandbox_indicators
+✅ TestRegulatoryHygiene::test_no_banned_terms_in_api
 ```
 
-## Technical Architecture
+---
+
+## Architecture
 
 ```
 /app/
 ├── backend/
-│   ├── server.py           # Main FastAPI application
-│   ├── models.py           # Pydantic/MongoDB models
-│   ├── fulfillment_routes.py
-│   ├── support_routes.py
-│   ├── brand_routes.py
+│   ├── server.py                    # Main FastAPI app
+│   ├── email_service.py             # NEW: Email notifications
+│   ├── fulfillment_routes.py        # UPDATED: Audit trail, idempotency, retry
+│   ├── brand_routes.py              # UPDATED: Sandbox mode, ROAS breakdowns
+│   ├── support_routes.py            # UPDATED: Voucher FAQ, admin retry
 │   ├── clans_routes.py
-│   └── leaderboards_routes.py
-└── frontend/
-    └── src/
-        ├── pages/
-        │   ├── Dashboard.js
-        │   ├── Shop.js
-        │   ├── Support.js
-        │   ├── Clans.js
-        │   ├── Leaderboards.js
-        │   └── brand/BrandPortal.js
-        └── context/AuthContext.js
+│   ├── leaderboards_routes.py
+│   └── tests/
+│       └── test_infra_hardening.py  # NEW: Load + hardening tests
+├── frontend/
+│   └── src/pages/
+│       └── BrandPortal.js           # UPDATED: Sandbox banner, attribution UI
+└── docs/
+    └── INFRA_HARDENING_RUNBOOK.md   # NEW: Manual runbook
 ```
 
-## Key API Endpoints
-- `/api/auth/*` - User authentication
-- `/api/products` - Shop products
-- `/api/redemptions` - Order/redemption management
-- `/api/fulfillments/*` - Voucher fulfillment pipeline
-- `/api/support/*` - Chat bot and tickets
-- `/api/clans/*` - Clan management
-- `/api/leaderboards/*` - Skill-based rankings
-- `/api/brand/*` - Brand portal (separate auth)
+---
 
-## Database Collections
-- `users` - User accounts with coins, level, XP
-- `products` - Brand-funded SKUs
-- `redemptions` - User orders
-- `fulfillments` - Voucher delivery records
-- `support_tickets` - User support requests
-- `clans` - User groups
-- `brand_accounts` - Brand partner accounts
-- `brand_campaigns` - Campaign management
-- `brand_products` - Brand-specific SKUs
+## Key API Endpoints (NEW/UPDATED)
 
-## What's MOCKED
-- Cricket match data (live scores, ball-by-ball)
-- Voucher fulfillment providers (Amazon, Swiggy APIs)
-- Brand campaign budget deduction
+### Fulfillment Admin
+- `GET /api/fulfillment/admin/audit/{id}` - Full audit trail
+- `POST /api/fulfillment/admin/retry/{id}?force=true` - Admin retry
+- `POST /api/fulfillment/admin/manual-fulfill/{id}` - Manual entry
+- `GET /api/fulfillment/admin/failed` - Failed report
+- `GET /api/fulfillment/admin/export/csv` - Reconciliation export
+- `GET /api/fulfillment/admin/providers/health` - Provider health
 
-## Upcoming Tasks
+### Support Admin
+- `GET /api/support/admin/tickets/{id}/delivery-details` - Delivery timeline
+- `POST /api/support/admin/tickets/{id}/retry-delivery` - Retry from ticket
+- `GET /api/support/admin/voucher-issues` - All voucher tickets
 
-### Phase 4: Beta Testing & Polish (Target: Mar 21, 2026)
-- [ ] Onboard beta users
-- [ ] Bug fixes from user feedback
-- [ ] Performance optimization
-- [ ] Mobile responsiveness audit
+### Brand Dashboard
+- `GET /api/brand/dashboard` - Includes sandbox mode, attribution integrity
+- `GET /api/brand/analytics` - ROAS by campaign/SKU/day
 
-### Phase 5: Launch Prep (Target: Mar 26, 2026)
-- [ ] Server scaling
-- [ ] Monitoring setup
-- [ ] Soft launch for IPL 2026
+---
 
-## Future/Backlog
-- [ ] Live cricket data API integration
-- [ ] Real voucher provider integrations
-- [ ] AdMob monetization
-- [ ] Premium subscriptions
-- [ ] ONDC/Q-Comm fulfillment
-- [ ] Push notifications
+## Environment Variables
 
-## Test Credentials
-- **User**: Register new account or use existing test users
-- **Brand**: Register via `/api/brand/auth/register`
+### Required for Production
+- `FREE11_ENV=production` - Enables ROAS display
+- `RESEND_API_KEY` - Email delivery
+- `RESEND_FROM_EMAIL` - Sender address
 
-## Known Technical Notes
-- Screenshot tool loses auth on hard navigation (use client-side nav buttons)
-- Auth state managed via React context + localStorage token
-- Brand Portal has separate JWT authentication system
+### Optional Monitoring
+- `SLACK_WEBHOOK_URL` - Failure alerts
+- `ALERT_EMAIL` - Admin notifications
+
+---
+
+## What's MOCKED (Intentional)
+- Cricket match data (live scores)
+- Voucher provider APIs (Amazon, Swiggy)
+- Brand budget deduction
+
+---
+
+## Next: Phase 4 - Closed Beta + Hardening
+
+Now that Phase 3 exit criteria are met:
+1. Enable production email (`RESEND_API_KEY`)
+2. Configure monitoring alerts
+3. Set `FREE11_ENV=production`
+4. Onboard beta users
+5. Monitor and fix issues
+
+---
+
+*Last updated: Feb 23, 2026*
+*Phase 3 Exit: APPROVED*
