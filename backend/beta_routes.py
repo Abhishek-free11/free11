@@ -253,7 +253,7 @@ async def get_beta_settings_endpoint(user = Depends(get_current_user)):
 
 
 @beta_router.put("/admin/settings")
-async def update_beta_settings(settings: BetaSettings, user: dict = Depends(get_current_user)):
+async def update_beta_settings(settings: BetaSettings, user = Depends(get_current_user)):
     """Update beta settings"""
     await db.beta_settings.update_one(
         {},
