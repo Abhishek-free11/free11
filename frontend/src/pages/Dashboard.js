@@ -138,6 +138,14 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* First-Time Tutorial */}
+      {showTutorial && (
+        <FirstTimeTutorial 
+          onComplete={handleTutorialComplete} 
+          onSkip={handleTutorialSkip} 
+        />
+      )}
+      
       <Navbar />
       <div className="container mx-auto px-4 py-6" data-testid="dashboard-page">
         
