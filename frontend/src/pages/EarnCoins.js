@@ -33,8 +33,14 @@ const EarnCoins = () => {
   const [scratching, setScratching] = useState(false);
   const [scratchResult, setScratchResult] = useState(null);
 
+  // Watch Ad state
+  const [adStatus, setAdStatus] = useState(null);
+  const [watchingAd, setWatchingAd] = useState(false);
+  const [adProgress, setAdProgress] = useState(0);
+
   useEffect(() => {
     fetchTasks();
+    fetchAdStatus();
   }, []);
 
   const fetchTasks = async () => {
@@ -44,6 +50,62 @@ const EarnCoins = () => {
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
+  };
+
+  const fetchAdStatus = async () => {
+    try {
+      const response = await api.getAdStatus();
+      setAdStatus(response.data);
+    } catch (error) {
+      console.error('Error fetching ad status:', error);
+    }
+  };
+
+  const handleWatchAd = async () => {
+    if (!adStatus?.can_watch) {
+      toast.error('Daily ad limit reached!');
+      return;
+    }
+
+    setWatchingAd(true);
+    setAdProgress(0);
+
+    // Simulate ad playback (in production, this would be real AdMob integration)
+    const interval = setInterval(() => {
+      setAdProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 150);
+
+    // After "ad" completes (3 seconds simulation)
+    setTimeout(async () => {
+      clearInterval(interval);
+      setAdProgress(100);
+      
+      try {
+        const response = await api.claimAdReward({ ad_type: 'rewarded' });
+        playCelebrationSound();
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+        toast.success(response.data.message, {
+          description: `${response.data.ads_remaining} ads remaining today`
+        });
+        updateUser({ coins_balance: response.data.new_balance });
+        fetchAdStatus();
+      } catch (error) {
+        toast.error(error.response?.data?.detail || 'Failed to claim reward');
+      } finally {
+        setWatchingAd(false);
+        setAdProgress(0);
+      }
+    }, 3000);
   };
 
   const handleCompleteTask = async (taskId) => {
