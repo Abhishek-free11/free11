@@ -2,9 +2,13 @@
 Voucher Fulfillment Pipeline for FREE11
 Production-grade fulfillment with pluggable providers
 Supports: Amazon Gift Cards, Generic vouchers (mocked but production-ready)
+
+AUDIT TRAIL: Full delivery auditability for disputes, ops, and brand trust
+IDEMPOTENCY: Prevents duplicate voucher delivery
+RETRY LOGIC: Capped retries with failure tracking
 """
 
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Query
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
@@ -13,6 +17,7 @@ from abc import ABC, abstractmethod
 import uuid
 import os
 import logging
+import asyncio
 
 # Import from server.py
 from server import db, get_current_user, User
@@ -20,6 +25,10 @@ from server import db, get_current_user, User
 logger = logging.getLogger(__name__)
 
 fulfillment_router = APIRouter(prefix="/fulfillment", tags=["Fulfillment"])
+
+# Constants for retry logic
+MAX_RETRY_ATTEMPTS = 3
+RETRY_DELAY_SECONDS = [30, 120, 300]  # 30s, 2min, 5min
 
 # ==================== ENUMS ====================
 
@@ -29,6 +38,7 @@ class FulfillmentStatus(str, Enum):
     DELIVERED = "delivered"
     FAILED = "failed"
     REFUNDED = "refunded"
+    RETRY_SCHEDULED = "retry_scheduled"
 
 class VoucherProvider(str, Enum):
     AMAZON = "amazon"
@@ -38,6 +48,15 @@ class VoucherProvider(str, Enum):
     SPOTIFY = "spotify"
     GENERIC = "generic"  # For manual/mocked fulfillment
 
+class FailureReason(str, Enum):
+    PROVIDER_UNAVAILABLE = "provider_unavailable"
+    PROVIDER_ERROR = "provider_error"
+    INSUFFICIENT_BALANCE = "insufficient_balance"
+    INVALID_AMOUNT = "invalid_amount"
+    RATE_LIMITED = "rate_limited"
+    TIMEOUT = "timeout"
+    UNKNOWN = "unknown"
+
 # ==================== MODELS ====================
 
 class FulfillmentRecord(BaseModel):
@@ -46,6 +65,7 @@ class FulfillmentRecord(BaseModel):
     order_id: str
     user_id: str
     user_email: str
+    user_name: Optional[str] = None
     product_id: str
     product_name: str
     provider: VoucherProvider
@@ -60,11 +80,36 @@ class FulfillmentRecord(BaseModel):
     voucher_url: Optional[str] = None
     expiry_date: Optional[str] = None
     
+    # === AUDIT TRAIL FIELDS (NEW) ===
+    delivery_attempt_count: int = 0
+    last_delivery_status: str = "pending"  # pending, delivered, failed
+    last_failure_reason: Optional[str] = None
+    last_failure_code: Optional[FailureReason] = None
+    delivery_provider_id: Optional[str] = None  # Provider's reference ID
+    delivery_timestamp_utc: Optional[str] = None
+    
+    # Delivery attempt history
+    delivery_history: List[Dict[str, Any]] = []
+    
+    # Admin flags
+    admin_override_allowed: bool = True
+    admin_override_used: bool = False
+    admin_override_by: Optional[str] = None
+    admin_override_at: Optional[str] = None
+    
+    # Idempotency
+    idempotency_key: Optional[str] = None
+    
     # Delivery
     delivery_method: str = "email"  # email, sms, in-app
     delivered_at: Optional[str] = None
-    delivery_attempts: int = 0
-    last_error: Optional[str] = None
+    delivery_attempts: int = 0  # Legacy field, use delivery_attempt_count
+    last_error: Optional[str] = None  # Legacy field, use last_failure_reason
+    
+    # Email notification tracking
+    email_sent: bool = False
+    email_sent_at: Optional[str] = None
+    email_log_id: Optional[str] = None
     
     # Tracking
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
