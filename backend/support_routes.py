@@ -517,3 +517,193 @@ async def resolve_ticket(
         await db.support_tickets.update_one({"id": ticket_id}, {"$set": update})
     
     return {"message": "Ticket resolved"}
+
+
+# ==================== ADMIN SUPPORT VIEW WITH DELIVERY DETAILS ====================
+
+@support_router.get("/admin/tickets/{ticket_id}/delivery-details")
+async def get_ticket_delivery_details(
+    ticket_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get delivery details for a ticket with related order
+    Shows: delivery timeline, provider used, last failure reason, retry option
+    """
+    ticket = await db.support_tickets.find_one({"id": ticket_id}, {"_id": 0})
+    
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    
+    # Get related order/fulfillment if any
+    fulfillment = None
+    if ticket.get("related_order_id"):
+        fulfillment = await db.fulfillments.find_one(
+            {"order_id": ticket["related_order_id"]},
+            {"_id": 0, "provider_response": 0}
+        )
+    
+    # If no direct order link, try to find from user's recent orders
+    user_fulfillments = []
+    if not fulfillment:
+        user_fulfillments = await db.fulfillments.find(
+            {"user_id": ticket["user_id"]},
+            {"_id": 0, "provider_response": 0}
+        ).sort("created_at", -1).limit(5).to_list(5)
+    
+    # Build delivery timeline if fulfillment exists
+    delivery_timeline = None
+    if fulfillment:
+        delivery_timeline = {
+            "order_id": fulfillment["order_id"],
+            "product_name": fulfillment["product_name"],
+            "current_status": fulfillment["status"],
+            "provider_used": fulfillment.get("provider"),
+            "delivery_provider_id": fulfillment.get("delivery_provider_id"),
+            "delivery_attempts": fulfillment.get("delivery_attempt_count", 0),
+            "max_retries": 3,
+            "last_failure_reason": fulfillment.get("last_failure_reason"),
+            "last_failure_code": fulfillment.get("last_failure_code"),
+            "delivery_history": fulfillment.get("delivery_history", []),
+            "timestamps": {
+                "created_at": fulfillment.get("created_at"),
+                "last_attempt": fulfillment.get("updated_at"),
+                "delivered_at": fulfillment.get("delivered_at")
+            },
+            "voucher_delivered": fulfillment["status"] == "delivered",
+            "voucher_code": fulfillment.get("voucher_code") if fulfillment["status"] == "delivered" else None,
+            "can_retry": fulfillment["status"] in ["failed", "pending", "retry_scheduled"] and fulfillment.get("delivery_attempt_count", 0) < 3,
+            "can_force_retry": fulfillment["status"] == "failed"
+        }
+    
+    return {
+        "ticket": ticket,
+        "delivery_timeline": delivery_timeline,
+        "user_recent_orders": user_fulfillments if not fulfillment else [],
+        "resolution_guidance": {
+            "voucher_not_received": [
+                "1. Check delivery_timeline.current_status",
+                "2. If 'failed', check last_failure_reason",
+                "3. If retries remain, use admin retry endpoint",
+                "4. If max retries reached, use manual fulfillment"
+            ]
+        }
+    }
+
+@support_router.post("/admin/tickets/{ticket_id}/retry-delivery")
+async def admin_retry_ticket_delivery(
+    ticket_id: str,
+    force: bool = False,
+    current_user: User = Depends(get_current_user)
+):
+    """Admin retry delivery for a ticket's related order"""
+    ticket = await db.support_tickets.find_one({"id": ticket_id})
+    
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    
+    if not ticket.get("related_order_id"):
+        raise HTTPException(status_code=400, detail="No order linked to this ticket")
+    
+    fulfillment = await db.fulfillments.find_one({"order_id": ticket["related_order_id"]})
+    
+    if not fulfillment:
+        raise HTTPException(status_code=404, detail="Fulfillment not found")
+    
+    if fulfillment["status"] == "delivered":
+        raise HTTPException(status_code=400, detail="Voucher already delivered")
+    
+    # Check retry eligibility
+    attempts = fulfillment.get("delivery_attempt_count", 0)
+    if attempts >= 3 and not force:
+        raise HTTPException(
+            status_code=400, 
+            detail="Max retries reached. Use force=true to override"
+        )
+    
+    # Reset attempts if forcing
+    if force and attempts >= 3:
+        await db.fulfillments.update_one(
+            {"id": fulfillment["id"]},
+            {"$set": {
+                "delivery_attempt_count": 0,
+                "admin_override_used": True,
+                "admin_override_by": current_user.id,
+                "admin_override_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    
+    # Trigger retry via fulfillment service
+    from fulfillment_routes import FulfillmentService
+    result = await FulfillmentService.execute_fulfillment(fulfillment["id"], is_retry=True)
+    
+    # Add note to ticket
+    await db.support_tickets.update_one(
+        {"id": ticket_id},
+        {
+            "$push": {"messages": {
+                "sender": "system",
+                "message": f"Admin triggered delivery retry. Result: {'Success' if result.get('success') else 'Failed - ' + result.get('error', 'Unknown')}",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "agent_id": current_user.id
+            }},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        }
+    )
+    
+    return {
+        "message": "Retry triggered",
+        "result": result,
+        "ticket_updated": True
+    }
+
+@support_router.get("/admin/voucher-issues")
+async def get_voucher_issue_tickets(
+    current_user: User = Depends(get_current_user),
+    status: Optional[str] = None
+):
+    """Get all tickets related to voucher/order issues for quick triage"""
+    query = {
+        "$or": [
+            {"category": "order"},
+            {"category": "redemption"},
+            {"subject": {"$regex": "voucher", "$options": "i"}},
+            {"description": {"$regex": "not received", "$options": "i"}}
+        ]
+    }
+    
+    if status:
+        query["status"] = status
+    
+    tickets = await db.support_tickets.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).limit(50).to_list(50)
+    
+    # Enrich with fulfillment data
+    enriched_tickets = []
+    for ticket in tickets:
+        fulfillment = None
+        if ticket.get("related_order_id"):
+            fulfillment = await db.fulfillments.find_one(
+                {"order_id": ticket["related_order_id"]},
+                {"_id": 0, "id": 1, "status": 1, "delivery_attempt_count": 1, "last_failure_reason": 1}
+            )
+        
+        enriched_tickets.append({
+            **ticket,
+            "fulfillment_status": fulfillment.get("status") if fulfillment else None,
+            "delivery_attempts": fulfillment.get("delivery_attempt_count", 0) if fulfillment else None,
+            "last_failure": fulfillment.get("last_failure_reason") if fulfillment else None,
+            "needs_attention": (
+                fulfillment and 
+                fulfillment.get("status") == "failed" and 
+                fulfillment.get("delivery_attempt_count", 0) >= 3
+            ) if fulfillment else False
+        })
+    
+    return {
+        "tickets": enriched_tickets,
+        "count": len(enriched_tickets),
+        "needs_attention_count": len([t for t in enriched_tickets if t.get("needs_attention")])
+    }
