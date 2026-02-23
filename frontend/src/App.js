@@ -13,6 +13,8 @@ import MyOrders from './pages/MyOrders';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import FAQ from './pages/FAQ';
+import Clans from './pages/Clans';
+import Leaderboards from './pages/Leaderboards';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -37,6 +39,8 @@ function App() {
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/clans" element={<PrivateRoute><Clans /></PrivateRoute>} />
+            <Route path="/leaderboards" element={<PrivateRoute><Leaderboards /></PrivateRoute>} />
           </Routes>
           <Toaster position="top-center" richColors />
         </div>
