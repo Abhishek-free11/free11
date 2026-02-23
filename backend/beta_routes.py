@@ -72,7 +72,7 @@ def generate_invite_code() -> str:
 # ==================== Admin Endpoints ====================
 
 @beta_router.post("/admin/invites/generate")
-async def generate_invites(request: CreateInviteRequest, user: dict = Depends(get_current_user)):
+async def generate_invites(request: CreateInviteRequest, user = Depends(get_current_user)):
     """Generate new invite codes (admin only)"""
     # Check beta cap
     total_invites = await db.beta_invites.count_documents({"is_revoked": False})
@@ -90,6 +90,9 @@ async def generate_invites(request: CreateInviteRequest, user: dict = Depends(ge
     if request.expires_in_days:
         expires_at = (datetime.now(timezone.utc) + timedelta(days=request.expires_in_days)).isoformat()
     
+    # Get user ID (handle both dict and Pydantic model)
+    user_id = user.id if hasattr(user, 'id') else user.get("id")
+    
     # Generate codes
     codes = []
     for _ in range(request.count):
@@ -102,7 +105,7 @@ async def generate_invites(request: CreateInviteRequest, user: dict = Depends(ge
         invite = InviteCode(
             code=code,
             source=request.source,
-            created_by=user.get("id"),
+            created_by=user_id,
             max_uses=request.max_uses_per_code,
             expires_at=expires_at
         )
