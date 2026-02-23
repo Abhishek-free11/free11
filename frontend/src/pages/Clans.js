@@ -89,7 +89,13 @@ const Clans = () => {
   const handleJoinClan = async (clanId) => {
     try {
       await api.joinClan(clanId);
-      toast.success('Joined clan successfully!');
+      toast.success(
+        <div>
+          <p className="font-bold">Welcome to the clan! 🎉</p>
+          <p className="text-sm text-slate-300 mt-1">Remember: Clans compete on SKILL (accuracy & streaks), not coins. Rise together!</p>
+        </div>,
+        { duration: 5000 }
+      );
       fetchData();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to join clan');

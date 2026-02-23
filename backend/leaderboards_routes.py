@@ -432,12 +432,24 @@ async def get_activity_feed(current_user: User = Depends(get_current_user), limi
     if membership:
         clan = await db.clans.find_one({"id": membership["clan_id"]}, {"_id": 0})
         if clan:
-            activities.append({
-                "type": "clan_stats",
-                "title": f"[{clan['tag']}] Clan Update",
-                "description": f"Accuracy: {clan.get('clan_accuracy', 0)}% | Streak: {clan.get('clan_streak', 0)}",
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            })
+            # Encouraging messaging for new/zero-stat clans
+            accuracy = clan.get('clan_accuracy', 0)
+            streak = clan.get('clan_streak', 0)
+            
+            if accuracy == 0 and streak == 0:
+                activities.append({
+                    "type": "clan_welcome",
+                    "title": f"[{clan['tag']}] Your Journey Begins!",
+                    "description": "Make predictions to build your clan's accuracy. Every correct prediction counts!",
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                })
+            else:
+                activities.append({
+                    "type": "clan_stats",
+                    "title": f"[{clan['tag']}] Clan Progress",
+                    "description": f"Accuracy: {accuracy}% | Streak: {streak} {'🔥' if streak > 0 else ''}",
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                })
     
     # Sort by timestamp
     activities.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
