@@ -1,185 +1,154 @@
-# FREE11 - Demand Rail Platform
-## Product Requirements Document (PRD)
+# FREE11 - Cricket Prediction & Demand Rail Platform
 
-### Original Problem Statement
-Build a cricket prediction and engagement platform called FREE11 to capture the 60 million displaced Real Money Gaming (RMG) users in India following a government ban. The platform converts **attention + skill into consumption** (Demand Rail), not a generic earn-and-redeem app.
+## Original Problem Statement
+Build a cricket prediction and engagement platform for capturing 60 million displaced RMG users in India. Designed as a "Demand Rail Engine" where users convert skill (cricket predictions) into coins, redeemable for brand-funded real goods.
 
-### Core Thesis (Demand Rail)
+## Core Product Thesis
+- **Demand Rail Engine**: Not a generic rewards app - cricket prediction is the PRIMARY feature
+- **Brand-Funded Model**: All rewards are brand-sponsored with tracked ROAS
+- **PRORGA-Safe**: Coins are non-financial (non-purchasable, non-withdrawable, non-transferable)
+- **Skill-First**: Rankings, leaderboards, and progression based on prediction ACCURACY, not coin balance
+
+## What's Been Implemented
+
+### Phase 1: Core Foundation (COMPLETE)
+- [x] User authentication (JWT-based)
+- [x] User progression system (levels, XP, streaks, badges)
+- [x] Cricket prediction interface (ball-by-ball, mocked data)
+- [x] Shop with brand-funded products
+- [x] Basic redemption flow
+- [x] FAQ page explaining coin policy
+
+### Phase 2: Social & Competition (COMPLETE)
+- [x] Clans system (create, join, browse)
+- [x] Clan leaderboard
+- [x] Global skill-based leaderboard
+- [x] Streaks leaderboard
+- [x] Prediction duels
+
+### Phase 3: Automation & Brand Tools (COMPLETE - VERIFIED Feb 23, 2026)
+- [x] Voucher fulfillment pipeline (pluggable providers)
+- [x] Support chatbot (deterministic, FAQ-driven)
+- [x] Support tickets system
+- [x] My Vouchers tracking (pending → delivered status)
+- [x] Brand Portal (separate authentication)
+  - [x] Campaign creation
+  - [x] Product management (SKU upload)
+  - [x] ROAS Dashboard
+  - [x] Analytics with time filters
+
+## Verification Artifacts Captured (Feb 23, 2026)
+
+### Screenshots Delivered:
+1. **User Dashboard** - Shows profile, coins (500), level, progression
+2. **Shop Page** - Brand-funded products with "Redeem Now" buttons
+3. **Redemption Dialog** - Balance breakdown, delivery address input
+4. **My Vouchers** - Shows pending/delivered status with voucher codes
+5. **Support Chat** - Bot interaction with order status lookup
+6. **My Tickets** - Existing ticket with order ID reference
+7. **Create Ticket Dialog** - Subject, category, description fields
+8. **Clans Page** - Browse, create, join clans
+9. **Leaderboards** - Skill-based with accuracy metrics (NOT coins)
+10. **Predict Page** - Ball-by-ball prediction interface
+11. **Brand Portal Login** - Partner dashboard entry
+12. **Brand Dashboard** - ROAS metrics (₹5,250 consumption, 30 redemptions)
+13. **Brand Campaigns** - IPL 2026 Campaign (₹6,000 delivered, 25 consumers)
+14. **Brand Products** - SKUs with redeemed counts
+15. **Brand Analytics** - Top performing products, consumer segments
+
+### ROAS Payload Sample Provided:
+```json
+{
+  "brand_id": "BRAND_90FD92XX",
+  "campaign_id": "CAMP_96A1D9CA",
+  "roas_metrics": {
+    "verified_consumption_inr": 5250,
+    "total_redemptions": 30,
+    "roas_ratio": 0.1
+  },
+  "attribution_correctness": {
+    "roas_computation_basis": "actual_consumption",
+    "not_based_on": ["tasks", "views", "impressions"]
+  }
+}
 ```
-Time → Skill → Coins → Goods → Utility → Repeat
-```
-- **Skill Loop:** Cricket predictions drive earning
-- **Consumption Loop:** Coins redeem for brand-funded goods
-- **Ego Loop:** Progression, badges, leaderboards on skill accuracy
-
-### Target Audience
-- Former RMG/fantasy cricket users in India
-- Consumption-constrained cohort seeking ability-to-pay unlock
-- Brand partners seeking demand creation + ROAS
-
-### PRORGA Compliance (Non-Financial Instrument)
-- ✅ Coins are **non-purchasable** (no buying with money)
-- ✅ Coins are **non-withdrawable** (no cash conversion)
-- ✅ Coins are **non-transferable** (no P2P transfer)
-- ✅ Coins are **redeemable only for goods/services**
-- ✅ **No gambling language** (no bet, stake, jackpot, win)
-- ✅ Brand-funded rewards (not platform-subsidized)
-
----
-
-## Implementation Status
-
-### Phase 1: Demand Rail Restructure ✅ COMPLETE (Feb 23, 2026)
-
-#### Key Changes:
-1. **Cricket as Hero** - Dashboard centers on Live Cricket Prediction
-2. **Boosters (not Core)** - Ads/Games labeled as "Coin Boosters" 
-3. **PRORGA Disclaimer** - Banner on dashboard
-4. **Brand-Funded Schema** - Products have brand_id, campaign_id
-5. **Impulse Rewards** - Starting at ₹10 (Mobile Recharge)
-6. **Progression System** - Ranks, badges, skill-based leaderboard
-7. **Demand Progress** - Shows path to next real-world reward
-8. **FAQ Page** - PRORGA-compliant coin policy disclaimer prominently displayed ✅ (Added Feb 2026)
-
-#### Backend Schema Updates:
-| Model | New Fields |
-|-------|-----------|
-| **User** | prediction_streak, total_predictions, correct_predictions, consumption_unlocked, badges |
-| **Product** | brand_id, campaign_id, funded_by_brand, fulfillment_type, min_level_required, is_limited_drop |
-| **Redemption** | brand_id, campaign_id, fulfillment_type, sku, brand_cost |
-| **CoinTransaction** | source (skill/booster/bonus) |
-
-#### New APIs:
-| Endpoint | Purpose |
-|----------|---------|
-| `/api/user/demand-progress` | Progress to next reward, prediction stats, consumption unlocked |
-| `/api/user/badges` | User's earned badges |
-| `/api/admin/brand-roas` | Brand ROAS dashboard (placeholder) |
-| `/api/leaderboard` | Skill-based leaderboard (accuracy, not coins) |
-| `/api/faq` | FAQ items with PRORGA-compliant coin policy |
-
-#### Product Tiers:
-| Tier | Examples | Coin Range | Level Required |
-|------|----------|------------|----------------|
-| Impulse | Mobile Recharge, CCD Coffee, OTT Trials | 10-50 | 1 (Rookie) |
-| Mid-Tier | Swiggy ₹100-200, Amazon ₹100-500, Groceries | 100-500 | 1-2 |
-| Premium | Flipkart ₹1000, Nike Shoes | 1000-5000 | 3-4 (Pro/Expert) |
-| Aspirational | Samsung S24, iPhone 15 Pro | 35000-50000 | 5 (Legend) |
-
-#### User Ranks:
-| Level | Name | Min XP | Color |
-|-------|------|--------|-------|
-| 1 | Rookie | 0 | Slate |
-| 2 | Amateur | 100 | Green |
-| 3 | Pro | 500 | Blue |
-| 4 | Expert | 1500 | Purple |
-| 5 | Legend | 5000 | Gold |
-
-#### Badges System:
-- first_prediction, prediction_pro (50% accuracy), streak_7, streak_30
-- first_redemption, hot_streak (5 correct in a row)
-- level_pro, level_expert, level_legend
-- consumption_100 (₹100 unlocked), consumption_500
-
-### Previous Phase: Cricket Core ✅ (Feb 22, 2026)
-- Ball-by-ball prediction engine
-- Watch ads to earn (50 coins/ad, 5/day)
-- Gift card system with admin bulk upload
-
-### MVP1 Features (Previously Complete):
-- User authentication (JWT)
-- Daily check-in with streak bonus
-- Mini-games (Quiz, Spin Wheel, Scratch Card)
-- Multi-language support (8 Indian languages)
-
----
-
-## Upcoming Phases
-
-### Phase 2: Clans & Leaderboards ✅ COMPLETE (Feb 24, 2026)
-- [x] Clan creation and joining (Level 2+ to create, free to join)
-- [x] Clan vs Clan leaderboards (skill-based: accuracy, not coins)
-- [x] Prediction duels (badge rewards, NO coin transfers)
-- [x] Global, Weekly, Streak leaderboards
-- [x] Public profiles (skill stats only, NO coin display)
-- [x] Activity feed for clan achievements
-
-### Phase 3: Automation & Brand Tools ✅ COMPLETE (Feb 24, 2026)
-- [x] Voucher fulfillment pipeline (pluggable providers, MOCKED but production-ready)
-- [x] Support chatbot (deterministic FAQ + order status + tickets)
-- [x] Brand Portal at /brand with brand-specific authentication
-- [x] ROAS analytics dashboard (verified consumption, NO impressions/CPM)
-- [x] Campaign & product management for brands
-
-### Phase 4: Beta Testing & Polish (Due: Mar 21, 2026)
-- [ ] Dynamic pricing on products
-- [ ] Limited-time drops
-- [ ] Shop tiers (unlock better items at higher levels)
-- [ ] Soft expiry warning for inactive coins (30-60 days)
-
-### Phase 5: ONDC/Q-Comm Integration (Post-IPL)
-- [ ] ONDC BAP adapter
-- [ ] Q-Commerce integration
-- [ ] D2C fulfillment
-
----
 
 ## Technical Architecture
 
 ```
 /app/
 ├── backend/
-│   ├── server.py          # Main FastAPI app + models
-│   ├── cricket_routes.py  # Cricket prediction APIs
-│   ├── ads_routes.py      # AdMob reward APIs
-│   ├── clans_routes.py    # Clans system APIs
-│   ├── leaderboards_routes.py # Leaderboards & Duels APIs
-│   ├── fulfillment_routes.py  # Voucher fulfillment pipeline
-│   ├── support_routes.py      # Support chatbot & tickets
-│   ├── brand_routes.py        # Brand Portal APIs
-│   ├── gift_card_routes.py # Gift card management
-│   └── tests/
-│       └── test_demand_rail.py
+│   ├── server.py           # Main FastAPI application
+│   ├── models.py           # Pydantic/MongoDB models
+│   ├── fulfillment_routes.py
+│   ├── support_routes.py
+│   ├── brand_routes.py
+│   ├── clans_routes.py
+│   └── leaderboards_routes.py
 └── frontend/
     └── src/
         ├── pages/
-        │   ├── Dashboard.js    # Demand Rail dashboard
-        │   ├── Cricket.js      # Cricket predictions
-        │   ├── EarnCoins.js    # Coin Boosters
-        │   └── Shop.js         # Redemption shop
-        └── components/
-            └── Navbar.js       # Updated hierarchy
+        │   ├── Dashboard.js
+        │   ├── Shop.js
+        │   ├── Support.js
+        │   ├── Clans.js
+        │   ├── Leaderboards.js
+        │   └── brand/BrandPortal.js
+        └── context/AuthContext.js
 ```
 
-### Navigation Hierarchy (Demand Rail):
-```
-Home → Predict (🏏) → Boost → Redeem → Orders
-        ↑ SKILL        ↑ BONUS    ↑ CONSUMPTION
-```
+## Key API Endpoints
+- `/api/auth/*` - User authentication
+- `/api/products` - Shop products
+- `/api/redemptions` - Order/redemption management
+- `/api/fulfillments/*` - Voucher fulfillment pipeline
+- `/api/support/*` - Chat bot and tickets
+- `/api/clans/*` - Clan management
+- `/api/leaderboards/*` - Skill-based rankings
+- `/api/brand/*` - Brand portal (separate auth)
 
----
+## Database Collections
+- `users` - User accounts with coins, level, XP
+- `products` - Brand-funded SKUs
+- `redemptions` - User orders
+- `fulfillments` - Voucher delivery records
+- `support_tickets` - User support requests
+- `clans` - User groups
+- `brand_accounts` - Brand partner accounts
+- `brand_campaigns` - Campaign management
+- `brand_products` - Brand-specific SKUs
 
-## Testing Status
+## What's MOCKED
+- Cricket match data (live scores, ball-by-ball)
+- Voucher fulfillment providers (Amazon, Swiggy APIs)
+- Brand campaign budget deduction
 
-### Test Reports:
-- `/app/test_reports/iteration_1.json` - Cricket Core (100% pass)
-- `/app/test_reports/iteration_2.json` - Demand Rail (100% pass)
+## Upcoming Tasks
 
-### Test Credentials:
-- Email: `cricket@free11.com`
-- Password: `cricket123`
+### Phase 4: Beta Testing & Polish (Target: Mar 21, 2026)
+- [ ] Onboard beta users
+- [ ] Bug fixes from user feedback
+- [ ] Performance optimization
+- [ ] Mobile responsiveness audit
 
----
+### Phase 5: Launch Prep (Target: Mar 26, 2026)
+- [ ] Server scaling
+- [ ] Monitoring setup
+- [ ] Soft launch for IPL 2026
 
-## Key Metrics (Soft Launch Target - Mar 26, 2026)
-- DAU: 10,000 users
-- Predictions/day: 50,000+
-- Skill accuracy average: 30-40%
-- Impulse redemptions/day: 500+
-- Brand ROAS: 3-5x
+## Future/Backlog
+- [ ] Live cricket data API integration
+- [ ] Real voucher provider integrations
+- [ ] AdMob monetization
+- [ ] Premium subscriptions
+- [ ] ONDC/Q-Comm fulfillment
+- [ ] Push notifications
 
----
+## Test Credentials
+- **User**: Register new account or use existing test users
+- **Brand**: Register via `/api/brand/auth/register`
 
-*Last Updated: February 24, 2026*
-*Sprint Day: 3 of 33*
-*Phase 3 Complete - AHEAD of Schedule!*
+## Known Technical Notes
+- Screenshot tool loses auth on hard navigation (use client-side nav buttons)
+- Auth state managed via React context + localStorage token
+- Brand Portal has separate JWT authentication system
