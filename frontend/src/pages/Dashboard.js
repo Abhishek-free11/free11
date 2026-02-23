@@ -351,7 +351,7 @@ const Dashboard = () => {
                 <Badge className="bg-purple-500/20 text-purple-400 text-xs">BONUS</Badge>
               </CardTitle>
               <CardDescription className="text-slate-500 text-xs">
-                Accelerate your earnings
+                Boosters help you earn faster. Skill drives your rewards.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
