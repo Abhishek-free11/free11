@@ -63,12 +63,12 @@ const FirstTimeTutorial = ({ onComplete, onSkip }) => {
   const isLastScreen = currentScreen === TUTORIAL_SCREENS.length - 1;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" data-testid="first-time-tutorial">
-      <div className="relative w-full max-w-md mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" data-testid="first-time-tutorial">
+      <div className="relative w-full max-w-md">
         {/* Skip button */}
         <button
           onClick={onSkip}
-          className="absolute -top-12 right-0 text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm"
+          className="absolute -top-10 right-0 text-slate-400 hover:text-white transition-colors flex items-center gap-1 text-sm"
           data-testid="tutorial-skip-btn"
         >
           Skip
@@ -76,15 +76,15 @@ const FirstTimeTutorial = ({ onComplete, onSkip }) => {
         </button>
 
         {/* Tutorial Card */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl">
           {/* Progress dots */}
-          <div className="flex justify-center gap-2 mb-8">
+          <div className="flex justify-center gap-2 mb-6 sm:mb-8">
             {TUTORIAL_SCREENS.map((_, index) => (
               <div
                 key={index}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentScreen
-                    ? 'w-8 bg-yellow-400'
+                    ? 'w-6 sm:w-8 bg-yellow-400'
                     : index < currentScreen
                     ? 'w-2 bg-yellow-400/50'
                     : 'w-2 bg-slate-600'
@@ -94,8 +94,8 @@ const FirstTimeTutorial = ({ onComplete, onSkip }) => {
           </div>
 
           {/* Icon */}
-          <div className={`w-20 h-20 rounded-2xl ${screen.iconBg} flex items-center justify-center mx-auto mb-6`}>
-            <Icon className={`h-10 w-10 ${screen.iconColor}`} />
+          <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl ${screen.iconBg} flex items-center justify-center mx-auto mb-4 sm:mb-6`}>
+            <Icon className={`h-8 w-8 sm:h-10 sm:w-10 ${screen.iconColor}`} />
           </div>
 
           {/* Content */}
