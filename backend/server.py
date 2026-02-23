@@ -705,13 +705,140 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
         "achievements": achievements
     }
 
+@api_router.get("/user/demand-progress")
+async def get_demand_progress(current_user: User = Depends(get_current_user)):
+    """
+    Get user's progress in the Demand Rail
+    Shows: next reachable reward, prediction accuracy, consumption unlocked
+    """
+    user_data = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    
+    # Get cheapest available product user can reach
+    products = await db.products.find(
+        {"active": True, "stock": {"$gt": 0}, "min_level_required": {"$lte": current_user.level}},
+        {"_id": 0}
+    ).sort("coin_price", 1).to_list(100)
+    
+    next_reward = None
+    for p in products:
+        if p["coin_price"] > current_user.coins_balance:
+            next_reward = p
+            break
+    
+    # If user has enough for all shown, get the cheapest one
+    if not next_reward and products:
+        next_reward = products[0]
+    
+    # Calculate prediction accuracy
+    total_predictions = user_data.get("total_predictions", 0)
+    correct_predictions = user_data.get("correct_predictions", 0)
+    accuracy = round((correct_predictions / total_predictions * 100), 1) if total_predictions > 0 else 0
+    
+    # Get consumption unlocked (from redemptions)
+    consumption_pipeline = [
+        {"$match": {"user_id": current_user.id}},
+        {"$group": {"_id": None, "total": {"$sum": "$coins_spent"}}}
+    ]
+    consumption_result = await db.redemptions.aggregate(consumption_pipeline).to_list(1)
+    consumption_unlocked = consumption_result[0]["total"] if consumption_result else 0
+    
+    # Get rank info
+    level = current_user.level
+    rank_info = USER_RANKS.get(level, USER_RANKS[1])
+    next_rank = USER_RANKS.get(level + 1) if level < 5 else None
+    
+    return {
+        "coins_balance": current_user.coins_balance,
+        "next_reward": {
+            "name": next_reward["name"] if next_reward else None,
+            "coin_price": next_reward["coin_price"] if next_reward else 0,
+            "progress": round((current_user.coins_balance / next_reward["coin_price"]) * 100, 1) if next_reward and next_reward["coin_price"] > 0 else 100,
+            "coins_needed": max(0, next_reward["coin_price"] - current_user.coins_balance) if next_reward else 0,
+            "image_url": next_reward.get("image_url") if next_reward else None
+        } if next_reward else None,
+        "prediction_stats": {
+            "total": total_predictions,
+            "correct": correct_predictions,
+            "accuracy": accuracy,
+            "streak": user_data.get("prediction_streak", 0)
+        },
+        "consumption_unlocked": consumption_unlocked,
+        "rank": {
+            "level": level,
+            "name": rank_info["name"],
+            "color": rank_info["color"],
+            "xp": current_user.xp,
+            "next_rank": next_rank["name"] if next_rank else None,
+            "xp_to_next": next_rank["min_xp"] - current_user.xp if next_rank else 0
+        },
+        "badges": user_data.get("badges", [])
+    }
+
+@api_router.get("/user/badges")
+async def get_user_badges(current_user: User = Depends(get_current_user)):
+    """Get user's earned badges and available badges"""
+    user_data = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    earned_badges = user_data.get("badges", [])
+    
+    all_badges = []
+    for badge_id, badge_info in BADGES.items():
+        all_badges.append({
+            "id": badge_id,
+            "title": badge_info["title"],
+            "description": badge_info["description"],
+            "icon": badge_info["icon"],
+            "earned": badge_id in earned_badges
+        })
+    
+    return {
+        "earned_count": len(earned_badges),
+        "total_count": len(BADGES),
+        "badges": all_badges
+    }
+
 @api_router.get("/leaderboard")
 async def get_leaderboard():
-    users = await db.users.find(
-        {},
-        {"_id": 0, "id": 1, "name": 1, "total_earned": 1, "level": 1}
-    ).sort("total_earned", -1).limit(10).to_list(10)
-    return users
+    """Get leaderboard based on SKILL (prediction accuracy), not coins"""
+    # Aggregate from ball predictions for skill-based leaderboard
+    pipeline = [
+        {"$group": {
+            "_id": "$user_id",
+            "total_predictions": {"$sum": 1},
+            "correct_predictions": {"$sum": {"$cond": ["$is_correct", 1, 0]}}
+        }},
+        {"$match": {"total_predictions": {"$gte": 5}}},  # Min 5 predictions to qualify
+        {"$addFields": {
+            "accuracy": {"$multiply": [{"$divide": ["$correct_predictions", "$total_predictions"]}, 100]}
+        }},
+        {"$sort": {"accuracy": -1, "correct_predictions": -1}},
+        {"$limit": 10}
+    ]
+    
+    leaderboard_data = await db.ball_predictions.aggregate(pipeline).to_list(10)
+    
+    # Enrich with user data
+    result = []
+    for entry in leaderboard_data:
+        user = await db.users.find_one({"id": entry["_id"]}, {"_id": 0, "name": 1, "level": 1})
+        if user:
+            result.append({
+                "id": entry["_id"],
+                "name": user.get("name", "Anonymous"),
+                "level": user.get("level", 1),
+                "accuracy": round(entry["accuracy"], 1),
+                "total_predictions": entry["total_predictions"],
+                "correct_predictions": entry["correct_predictions"]
+            })
+    
+    # Fallback to old leaderboard if no predictions yet
+    if not result:
+        users = await db.users.find(
+            {},
+            {"_id": 0, "id": 1, "name": 1, "total_earned": 1, "level": 1}
+        ).sort("total_earned", -1).limit(10).to_list(10)
+        return users
+    
+    return result
 
 # ==================== ADMIN ROUTES ====================
 
@@ -733,6 +860,36 @@ async def get_analytics():
         "total_redemptions": total_redemptions,
         "total_products": total_products,
         "total_coins_in_circulation": total_coins
+    }
+
+@api_router.get("/admin/brand-roas")
+async def get_brand_roas():
+    """
+    Placeholder Brand ROAS Dashboard
+    Shows redemption attribution by brand for partner reporting
+    """
+    # Aggregate redemptions by brand
+    pipeline = [
+        {"$group": {
+            "_id": "$brand_id",
+            "total_redemptions": {"$sum": 1},
+            "total_coins_spent": {"$sum": "$coins_spent"},
+            "unique_users": {"$addToSet": "$user_id"}
+        }},
+        {"$addFields": {
+            "unique_user_count": {"$size": "$unique_users"}
+        }},
+        {"$project": {"unique_users": 0}},
+        {"$sort": {"total_redemptions": -1}}
+    ]
+    
+    brand_data = await db.redemptions.aggregate(pipeline).to_list(50)
+    
+    return {
+        "message": "Brand ROAS Dashboard (Placeholder)",
+        "note": "Full attribution tracking will be enabled with live brand integrations",
+        "brand_performance": brand_data,
+        "total_demand_created": sum(b.get("total_coins_spent", 0) for b in brand_data)
     }
 
 # ==================== SEED DATA ====================
