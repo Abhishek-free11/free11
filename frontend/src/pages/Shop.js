@@ -355,6 +355,63 @@ const Shop = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Voucher Delivery Success Dialog - Delight Moment */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="bg-gradient-to-br from-slate-900 via-slate-900 to-green-900/20 border-green-500/30" data-testid="voucher-success-dialog">
+          <div className="text-center py-6">
+            {/* Success Icon with Animation */}
+            <div className="relative inline-block mb-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto animate-bounce">
+                <Gift className="h-10 w-10 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1">
+                <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
+              </div>
+            </div>
+
+            {/* Main Headline */}
+            <h2 className="text-3xl font-black text-white mb-2" data-testid="success-headline">
+              Unlocked! Your reward is ready 🎉
+            </h2>
+
+            {/* Sub-copy - Skill Acknowledgment */}
+            <p className="text-lg text-green-400 font-medium mb-6" data-testid="success-subcopy">
+              You earned this through skill. Enjoy!
+            </p>
+
+            {/* Product Info */}
+            {lastRedeemedProduct && (
+              <div className="bg-slate-800/50 rounded-xl p-4 mb-6 inline-block">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={lastRedeemedProduct.image_url}
+                    alt={lastRedeemedProduct.name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                  <div className="text-left">
+                    <p className="text-white font-bold">{lastRedeemedProduct.name}</p>
+                    <p className="text-sm text-slate-400">{lastRedeemedProduct.brand}</p>
+                    <Badge className="mt-1 bg-green-500/20 text-green-400 text-xs">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Delivery in progress
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CTA */}
+            <Button
+              onClick={() => setShowSuccessDialog(false)}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold px-8"
+              data-testid="success-close-btn"
+            >
+              Continue Shopping
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
