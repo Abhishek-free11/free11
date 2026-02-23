@@ -99,41 +99,43 @@ const FirstTimeTutorial = ({ onComplete, onSkip }) => {
           </div>
 
           {/* Content */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-black text-white mb-1">{screen.title}</h2>
-            <h3 className="text-xl font-bold text-yellow-400 mb-4">{screen.subtitle}</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">{screen.description}</p>
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-black text-white mb-1">{screen.title}</h2>
+            <h3 className="text-lg sm:text-xl font-bold text-yellow-400 mb-3 sm:mb-4">{screen.subtitle}</h3>
+            <p className="text-slate-400 text-sm leading-relaxed px-2">{screen.description}</p>
           </div>
 
           {/* Navigation */}
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
+              size="sm"
               onClick={handlePrev}
               disabled={currentScreen === 0}
               className={`text-slate-400 hover:text-white ${currentScreen === 0 ? 'invisible' : ''}`}
             >
-              <ChevronLeft className="h-5 w-5 mr-1" />
-              Back
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-1" />
+              <span className="text-sm">Back</span>
             </Button>
 
-            <span className="text-sm text-slate-500">
+            <span className="text-xs sm:text-sm text-slate-500">
               {currentScreen + 1} of {TUTORIAL_SCREENS.length}
             </span>
 
             <Button
               onClick={handleNext}
+              size="sm"
               className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold"
               data-testid="tutorial-next-btn"
             >
-              {isLastScreen ? "Let's Go!" : 'Next'}
-              {!isLastScreen && <ChevronRight className="h-5 w-5 ml-1" />}
+              <span className="text-sm">{isLastScreen ? "Let's Go!" : 'Next'}</span>
+              {!isLastScreen && <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1" />}
             </Button>
           </div>
         </div>
 
         {/* Replay hint */}
-        <p className="text-center text-slate-500 text-xs mt-4">
+        <p className="text-center text-slate-500 text-xs mt-3 sm:mt-4 px-4">
           You can replay this tutorial anytime from Profile → Help
         </p>
       </div>
