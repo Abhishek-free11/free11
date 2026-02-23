@@ -173,7 +173,9 @@ Tap "Support" anytime to report issues.
 | Metric | Target | Red Flag |
 |--------|--------|----------|
 | **Activation Rate** | 60%+ of invites → registered | < 40% |
+| **Time to First Prediction** | < 10 minutes | > 24 hours |
 | **First Prediction** | 80%+ of registered users | < 60% |
+| **Tutorial Completion Rate** | 70%+ | < 50% |
 | **Time to First Redeem** | < 3 days average | > 7 days |
 | **Redemption Completion** | 30%+ of active users | < 15% |
 | **Voucher Delivery Success** | 95%+ | < 90% |
@@ -184,7 +186,6 @@ Tap "Support" anytime to report issues.
 |--------|--------|-------|
 | Predictions per User per Day | 5-10 | Lower = engagement issue |
 | Support Tickets | < 10% of users | Higher = UX friction |
-| Tutorial Completion | 90%+ | Drop-off = tutorial too long |
 | Return Rate (Day 2) | 50%+ | Lower = no hook |
 
 ### What We're NOT Measuring (Anti-Vanity)
@@ -200,7 +201,7 @@ Tap "Support" anytime to report issues.
 2. Voucher delivery failure rate < 5%
 3. < 5 critical bugs (app-breaking)
 4. Top 3 friction points identified with clear fix path
-5. No user confused coins with real money
+5. No user confused coins with real money or gambling
 
 **Week 2 Success =**
 1. Wave 2 onboarded without new blockers
