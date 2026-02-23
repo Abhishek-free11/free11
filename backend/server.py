@@ -291,6 +291,13 @@ def calculate_level(xp: int):
 
 @api_router.post("/auth/register", response_model=Token)
 async def register(user_data: UserCreate):
+    # Check beta registration status
+    from beta_routes import check_beta_registration_allowed, use_invite_code
+    
+    allowed, message = await check_beta_registration_allowed(user_data.invite_code)
+    if not allowed:
+        raise HTTPException(status_code=403, detail=message)
+    
     # Check if user exists
     existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing_user:
@@ -304,7 +311,14 @@ async def register(user_data: UserCreate):
         coins_balance=50  # Welcome bonus
     )
     
-    await db.users.insert_one(user.model_dump())
+    user_dict = user.model_dump()
+    
+    # Track invite code if used
+    if user_data.invite_code:
+        user_dict["beta_invite_code"] = user_data.invite_code.upper().strip()
+        await use_invite_code(user_data.invite_code, user.id, user.email)
+    
+    await db.users.insert_one(user_dict)
     
     # Create welcome transaction
     await add_coins(user.id, 50, "bonus", "Welcome bonus")
@@ -312,7 +326,6 @@ async def register(user_data: UserCreate):
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
     
-    user_dict = user.model_dump()
     user_dict.pop('password_hash', None)
     
     return {
