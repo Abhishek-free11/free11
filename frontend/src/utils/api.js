@@ -43,10 +43,9 @@ export const api = {
   getUserBadges: () => axios.get(`${API}/user/badges`, { headers: getAuthHeader() }),
   getLeaderboard: () => axios.get(`${API}/leaderboard`),
   
-  // Tutorial
-  getTutorialStatus: () => axios.get(`${API}/user/tutorial-status`, { headers: getAuthHeader() }),
-  completeTutorial: () => axios.post(`${API}/user/complete-tutorial`, {}, { headers: getAuthHeader() }),
-  resetTutorial: () => axios.post(`${API}/user/reset-tutorial`, {}, { headers: getAuthHeader() }),
+  // Beta
+  getBetaStatus: () => axios.get(`${API}/beta/status`),
+  validateInvite: (code) => axios.post(`${API}/beta/validate-invite`, { code }),
 
   // Admin
   getAnalytics: () => axios.get(`${API}/admin/analytics`, { headers: getAuthHeader() }),
