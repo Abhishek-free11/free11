@@ -156,6 +156,13 @@ const Dashboard = () => {
             No cash. No betting. Brand-funded rewards.
           </p>
         </div>
+        
+        {/* Brand Voice Line */}
+        <div className="mb-6 text-center">
+          <p className="text-slate-500 text-sm font-medium tracking-wide">
+            <span className="text-yellow-400/80">Skill beats luck here.</span>
+          </p>
+        </div>
 
         {/* Welcome + Demand Progress Header */}
         <div className="grid lg:grid-cols-3 gap-6 mb-6">
