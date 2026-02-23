@@ -5,8 +5,8 @@ The user's goal is to build a cricket prediction and engagement platform, FREE11
 The platform is a Demand Rail Engine, not a generic rewards app.
 *   **Core Loop:** Users convert their time and cricket prediction skill into coins (a non-financial token), which they redeem for real-world goods.
 *   **Product Identity:** Cricket prediction is the primary feature. Ads and mini-games are secondary Boosters.
-*   **Brand-Funded Model:** The shop's products are brand-funded, with every redemption tracked for ROAS.
-*   **PRORGA-Safe:** The coin economy is strictly a non-financial instrument (non-purchasable, non-withdrawable, non-transferable) to comply with Indian regulations.
+*   **Brand-Funded Model:** The shop's products are brand-funded, with every redemption tracked for Return on Ad Spend (ROAS).
+*   **PRORGA-Safe:** The coin economy is a non-financial instrument (non-purchasable, non-withdrawable, non-transferable) to comply with Indian regulations.
 *   **User Experience:** The UI must emphasize user skill, progression towards real-world goods, and the total value of Consumption Unlocked.
 *   **Progression & Ego:** The platform must include user levels, streaks, badges, and skill-based leaderboards.
 *   **Impulse Redemption:** The shop must include low-value items to drive early and frequent redemptions.
@@ -14,152 +14,123 @@ The platform is a Demand Rail Engine, not a generic rewards app.
 **User's preferred language**: English
 
 **what currently exists?**
-The application has been built out across three major phases, aligning with the Demand Rail thesis.
-*   **Backend (FastAPI/MongoDB):** The initial monolithic  has been refactored into a modular structure using API routers. It now includes:
-    *   Separate authentication systems for users (JWT) and brands.
-    *   Routes for user progression, cricket prediction (mocked), brand-funded products, clans, skill-based leaderboards, a pluggable voucher fulfillment pipeline, a deterministic support chatbot, and a brand dashboard.
-    *   Guardrails are implemented to enforce skill-based rankings and prevent coin transfers.
-*   **Frontend (React/Tailwind/shadcn):** The UI reflects the product's core journey ().
-    *   **Phase 1:** An FAQ page was added to clarify coin policy.
-    *   **Phase 2:** Pages for Clans and Leaderboards () were created, emphasizing skill metrics.
-    *   **Phase 3:** A user-facing Support page and a completely separate Brand Portal () for partners were implemented. The Brand Portal has its own login and a dashboard focused on ROAS and consumption metrics.
+The application is a full-stack platform with a FastAPI/MongoDB backend and a React/Tailwind frontend. The core features are built out, including user/brand authentication, skill-based clans and leaderboards, a brand-funded product shop, and a user support system. The platform has just completed a critical hardening phase to make the infrastructure launch-safe. This includes:
+*   An auditable voucher delivery system with idempotency checks, retry logic, and admin oversight.
+*   A Sandbox Mode for the Brand Portal to prevent misinterpretation of test data, with clear watermarks and attribution integrity notes.
+*   Enhanced support bot flows for common failure cases (e.g., voucher not received).
+*   Transactional email notifications (via Resend) for voucher delivery status.
+*   An automated test suite to perform load and failure simulation on the redemption system.
 
 **Last working item**:
--   **Last item agent was working:** The agent was attempting to fulfill the user's request for specific screenshots and data payloads to verify the completed Phase 3 features (Redemption flow, Support Bot, Brand Portal). It successfully captured the Brand Portal UI but ran into an authentication issue when trying to screenshot the user-facing private routes like . The agent was pivoting to providing API responses as an alternative proof for the blocked user-side flows.
+-   **Last item agent was working:** The agent finished implementing all the Phase 3 Hardening features as mandated by the user. The user has now provided a final, detailed list of required screenshots, data payloads, and test outputs to verify that these launch-safe features are working correctly. The agent's next action is to generate and provide this evidence.
 -   **Status:** IN PROGRESS
--   **Agent Testing Done:** Y (Testing agent passed for Phase 3, but manual verification via screenshot is blocked)
--   **Which testing method agent to use?** The screenshot tool is currently failing due to an auth issue. The immediate next step should be to use the  to diagnose the frontend authentication persistence problem. After the fix, use the  to capture the remaining user-requested screens.
+-   **Agent Testing Done:** Y (A new pytest suite for infrastructure hardening was created and all tests are passing).
+-   **Which testing method agent to use?**  for UI verification and  or  to generate API payloads and test outputs.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Frontend Authentication Fails During Screenshot Navigation (P0)**
-    -   **Description:** When using the  to navigate to a private user route (e.g., ), the session appears to lose its authentication token, causing a redirect to the  page. This prevents the agent from capturing the required screenshots for user-side features like the redemption flow and support bot.
-    -   **Attempted fixes:**
-        - Tried navigating directly to the URL.
-        - Attempted to check frontend logs for errors.
-        - Pivoted to taking screenshots of the separate, working Brand Portal.
-        - Attempted to provide API responses via  as a workaround.
-    -   **Next debug checklist:**
-        1.  Invoke the  to specifically analyze the frontend authentication flow.
-        2.  Investigate how the auth token is stored (e.g., localStorage) and why it might be getting lost during programmatic navigation by the tool.
-        3.  Examine the  component and any associated auth context providers in the React application.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker preventing the agent from providing the verification evidence requested by the user, which is necessary to get approval for Phase 3 and move on.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** No, this issue is the primary blocker.
+There are no active technical issues or bugs. The primary focus is on completing the user's verification task.
 
 **In progress Task List**:
--   **Task 1: Provide Phase 3 Verification Artifacts (P0)**
-    -   **Where to resume:** Resume after fixing the frontend authentication issue. The next step is to capture the remaining screenshots and data payloads as requested by the user.
-    -   **What will be achieved with this?** Fulfill the user's verification request for Phase 3 and gain approval to proceed to the next phase.
-    -   **Status:** BLOCKED
-    -   **Blocked on something:** .
+-   **Task 1: Provide Phase 3 Hardening Verification Artifacts (P0)**
+    -   **Where to resume:** Begin by creating the necessary test data, including successful, pending, and failed voucher deliveries, to accurately capture all states requested by the user.
+    -   **What will be achieved with this?** Fulfill the user's final verification request for Phase 3, meet all exit criteria, and secure approval to proceed to Phase 4 (Closed Beta).
+    -   **Status:** NOT STARTED
+    -   **Should Test frontend/backend/both after fix?** Not applicable. This task is about demonstrating existing functionality.
+    -   **Blocked on something:** Nothing.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-*   **P0: Phase 2 Polish:**
-    *   Improve zero-state copy in the Activity Feed ().
-    *   Add a one-time tooltip on clan join to reinforce skill-first principles ().
-*   **P0: Phase 4: Beta Testing & Polish (Due: Mar 21, 2026):** Onboard beta users, fix bugs, and stabilize the application.
+*   **P0: Phase 4: Closed Beta & Hardening (Due: Mar 21, 2026):** Onboard beta users, fix bugs, and stabilize the application based on feedback.
 *   **P1: Phase 5: Launch Prep & Soft Launch (Due: Mar 26, 2026):** Final server preparations and go live.
 
 **Future Tasks:**
-*   **Full Public Launch & Fundraising:** Post-IPL 2026.
-*   **Monetization:** Integrate AdMob and premium subscription features.
-*   **Live Integrations:** Implement live cricket data APIs and ONDC/Q-Comm for fulfillment.
+*   Full Public Launch & Fundraising.
+*   Monetization: Integrate AdMob and premium subscription features.
+*   Live Integrations: Implement live cricket data APIs and ONDC/Q-Comm for fulfillment.
 
 **Completed work in this session**
--   **FAQ Feature (Phase 1 Tweak):** Implemented a full-featured FAQ page with a backend API () and frontend UI ().
--   **Clans & Leaderboards (Phase 2):** Built the backend (, ) and frontend (, ) for skill-based clans and leaderboards, including guardrails against coin-based ranking and P2P transfers.
--   **Automation & Brand Tools (Phase 3):**
-    -   Created backend infrastructure for voucher fulfillment (), a support bot (), and a dedicated Brand Portal ().
-    -   Built the user-facing Support page () and a separate frontend application for the Brand Portal ().
--   **Phase 2 Polish:** Applied minor UX improvements to the Activity Feed and Clans page as requested by the user.
+-   **Phase 3 Hardening & Launch-Readiness:**
+    -   **Auditable Voucher Delivery Rail:** Implemented a full audit trail for fulfillment (, , , ), including idempotency checks, retry logic, and admin endpoints for oversight.
+    -   **ROAS Dashboard Hardening:** Added a SANDBOX / TEST DATA watermark to the Brand Portal, hid the ROAS ratio in test mode, and added detailed attribution integrity notes.
+    -   **Support Bot Enhancement:** Improved the support bot to handle voucher not received cases and provided admins with detailed delivery timelines.
+    -   **Transactional Emails:** Integrated the Resend API for voucher delivery and failure notifications.
+    -   **Infrastructure Hardening:** Created and passed an automated test suite () for load testing, failure simulation, and idempotency checks.
+    -   **Narrative Hygiene:** Ensured all brand-facing language is PRORGA-safe and focused on consumption, not advertising metrics.
+-   **Resolved Frontend Authentication Bug:** Fixed the recurring issue where screenshot tools would lose authentication context during navigation.
 
 **Known issue recurrence from previous fork**
--   **Issue:** Frontend authentication context is lost during programmatic navigation by tools, causing redirects to login.
--   **Recurrence count:** High (occurred multiple times during this session).
--   **Status:** IN PROGRESS
+-   **Issue:** Frontend authentication context was lost during programmatic navigation by tools.
+-   **Recurrence count:** High
+-   **Status:** RESOLVED. A stable pattern of using client-side navigation clicks instead of hard  navigations was established and works reliably.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Backend:** FastAPI, Python, MongoDB (with Beanie ODM), modular API routers.
+*   **Backend:** FastAPI, MongoDB, Modular API Routers, Pydantic.
 *   **Frontend:** React, Tailwind CSS, shadcn/ui.
-*   **Authentication:** Dual JWT systems (one for users, one for brands).
-*   **Core Product Concept:** Demand Rail Engine, Skill-based progression, Brand-funded ROAS.
+*   **Core Concepts:** Demand Rail Engine, Idempotency, Retry Logic, Audit Trails, ROAS Calculation.
+*   **Integrations:** Resend for transactional emails.
 
 **key DB schema**
-*   ****: 
-*   ****: 
-*   ****: 
-*   ****: 
-*   ****: 
-*   ****: 
-*   ****: 
-*   ****: 
+-   ****: 
+
+**changes in tech stack**
+-   **Resend:** Added for transactional email delivery.
 
 **All files of reference**
-*   ****: Main application file that now aggregates all the modular routers.
-*   ****: The set of new files that modularize the backend API logic.
-*   ****: Main frontend router, updated with all new pages and the Brand Portal.
-*   ****, ****: Core Phase 2 feature pages.
-*   ****: The main component for the separate brand-facing dashboard.
-*   ****: Updated to include API call functions for all new backend endpoints.
+*   ****: Core logic for the auditable, retry-safe voucher delivery system.
+*   ****: Service for sending transactional emails via Resend.
+*   ****: New endpoints for admin functions like viewing failed deliveries and retrying them.
+*   ****: The automated test suite for load, failure, and idempotency checks.
+*   ****: Frontend component updated to display sandbox mode indicators.
+*   ****: Manual checklist for infrastructure testing.
 
 **Areas that need refactoring**:
-*   The frontend authentication logic needs to be revisited and potentially refactored into a more robust context or state management solution to resolve the auth persistence issue with tooling.
+*   The backend's dependency pattern where route modules import directly from the main  file could be improved in the future with a more robust application context or dependency injection to avoid potential circular import issues.
 
 **key api endpoints**
-*   
-*   
-*   
-*   
-*   
-*   , 
+*   : Get a list of failed voucher deliveries.
+*   : Manually re-trigger a failed delivery.
+*   : Get the detailed audit trail for a specific delivery.
 
 **Critical Info for New Agent**
-*   **Primary Blocker:** You cannot proceed with new features until you resolve the frontend authentication issue that is preventing screenshot verification. The user is waiting for this proof. Use the  as your first step.
-*   **The Thesis is King:** All development must continue to align strictly with the Demand Rail Engine and Skill-first principles.
-*   **Verification is Key:** The user requires visual and data-based proof of completion for each phase. After fixing the auth bug, your immediate task is to generate all the artifacts requested in the user's last message.
+*   The project is at a critical pre-beta gate. Do not start any new features.
+*   Your immediate and sole task is to generate the comprehensive verification artifacts (screenshots, payloads, test results) listed in the user's last message. This is mandatory for Phase 3 completion.
+*   The authentication issue with the screenshot tool is solved; use client-side navigation (e.g., ) for all private routes.
 
 **documents and test reports created in this job**
-*    (updated)
-*   
-*   
 *   
 *   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Approved Phase 2 and confirmed alignment with skill-first guardrails. (Completed)
-2.  **User:** Authorized the start of Phase 3 with specific preferences (pluggable voucher pipeline, deterministic chatbot, separate brand portal). (Completed)
-3.  **Agent:** Acknowledged and proposed starting with Phase 2 polish before moving to Phase 3. (Completed)
-4.  **Agent:** Implemented the Phase 2 polish and began work on Phase 3. (Completed)
-5.  **Agent:** Completed all coding for Phase 3 features. (Completed)
-6.  **Agent:** Ran the testing agent, which reported all tests passed for Phase 3. (Completed)
-7.  **Agent:** Finished the task, summarizing the completion of Phase 3 and outlining next steps. (Completed)
-8.  **PENDING User Request:** User requested a detailed set of screenshots and a sample data payload to verify the functionality of the redemption flow, voucher delivery, brand portal, and support bot.
-9.  **Agent:** Acknowledged the request and began creating test data to facilitate the screenshots. (Completed)
-10. **Agent:** Attempted to take the screenshots but encountered a recurring authentication/redirect issue on the user-facing private routes. (In Progress)
+1.  **Agent:** Completed initial Phase 3 features and provided screenshots.
+2.  **PENDING User Request:** User provided extensive and non-negotiable feedback, defining the Phase 3 Hardening requirements (auditable vouchers, ROAS sandbox mode, better support, emails, load tests).
+3.  **Agent:** Proposed a plan to implement all hardening requirements in batches.
+4.  **User:** Approved the plan with minor reordering and clarifications (use Resend, add Slack/Email alerts).
+5.  **Agent:** Implemented all backend and frontend changes for the hardening requirements.
+6.  **Agent:** Created and ran an automated test suite for the new infrastructure, confirming all 9 tests passed.
+7.  **Agent:** Updated the PRD and finished the implementation task.
+8.  **PENDING User Request:** User provided a new, detailed list of screenshots and artifacts required to visually verify the successful implementation of all the Phase 3 hardening features.
 
 **Project Health Check:**
-*   **Broken:** The frontend authentication flow for private user routes is unreliable when using automated tooling, preventing verification.
-*   **Mocked:** Cricket data, brand campaign data, and voucher fulfillment providers remain mocked as per the plan.
+*   **Broken:** No features are currently broken.
+*   **Mocked:** Cricket data, brand campaign data, and the actual fulfillment provider logic (using ) remain mocked as per the project plan.
 
 **3rd Party Integrations**
+*   **Active:** Resend (for transactional emails).
 *   **Planned:** Live Cricket Data API, Amazon Gift Card / Voucher API.
 *   **Future:** Google AdMob SDK, ONDC / Q-Comm APIs.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES. Used after each major phase.
--   **Test files created:** []
--   **Known regressions:** The screenshot tool fails to maintain authentication on private user routes, which worked in earlier stages of development.
+-   **Testing agent used after significant changes:** NO (Agent created a new, comprehensive pytest suite for self-testing).
+-   **Test files created:** [, ]
+-   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   User registration is open. Create a new user for testing.
 -   Brand registration is available via the  endpoint.
 
 **What agent forgot to execute**
-- The agent has not forgotten any tasks but is currently blocked by a technical issue () from completing the user's most recent verification request.</analysis>
+-   The agent has not forgotten any tasks. The current work is a direct continuation of the user's explicit feedback loop and is pending final verification.</analysis>

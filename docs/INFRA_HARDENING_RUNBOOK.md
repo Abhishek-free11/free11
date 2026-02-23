@@ -97,10 +97,10 @@ pytest tests/test_infra_hardening.py -v --tb=short
 **Failure Simulation:**
 ```bash
 # Test provider health
-curl -s https://demand-rail.preview.emergentagent.com/api/fulfillment/providers/status | python3 -m json.tool
+curl -s https://free11-cricket.preview.emergentagent.com/api/fulfillment/providers/status | python3 -m json.tool
 
 # Test admin health view
-curl -s https://demand-rail.preview.emergentagent.com/api/fulfillment/admin/providers/health \
+curl -s https://free11-cricket.preview.emergentagent.com/api/fulfillment/admin/providers/health \
   -H "Authorization: Bearer <admin_token>" | python3 -m json.tool
 ```
 
@@ -108,7 +108,7 @@ curl -s https://demand-rail.preview.emergentagent.com/api/fulfillment/admin/prov
 ```bash
 # Attempt duplicate order (should fail with 409)
 ORDER_ID="test-order-123"
-curl -X POST "https://demand-rail.preview.emergentagent.com/api/products/1/redeem" \
+curl -X POST "https://free11-cricket.preview.emergentagent.com/api/products/1/redeem" \
   -H "Authorization: Bearer <user_token>" \
   -H "Content-Type: application/json" \
   -d '{"delivery_address":"Test"}'
@@ -147,7 +147,7 @@ curl -X POST "https://demand-rail.preview.emergentagent.com/api/products/1/redee
 
 ### Step 1: Prepare Test Environment
 ```bash
-export API_URL="https://demand-rail.preview.emergentagent.com/api"
+export API_URL="https://free11-cricket.preview.emergentagent.com/api"
 ```
 
 ### Step 2: Create Test Users (100)
