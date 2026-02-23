@@ -22,7 +22,19 @@ brand_router = APIRouter(prefix="/brand", tags=["Brand Portal"])
 
 # ==================== AUTH CONFIG ====================
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt
+
+def verify_brand_password(plain_password, hashed_password):
+    """Verify password using bcrypt directly to avoid passlib/bcrypt 4.x compatibility issues"""
+    try:
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    except Exception:
+        return False
+
+def hash_brand_password(password):
+    """Hash password using bcrypt directly"""
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
 SECRET_KEY = os.environ.get("JWT_SECRET", "free11-brand-secret-key-change-in-production")
 ALGORITHM = "HS256"
 security = HTTPBearer()
