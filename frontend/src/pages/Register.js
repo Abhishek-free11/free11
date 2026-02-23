@@ -83,22 +83,22 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800" data-testid="register-card">
-        <CardHeader className="space-y-4 text-center">
+      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800 mx-4" data-testid="register-card">
+        <CardHeader className="space-y-3 text-center px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">
             <img 
               src="/app-icon.png" 
               alt="FREE11" 
-              className="h-16 w-16 rounded-xl"
+              className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl"
             />
           </div>
-          <CardTitle className="text-2xl text-white">Join FREE11</CardTitle>
-          <CardDescription className="text-slate-400">Create your account and get 50 welcome coins</CardDescription>
+          <CardTitle className="text-xl sm:text-2xl text-white">Join FREE11</CardTitle>
+          <CardDescription className="text-slate-400 text-sm">Create your account and get 50 welcome coins</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-slate-200">Full Name</Label>
+              <Label htmlFor="name" className="text-slate-200 text-sm">Full Name</Label>
               <Input
                 id="name"
                 type="text"
@@ -106,7 +106,7 @@ const Register = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-slate-800 border-slate-700 text-white h-11"
                 data-testid="name-input"
               />
             </div>
