@@ -38,6 +38,15 @@ api_router = APIRouter(prefix="/api")
 
 # ==================== MODELS ====================
 
+# User Rank Tiers (Progression System)
+USER_RANKS = {
+    1: {"name": "Rookie", "min_xp": 0, "color": "#94a3b8"},
+    2: {"name": "Amateur", "min_xp": 100, "color": "#22c55e"},
+    3: {"name": "Pro", "min_xp": 500, "color": "#3b82f6"},
+    4: {"name": "Expert", "min_xp": 1500, "color": "#a855f7"},
+    5: {"name": "Legend", "min_xp": 5000, "color": "#eab308"},
+}
+
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -52,6 +61,13 @@ class User(BaseModel):
     last_checkin: Optional[str] = None
     total_earned: int = 0
     total_redeemed: int = 0
+    # Progression System
+    prediction_streak: int = 0  # Consecutive correct predictions
+    total_predictions: int = 0
+    correct_predictions: int = 0
+    consumption_unlocked: int = 0  # Total value in paise of goods redeemed
+    badges: List[str] = Field(default_factory=list)  # List of badge IDs
+    last_activity: Optional[str] = None  # For coin expiry warning
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 class UserCreate(BaseModel):
@@ -75,7 +91,23 @@ class CoinTransaction(BaseModel):
     amount: int
     type: str  # earned, spent, bonus
     description: str
+    source: str = "skill"  # skill, booster, bonus (for categorization)
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+# Badge definitions
+BADGES = {
+    "first_prediction": {"title": "First Prediction", "description": "Made your first cricket prediction", "icon": "🎯"},
+    "prediction_pro": {"title": "Prediction Pro", "description": "Reached 50% prediction accuracy", "icon": "🏆"},
+    "streak_7": {"title": "7-Day Streak", "description": "Maintained a 7-day check-in streak", "icon": "🔥"},
+    "streak_30": {"title": "Monthly Master", "description": "Maintained a 30-day check-in streak", "icon": "⚡"},
+    "first_redemption": {"title": "First Redemption", "description": "Redeemed your first reward", "icon": "🎁"},
+    "level_pro": {"title": "Pro Player", "description": "Reached Pro level", "icon": "⭐"},
+    "level_expert": {"title": "Expert Predictor", "description": "Reached Expert level", "icon": "💎"},
+    "level_legend": {"title": "Legendary", "description": "Reached Legend level", "icon": "👑"},
+    "hot_streak": {"title": "Hot Streak", "description": "5 correct predictions in a row", "icon": "🎯"},
+    "consumption_100": {"title": "First ₹100", "description": "Unlocked ₹100 worth of goods", "icon": "💰"},
+    "consumption_500": {"title": "Power Consumer", "description": "Unlocked ₹500 worth of goods", "icon": "🛒"},
+}
 
 class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
