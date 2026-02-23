@@ -91,7 +91,14 @@ async def create_clan(
     clan_data: ClanCreate,
     current_user: User = Depends(get_current_user)
 ):
-    """Create a new clan"""
+    """Create a new clan - Requires Level 2+ (Amateur)"""
+    # Level requirement for clan creation
+    if current_user.level < 2:
+        raise HTTPException(
+            status_code=403, 
+            detail="You need to be Level 2 (Amateur) or higher to create a clan. Keep predicting to level up!"
+        )
+    
     # Validate tag
     if len(clan_data.tag) < 2 or len(clan_data.tag) > 5:
         raise HTTPException(status_code=400, detail="Tag must be 2-5 characters")
