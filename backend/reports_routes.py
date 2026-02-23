@@ -167,7 +167,7 @@ async def get_top_support_issues(days: int = 7, limit: int = 3) -> List[Dict]:
 
 
 @reports_router.get("/beta-report")
-async def get_beta_report(days: int = 7, user: dict = Depends(get_current_user)):
+async def get_beta_report(days: int = 7, user = Depends(get_current_user)):
     """
     Generate weekly beta report with all key metrics.
     
