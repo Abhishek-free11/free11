@@ -43,6 +43,43 @@ export const api = {
 
   // Admin
   getAnalytics: () => axios.get(`${API}/admin/analytics`, { headers: getAuthHeader() }),
+
+  // ==================== CRICKET APIs ====================
+  // Matches
+  getMatches: (status) => axios.get(`${API}/cricket/matches${status ? `?status=${status}` : ''}`),
+  getLiveMatches: () => axios.get(`${API}/cricket/matches/live`),
+  getMatch: (matchId) => axios.get(`${API}/cricket/matches/${matchId}`),
+  
+  // Predictions
+  predictBall: (data) => axios.post(`${API}/cricket/predict/ball`, data, { headers: getAuthHeader() }),
+  predictMatch: (data) => axios.post(`${API}/cricket/predict/match`, data, { headers: getAuthHeader() }),
+  getMyPredictions: (matchId) => axios.get(`${API}/cricket/predictions/my${matchId ? `?match_id=${matchId}` : ''}`, { headers: getAuthHeader() }),
+  getCricketLeaderboard: () => axios.get(`${API}/cricket/leaderboard`),
+
+  // ==================== ADS APIs ====================
+  getAdConfig: () => axios.get(`${API}/ads/config`),
+  getAdStatus: () => axios.get(`${API}/ads/status`, { headers: getAuthHeader() }),
+  claimAdReward: (data) => axios.post(`${API}/ads/reward`, data, { headers: getAuthHeader() }),
+  getAdHistory: () => axios.get(`${API}/ads/history`, { headers: getAuthHeader() }),
+
+  // ==================== GIFT CARD APIs ====================
+  getAvailableGiftCards: (brand) => axios.get(`${API}/gift-cards/available${brand ? `?brand=${brand}` : ''}`, { headers: getAuthHeader() }),
+  redeemGiftCard: (brand, value) => axios.post(`${API}/gift-cards/redeem?brand=${brand}&value=${value}`, {}, { headers: getAuthHeader() }),
+  getMyGiftCardRedemptions: () => axios.get(`${API}/gift-cards/my-redemptions`, { headers: getAuthHeader() }),
+  
+  // Admin Gift Cards
+  uploadSingleGiftCard: (data) => axios.post(`${API}/gift-cards/admin/upload-single`, data, { headers: getAuthHeader() }),
+  uploadBulkGiftCards: (formData) => axios.post(`${API}/gift-cards/admin/upload-bulk`, formData, { 
+    headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+  }),
+  getGiftCardInventory: (brand, status) => {
+    let url = `${API}/gift-cards/admin/inventory`;
+    const params = [];
+    if (brand) params.push(`brand=${brand}`);
+    if (status) params.push(`status=${status}`);
+    if (params.length) url += `?${params.join('&')}`;
+    return axios.get(url, { headers: getAuthHeader() });
+  },
 };
 
 export default api;
