@@ -150,8 +150,10 @@ class MockAmazonProvider(VoucherProviderBase):
         # In production: Call Amazon Gift Card API
         # API: https://developer.amazon.com/docs/incentives-api/incentives-api.html
         
-        # Mock response
+        # Mock response with provider tracking ID
+        provider_id = f"AMZN-{uuid.uuid4().hex[:16].upper()}"
         voucher_code = f"AMZ-{uuid.uuid4().hex[:12].upper()}"
+        
         return {
             "success": True,
             "voucher_code": voucher_code,
@@ -160,12 +162,22 @@ class MockAmazonProvider(VoucherProviderBase):
             "amount": amount,
             "currency": "INR",
             "expiry_date": "2027-12-31",
-            "provider_ref": f"MOCK-{order_id}",
-            "is_mocked": True
+            "provider_ref": provider_id,
+            "provider_id": provider_id,
+            "provider_name": "amazon",
+            "is_mocked": True,
+            "generated_at": datetime.now(timezone.utc).isoformat()
         }
     
     async def check_balance(self) -> Dict[str, Any]:
-        return {"available": True, "balance": 100000, "currency": "INR", "is_mocked": True}
+        return {
+            "available": True, 
+            "balance": 100000, 
+            "currency": "INR", 
+            "is_mocked": True,
+            "health_status": "healthy",
+            "last_check": datetime.now(timezone.utc).isoformat()
+        }
     
     def get_provider_name(self) -> str:
         return "Amazon Gift Cards"
@@ -174,7 +186,9 @@ class MockSwiggyProvider(VoucherProviderBase):
     """Swiggy Voucher Provider (MOCKED)"""
     
     async def generate_voucher(self, amount: int, order_id: str) -> Dict[str, Any]:
+        provider_id = f"SWG-{uuid.uuid4().hex[:16].upper()}"
         voucher_code = f"SWG-{uuid.uuid4().hex[:8].upper()}"
+        
         return {
             "success": True,
             "voucher_code": voucher_code,
@@ -183,12 +197,22 @@ class MockSwiggyProvider(VoucherProviderBase):
             "amount": amount,
             "currency": "INR",
             "expiry_date": "2026-06-30",
-            "provider_ref": f"MOCK-{order_id}",
-            "is_mocked": True
+            "provider_ref": provider_id,
+            "provider_id": provider_id,
+            "provider_name": "swiggy",
+            "is_mocked": True,
+            "generated_at": datetime.now(timezone.utc).isoformat()
         }
     
     async def check_balance(self) -> Dict[str, Any]:
-        return {"available": True, "balance": 50000, "currency": "INR", "is_mocked": True}
+        return {
+            "available": True, 
+            "balance": 50000, 
+            "currency": "INR", 
+            "is_mocked": True,
+            "health_status": "healthy",
+            "last_check": datetime.now(timezone.utc).isoformat()
+        }
     
     def get_provider_name(self) -> str:
         return "Swiggy"
@@ -197,7 +221,9 @@ class MockGenericProvider(VoucherProviderBase):
     """Generic Voucher Provider for manual fulfillment"""
     
     async def generate_voucher(self, amount: int, order_id: str) -> Dict[str, Any]:
+        provider_id = f"GEN-{uuid.uuid4().hex[:16].upper()}"
         voucher_code = f"FREE11-{uuid.uuid4().hex[:10].upper()}"
+        
         return {
             "success": True,
             "voucher_code": voucher_code,
@@ -206,13 +232,22 @@ class MockGenericProvider(VoucherProviderBase):
             "amount": amount,
             "currency": "INR",
             "expiry_date": "2026-12-31",
-            "provider_ref": f"MANUAL-{order_id}",
+            "provider_ref": provider_id,
+            "provider_id": provider_id,
+            "provider_name": "generic",
             "is_mocked": True,
-            "requires_manual_fulfillment": True
+            "requires_manual_fulfillment": True,
+            "generated_at": datetime.now(timezone.utc).isoformat()
         }
     
     async def check_balance(self) -> Dict[str, Any]:
-        return {"available": True, "balance": "unlimited", "is_mocked": True}
+        return {
+            "available": True, 
+            "balance": "unlimited", 
+            "is_mocked": True,
+            "health_status": "healthy",
+            "last_check": datetime.now(timezone.utc).isoformat()
+        }
     
     def get_provider_name(self) -> str:
         return "FREE11 Generic"
