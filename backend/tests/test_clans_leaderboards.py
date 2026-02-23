@@ -9,7 +9,7 @@ import os
 import random
 import string
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://free11-cricket.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://skill-shop-6.preview.emergentagent.com')
 
 # Test credentials
 LEVEL2_USER = {"email": "cricket@free11.com", "password": "cricket123"}  # Level 2 user

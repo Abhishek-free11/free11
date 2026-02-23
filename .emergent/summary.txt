@@ -2,7 +2,6 @@
 The user's goal is to build a cricket prediction and engagement platform, FREE11, designed to capture the 60 million displaced Real Money Gaming (RMG) users in India. The project is a 5-week sprint to have a soft launch ready for the IPL 2026 tournament.
 
 **PRODUCT REQUIREMENTS (Demand Rail Thesis):**
-The platform is a Demand Rail Engine, not a generic rewards app.
 *   **Core Loop:** Users convert their time and cricket prediction skill into coins (a non-financial token), which they redeem for real-world goods.
 *   **Product Identity:** Cricket prediction is the primary feature. Ads and mini-games are secondary Boosters.
 *   **Brand-Funded Model:** The shop's products are brand-funded, with every redemption tracked for Return on Ad Spend (ROAS).
@@ -14,123 +13,131 @@ The platform is a Demand Rail Engine, not a generic rewards app.
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack platform with a FastAPI/MongoDB backend and a React/Tailwind frontend. The core features are built out, including user/brand authentication, skill-based clans and leaderboards, a brand-funded product shop, and a user support system. The platform has just completed a critical hardening phase to make the infrastructure launch-safe. This includes:
-*   An auditable voucher delivery system with idempotency checks, retry logic, and admin oversight.
-*   A Sandbox Mode for the Brand Portal to prevent misinterpretation of test data, with clear watermarks and attribution integrity notes.
-*   Enhanced support bot flows for common failure cases (e.g., voucher not received).
-*   Transactional email notifications (via Resend) for voucher delivery status.
-*   An automated test suite to perform load and failure simulation on the redemption system.
+The application is a full-stack platform (FastAPI/MongoDB backend, React/Tailwind frontend) that is feature-complete for its closed beta launch. All core infrastructure and user-facing features have been built and hardened. This includes user/brand authentication, a brand-funded shop, skill-based leaderboards, a support system, an auditable voucher delivery rail, a beta invite system, and admin reporting endpoints. The final pre-beta tasks, including a first-time user tutorial and various UX polishes, have also been implemented.
 
 **Last working item**:
--   **Last item agent was working:** The agent finished implementing all the Phase 3 Hardening features as mandated by the user. The user has now provided a final, detailed list of required screenshots, data payloads, and test outputs to verify that these launch-safe features are working correctly. The agent's next action is to generate and provide this evidence.
+-   **Last item agent was working:** The agent was implementing the final pre-beta task: adding light emotional design / delight touches to the UI. This included adding micro-celebrations for user achievements and improving copy. The agent was in the process of adding a delight moment for successful voucher redemptions.
 -   **Status:** IN PROGRESS
--   **Agent Testing Done:** Y (A new pytest suite for infrastructure hardening was created and all tests are passing).
--   **Which testing method agent to use?**  for UI verification and  or  to generate API payloads and test outputs.
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?**  to capture the final UI changes for user verification.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no active technical issues or bugs. The primary focus is on completing the user's verification task.
+There are no known technical issues or bugs. The only pending item is the completion of the light emotional design task.
 
 **In progress Task List**:
--   **Task 1: Provide Phase 3 Hardening Verification Artifacts (P0)**
-    -   **Where to resume:** Begin by creating the necessary test data, including successful, pending, and failed voucher deliveries, to accurately capture all states requested by the user.
-    -   **What will be achieved with this?** Fulfill the user's final verification request for Phase 3, meet all exit criteria, and secure approval to proceed to Phase 4 (Closed Beta).
-    -   **Status:** NOT STARTED
-    -   **Should Test frontend/backend/both after fix?** Not applicable. This task is about demonstrating existing functionality.
+-   **Task 1: Implement Light Emotional Design Touches (P0)**
+    -   **Where to resume:** The agent needs to modify  to add a delight moment on successful voucher delivery. This should be a toast or similar notification with the copy: Unlocked! Your reward is ready 🎉 and You earned this through skill. Enjoy!.
+    -   **What will be achieved with this?** This will make the beta experience more inviting and engaging for early users, ensuring feedback focuses on core product learning rather than a cold user experience.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Frontend
     -   **Blocked on something:** Nothing.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-*   **P0: Phase 4: Closed Beta & Hardening (Due: Mar 21, 2026):** Onboard beta users, fix bugs, and stabilize the application based on feedback.
-*   **P1: Phase 5: Launch Prep & Soft Launch (Due: Mar 26, 2026):** Final server preparations and go live.
+*   **P0: Final Pre-Beta Sign-off:** After completing the current task, provide screenshots of the celebration moment on a correct prediction and the voucher delivery delight screen for final user approval.
+*   **P0: Open Closed Beta:** Once approved, begin onboarding the first 50-200 beta users using the invite system.
+*   **P0: Phase 4: Closed Beta Monitoring & Hardening:**
+    *   Onboard a pilot brand campaign.
+    *   Monitor application performance, user friction, and support tickets.
+    *   Fix P0/P1 bugs based on beta feedback.
+    *   Generate weekly beta reports for the user.
+*   **P1: Implement Phase 4 P1 Items:**
+    *   Integrate Slack/Email alerts for critical system failures.
+    *   Implement basic UX funnel tracking.
 
 **Future Tasks:**
 *   Full Public Launch & Fundraising.
 *   Monetization: Integrate AdMob and premium subscription features.
 *   Live Integrations: Implement live cricket data APIs and ONDC/Q-Comm for fulfillment.
+*   Deeper UI/UX and visual polish based on beta feedback.
 
 **Completed work in this session**
--   **Phase 3 Hardening & Launch-Readiness:**
-    -   **Auditable Voucher Delivery Rail:** Implemented a full audit trail for fulfillment (, , , ), including idempotency checks, retry logic, and admin endpoints for oversight.
-    -   **ROAS Dashboard Hardening:** Added a SANDBOX / TEST DATA watermark to the Brand Portal, hid the ROAS ratio in test mode, and added detailed attribution integrity notes.
-    -   **Support Bot Enhancement:** Improved the support bot to handle voucher not received cases and provided admins with detailed delivery timelines.
-    -   **Transactional Emails:** Integrated the Resend API for voucher delivery and failure notifications.
-    -   **Infrastructure Hardening:** Created and passed an automated test suite () for load testing, failure simulation, and idempotency checks.
-    -   **Narrative Hygiene:** Ensured all brand-facing language is PRORGA-safe and focused on consumption, not advertising metrics.
--   **Resolved Frontend Authentication Bug:** Fixed the recurring issue where screenshot tools would lose authentication context during navigation.
+-   **Phase 3 Hardening Verification:** Debugged login issues and generated all required verification artifacts (payloads, screenshots, test outputs) to secure user approval for Phase 3 completion.
+-   **Phase 4 (P0 Features) Implementation:**
+    *   **Go Live Script:** Built  with safety checks (, dry-run).
+    *   **Beta Invite System:** Implemented backend routes () and frontend UI () for a capped, invite-only beta.
+    *   **Weekly Beta Report:** Created an admin endpoint () for user reporting.
+    *   **Alerting Service:** Stubbed out an  for future webhook integration.
+-   **Pre-Beta UX Polish:**
+    *   **First-Time Tutorial:** Created a server-side persistent, multi-screen tutorial for new users with a replay option.
+    *   **Zero-State & UI Polish:** Added friendly empty states to key screens and made the Progress to Next Reward bar more prominent.
+-   **Bug Fixes:**
+    *   Resolved a  password verification issue preventing brand login.
+    *   Fixed a MongoDB  serialization error in the user registration API response.
 
 **Known issue recurrence from previous fork**
 -   **Issue:** Frontend authentication context was lost during programmatic navigation by tools.
--   **Recurrence count:** High
--   **Status:** RESOLVED. A stable pattern of using client-side navigation clicks instead of hard  navigations was established and works reliably.
+-   **Recurrence count:** High (in previous forks)
+-   **Status:** RESOLVED. A stable pattern of API-based login followed by client-side navigation or direct local storage manipulation has proven effective.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Backend:** FastAPI, MongoDB, Modular API Routers, Pydantic.
-*   **Frontend:** React, Tailwind CSS, shadcn/ui.
-*   **Core Concepts:** Demand Rail Engine, Idempotency, Retry Logic, Audit Trails, ROAS Calculation.
+*   **Backend:** FastAPI, MongoDB, Pydantic Models.
+*   **Frontend:** React, Tailwind CSS, shadcn/ui, React Context API.
+*   **Core Concepts:** Demand Rail Engine, Idempotency, Audit Trails, ROAS, PRORGA-safe tokenization, Beta Gating, Server-side Feature Flagging (for tutorial).
 *   **Integrations:** Resend for transactional emails.
 
 **key DB schema**
 -   ****: 
+-   ****: 
+-   ****: 
 
 **changes in tech stack**
--   **Resend:** Added for transactional email delivery.
+-   None.
 
 **All files of reference**
-*   ****: Core logic for the auditable, retry-safe voucher delivery system.
-*   ****: Service for sending transactional emails via Resend.
-*   ****: New endpoints for admin functions like viewing failed deliveries and retrying them.
-*   ****: The automated test suite for load, failure, and idempotency checks.
-*   ****: Frontend component updated to display sandbox mode indicators.
-*   ****: Manual checklist for infrastructure testing.
-
-**Areas that need refactoring**:
-*   The backend's dependency pattern where route modules import directly from the main  file could be improved in the future with a more robust application context or dependency injection to avoid potential circular import issues.
+-   ****: File to be modified next to add the voucher delivery delight moment.
+-   ****: Recently modified to add a micro-celebration on correct predictions.
+-   ****: Recently modified to enhance progress visualization and add brand voice lines.
+-   ****: Core component for the new user onboarding flow.
+-   ****: Contains the new endpoint for managing the  flag.
+-   ****: Contains the logic for the beta invite system.
+-   ****: Updated to include the mandatory invite code field.
 
 **key api endpoints**
-*   : Get a list of failed voucher deliveries.
-*   : Manually re-trigger a failed delivery.
-*   : Get the detailed audit trail for a specific delivery.
+*   : (Admin) Creates new invite codes.
+*   : Checks if an invite code is valid before registration.
+*   : (Admin) Gets the weekly beta report data.
+*   : GET/POST to manage a user's tutorial completion status.
+*   : Updated to accept and validate an .
 
 **Critical Info for New Agent**
-*   The project is at a critical pre-beta gate. Do not start any new features.
-*   Your immediate and sole task is to generate the comprehensive verification artifacts (screenshots, payloads, test results) listed in the user's last message. This is mandatory for Phase 3 completion.
-*   The authentication issue with the screenshot tool is solved; use client-side navigation (e.g., ) for all private routes.
+*   **Top Priority:** You are on the final task before the Closed Beta launch. Complete the light emotional design feature by adding the voucher delivery celebration in .
+*   **User Verification:** After implementation, the user requires screenshots of the correct prediction celebration and the voucher delivery delight moment for final sign-off.
+*   **Guardrails:** Adhere strictly to the user's copy and design guidelines. The goal is light polish, not a redesign. No gambling-like language or dark patterns.
+*   **Next Step:** Once this final UX task is approved, the project moves into Closed Beta.
 
 **documents and test reports created in this job**
-*   
-*   
+*    was updated to reflect the completion of Phase 3 and the start of Phase 4.
+*    was updated to include  and  variables.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Agent:** Completed initial Phase 3 features and provided screenshots.
-2.  **PENDING User Request:** User provided extensive and non-negotiable feedback, defining the Phase 3 Hardening requirements (auditable vouchers, ROAS sandbox mode, better support, emails, load tests).
-3.  **Agent:** Proposed a plan to implement all hardening requirements in batches.
-4.  **User:** Approved the plan with minor reordering and clarifications (use Resend, add Slack/Email alerts).
-5.  **Agent:** Implemented all backend and frontend changes for the hardening requirements.
-6.  **Agent:** Created and ran an automated test suite for the new infrastructure, confirming all 9 tests passed.
-7.  **Agent:** Updated the PRD and finished the implementation task.
-8.  **PENDING User Request:** User provided a new, detailed list of screenshots and artifacts required to visually verify the successful implementation of all the Phase 3 hardening features.
+1.  **User:** Greenlights opening Closed Beta after a successful pre-beta UX polish review. Asks for two final micro-checks.
+2.  **Agent:** Runs the checks, finds and fixes a backend serialization bug, and confirms both checks passed with a screenshot.
+3.  **User:** Adds one final, small pre-beta task: implement light emotional design / delight touches to make the app feel more inviting.
+4.  **Agent:** Proposes a plan to add the emotional design touches.
+5.  **PENDING User Request:** User approves the plan with minor copy refinements and requests screenshots of the celebration and voucher delivery screens for final sign-off before officially starting the beta.
 
 **Project Health Check:**
-*   **Broken:** No features are currently broken.
-*   **Mocked:** Cricket data, brand campaign data, and the actual fulfillment provider logic (using ) remain mocked as per the project plan.
+*   **Broken:** No features are broken.
+*   **Mocked:** Cricket data, brand campaign data, and the actual fulfillment provider logic () remain mocked as per the project plan for beta.
 
 **3rd Party Integrations**
 *   **Active:** Resend (for transactional emails).
-*   **Planned:** Live Cricket Data API, Amazon Gift Card / Voucher API.
+*   **Planned:** Slack (via webhook), Live Cricket Data API, Amazon Gift Card / Voucher API.
 *   **Future:** Google AdMob SDK, ONDC / Q-Comm APIs.
 
 **Testing status**
--   **Testing agent used after significant changes:** NO (Agent created a new, comprehensive pytest suite for self-testing).
--   **Test files created:** [, ]
+-   **Testing agent used after significant changes:** NO
+-   **Test files created:** None in this session.
 -   **Known regressions:** None.
 
 **Credentials to test flow:**
--   User registration is open. Create a new user for testing.
--   Brand registration is available via the  endpoint.
+-   User registration is gated by an invite code. An admin user must first generate a code using the  endpoint.
+-   Admin credentials can be created via direct database insertion if needed.
 
 **What agent forgot to execute**
--   The agent has not forgotten any tasks. The current work is a direct continuation of the user's explicit feedback loop and is pending final verification.</analysis>
+-   The agent has been diligent and has not forgotten or missed any user requests.</analysis>
