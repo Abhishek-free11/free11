@@ -255,8 +255,7 @@ const Dashboard = () => {
                       onClick={() => navigate('/shop')}
                       disabled={demandProgress.next_reward.coins_needed > 0}
                       size="lg"
-                      disabled={demandProgress.next_reward.coins_needed > 0}
-                      className="bg-green-500 hover:bg-green-600 text-white"
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold px-6"
                     >
                       {demandProgress.next_reward.coins_needed > 0 ? 'Earn More' : 'Redeem'}
                     </Button>
