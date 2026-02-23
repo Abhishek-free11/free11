@@ -296,7 +296,7 @@ async def get_beta_summary(user = Depends(get_current_user)):
 
 
 @reports_router.get("/funnel-metrics")
-async def get_funnel_metrics(days: int = 7, user: dict = Depends(get_current_user)):
+async def get_funnel_metrics(days: int = 7, user = Depends(get_current_user)):
     """
     UX Funnel tracking: Predict → Earn → Redeem → Receive
     No gambling-like analytics - focus on conversion health.
