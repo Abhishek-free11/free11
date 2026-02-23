@@ -462,8 +462,8 @@ async def get_detailed_analytics(
         "campaigns": campaign_stats,
         "top_products": product_stats,
         "consumer_segments": [
-            {"level": l["_id"] or 1, "consumers": l["count"]}
-            for l in user_levels
+            {"level": segment["_id"] or 1, "consumers": segment["count"]}
+            for segment in user_levels
         ],
         # Attribution integrity
         "attribution_note": "All metrics computed from verified redemptions (actual goods delivered), not from tasks/views/impressions"
