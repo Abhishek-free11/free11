@@ -71,12 +71,12 @@
 ```
 Hey [Name]!
 
-You're invited to try FREE11 — a cricket prediction app where your skill unlocks real rewards.
+You're invited to try FREE11 — a simple but powerful Social Entertainment Sports Platform where your correct calls get you real products for free.
 
 🏏 What you'll do:
-- Predict ball-by-ball outcomes during IPL matches
-- Earn FREE11 Coins for correct predictions
-- Redeem coins for vouchers (Swiggy, Amazon, recharges)
+- Call ball-by-ball outcomes during IPL matches
+- Get FREE11 Coins for correct calls
+- Use coins to get vouchers (Swiggy, Amazon, recharges)
 
 🔑 Your invite code: [FREE11-XXXXXXXX]
 
@@ -84,7 +84,6 @@ You're invited to try FREE11 — a cricket prediction app where your skill unloc
 
 ⚠️ Important:
 - This is a closed beta — things may break
-- Your feedback shapes the product
 - Coins are reward tokens, not cash (no betting, no withdrawal)
 
 Questions? Reply here or use "Support" in the app.
