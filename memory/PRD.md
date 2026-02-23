@@ -165,6 +165,46 @@ All verification artifacts generated and documented in `/app/memory/phase3_verif
 
 ---
 
+## Pre-Beta UX Polish - COMPLETE (Feb 23, 2026)
+
+### 1. First-Time Tutorial (60 seconds, 4 screens)
+**Component:** `/app/frontend/src/components/FirstTimeTutorial.js`
+- Screen 1: "Predict cricket. That's how you earn coins."
+- Screen 2: "Coins unlock real products. No cash. No betting."
+- Screen 3: "Redeem vouchers instantly for real products."
+- Screen 4: "Skill drives rewards. Boosters just help you earn faster."
+- **Server-side persistence** (not localStorage) via `/api/user/tutorial-status`
+- **Replay option** in Profile → Help
+
+### 2. Empty States
+**Component:** `/app/frontend/src/components/EmptyState.js`
+- Dashboard: "Make your first prediction to start unlocking real products."
+- My Vouchers: "Redeemed vouchers will appear here once you unlock your first reward."
+- Transactions: "Your coin history will show up once you start earning."
+- Predictions: "No predictions yet. Start predicting to build your streak!"
+
+### 3. Microcopy Polish (5 key spots)
+- Dashboard CTA: "Start Predicting" (was "Predict Now")
+- Predict helper: "Earn 5-15 coins per correct prediction" (green text)
+- Boosters: "Boosters help you earn faster. Skill drives your rewards."
+- Wallet disclaimer: Warm, human tone in Profile section
+- Registration: Clear invite code validation with visual feedback
+
+### 4. Progress to Next Reward - Enhanced
+- Larger progress bar (h-4 instead of h-2)
+- Milestone markers at 25%, 50%, 75%
+- "Ready!" badge when progress >= 100%
+- Prominent coins balance display
+- Green border highlight on card
+
+### 5. Beta Registration with Invite Code
+- Invite code field with real-time validation
+- Green checkmark for valid codes
+- "(Required for beta)" label
+- Button disabled until valid invite provided
+
+---
+
 ## Phase 4: Closed Beta + Hardening (IN PROGRESS)
 
 ### Phase 4 Implemented Features (Feb 23, 2026)
