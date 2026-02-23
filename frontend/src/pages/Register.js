@@ -21,6 +21,7 @@ const Register = () => {
   const [inviteChecking, setInviteChecking] = useState(false);
   const [loading, setLoading] = useState(false);
   const [betaRequired, setBetaRequired] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Check if invite code is in URL
   useEffect(() => {
