@@ -50,6 +50,31 @@ export const api = {
   // FAQ
   getFAQ: () => axios.get(`${API}/faq`),
 
+  // ==================== CLANS APIs ====================
+  createClan: (data) => axios.post(`${API}/clans/create`, data, { headers: getAuthHeader() }),
+  listClans: (sortBy = 'accuracy') => axios.get(`${API}/clans/list?sort_by=${sortBy}`),
+  getMyClan: () => axios.get(`${API}/clans/my`, { headers: getAuthHeader() }),
+  getClan: (clanId) => axios.get(`${API}/clans/${clanId}`),
+  joinClan: (clanId) => axios.post(`${API}/clans/join`, { clan_id: clanId }, { headers: getAuthHeader() }),
+  leaveClan: () => axios.post(`${API}/clans/leave`, {}, { headers: getAuthHeader() }),
+  getClanLeaderboard: () => axios.get(`${API}/clans/leaderboard/clans`),
+  getClanMemberLeaderboard: (clanId) => axios.get(`${API}/clans/leaderboard/members/${clanId}`),
+  getClanChallenges: () => axios.get(`${API}/clans/challenges/available`, { headers: getAuthHeader() }),
+  participateInChallenge: (challengeId) => axios.post(`${API}/clans/challenges/participate/${challengeId}`, {}, { headers: getAuthHeader() }),
+
+  // ==================== LEADERBOARDS APIs ====================
+  getGlobalLeaderboard: (limit = 50) => axios.get(`${API}/leaderboards/global?limit=${limit}`),
+  getWeeklyLeaderboard: (limit = 50) => axios.get(`${API}/leaderboards/weekly?limit=${limit}`),
+  getStreakLeaderboard: (limit = 50) => axios.get(`${API}/leaderboards/streak?limit=${limit}`),
+  getPublicProfile: (userId) => axios.get(`${API}/leaderboards/profile/${userId}`),
+  getActivityFeed: () => axios.get(`${API}/leaderboards/activity-feed`, { headers: getAuthHeader() }),
+  
+  // Duels
+  getMyDuels: () => axios.get(`${API}/leaderboards/duels/my`, { headers: getAuthHeader() }),
+  createDuel: (challengedId, matchId = null) => axios.post(`${API}/leaderboards/duels/challenge`, { challenged_id: challengedId, match_id: matchId }, { headers: getAuthHeader() }),
+  acceptDuel: (duelId) => axios.post(`${API}/leaderboards/duels/${duelId}/accept`, {}, { headers: getAuthHeader() }),
+  declineDuel: (duelId) => axios.post(`${API}/leaderboards/duels/${duelId}/decline`, {}, { headers: getAuthHeader() }),
+
   // ==================== CRICKET APIs ====================
   // Matches
   getMatches: (status) => axios.get(`${API}/cricket/matches${status ? `?status=${status}` : ''}`),
