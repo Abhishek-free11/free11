@@ -84,9 +84,20 @@ class Product(BaseModel):
     description: str
     category: str
     coin_price: int
+    base_coin_price: Optional[int] = None  # For dynamic pricing
     image_url: str
     stock: int
     brand: str
+    # Brand-funded fields (Demand Rail)
+    brand_id: str = "default_brand"
+    campaign_id: Optional[str] = None
+    funded_by_brand: bool = True
+    # Fulfillment abstraction (ONDC/Q-Comm ready)
+    fulfillment_type: str = "direct"  # direct, ondc_bap, qcomm, d2c
+    # Economy controls
+    min_level_required: int = 1  # Shop tier unlock
+    is_limited_drop: bool = False
+    drop_expires_at: Optional[str] = None
     active: bool = True
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -98,6 +109,12 @@ class ProductCreate(BaseModel):
     image_url: str
     stock: int
     brand: str
+    brand_id: Optional[str] = "default_brand"
+    campaign_id: Optional[str] = None
+    funded_by_brand: bool = True
+    fulfillment_type: str = "direct"
+    min_level_required: int = 1
+    is_limited_drop: bool = False
 
 class Redemption(BaseModel):
     model_config = ConfigDict(extra="ignore")
