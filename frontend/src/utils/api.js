@@ -93,6 +93,22 @@ export const api = {
   claimAdReward: (data) => axios.post(`${API}/ads/reward`, data, { headers: getAuthHeader() }),
   getAdHistory: () => axios.get(`${API}/ads/history`, { headers: getAuthHeader() }),
 
+  // ==================== SUPPORT APIs ====================
+  // Chatbot
+  sendChatMessage: (message) => axios.post(`${API}/support/chat`, { message }, { headers: getAuthHeader() }),
+  getChatSuggestions: () => axios.get(`${API}/support/chat/suggestions`),
+  
+  // Tickets
+  createTicket: (data) => axios.post(`${API}/support/tickets`, data, { headers: getAuthHeader() }),
+  getMyTickets: (status) => axios.get(`${API}/support/tickets${status ? `?status=${status}` : ''}`, { headers: getAuthHeader() }),
+  getTicket: (ticketId) => axios.get(`${API}/support/tickets/${ticketId}`, { headers: getAuthHeader() }),
+  replyToTicket: (ticketId, message) => axios.post(`${API}/support/tickets/${ticketId}/reply?message=${encodeURIComponent(message)}`, {}, { headers: getAuthHeader() }),
+
+  // ==================== FULFILLMENT APIs ====================
+  getFulfillmentStatus: (orderId) => axios.get(`${API}/fulfillment/status/${orderId}`, { headers: getAuthHeader() }),
+  getMyVouchers: (status) => axios.get(`${API}/fulfillment/my-vouchers${status ? `?status=${status}` : ''}`, { headers: getAuthHeader() }),
+  retryFulfillment: (fulfillmentId) => axios.post(`${API}/fulfillment/retry/${fulfillmentId}`, {}, { headers: getAuthHeader() }),
+
   // ==================== GIFT CARD APIs ====================
   getAvailableGiftCards: (brand) => axios.get(`${API}/gift-cards/available${brand ? `?brand=${brand}` : ''}`, { headers: getAuthHeader() }),
   redeemGiftCard: (brand, value) => axios.post(`${API}/gift-cards/redeem?brand=${brand}&value=${value}`, {}, { headers: getAuthHeader() }),
