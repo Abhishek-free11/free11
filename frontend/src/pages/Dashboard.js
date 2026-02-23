@@ -147,51 +147,49 @@ const Dashboard = () => {
       )}
       
       <Navbar />
-      <div className="container mx-auto px-4 py-6" data-testid="dashboard-page">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6" data-testid="dashboard-page">
         
         {/* Beta Program Banner */}
-        <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🧪</span>
-              <div>
-                <p className="text-yellow-400 font-medium text-sm">You're in the FREE11 Beta</p>
-                <p className="text-slate-400 text-xs">
-                  Thanks for testing early! Things may break. 
-                  <a href="/support" className="text-blue-400 hover:underline ml-1">Report issues →</a>
-                </p>
-              </div>
+        <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-base sm:text-lg">🧪</span>
+            <div>
+              <p className="text-yellow-400 font-medium text-xs sm:text-sm">You're in the FREE11 Beta</p>
+              <p className="text-slate-400 text-xs">
+                Things may break. 
+                <a href="/support" className="text-blue-400 hover:underline ml-1">Report issues →</a>
+              </p>
             </div>
           </div>
         </div>
         
         {/* PRORGA Disclaimer Banner */}
-        <div className="mb-6 p-3 bg-slate-800/50 border border-slate-700 rounded-lg text-center">
+        <div className="mb-4 sm:mb-6 p-2.5 sm:p-3 bg-slate-800/50 border border-slate-700 rounded-lg text-center">
           <p className="text-xs text-slate-400">
-            <span className="text-yellow-400 font-medium">FREE11 Coins</span> are non-withdrawable reward tokens redeemable only for goods/services. 
-            No cash. No betting. Brand-funded rewards.
+            <span className="text-yellow-400 font-medium">FREE11 Coins</span> = reward tokens for goods/services. 
+            No cash. No betting.
           </p>
         </div>
         
         {/* Brand Voice Line */}
-        <div className="mb-6 text-center">
-          <p className="text-slate-500 text-sm font-medium tracking-wide">
+        <div className="mb-4 sm:mb-6 text-center">
+          <p className="text-slate-500 text-xs sm:text-sm font-medium tracking-wide">
             <span className="text-yellow-400/80">Skill beats luck here.</span>
           </p>
         </div>
 
         {/* Welcome + Demand Progress Header */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
           {/* Welcome Card */}
           <Card className={`bg-gradient-to-br ${rankStyle.bg} ${rankStyle.border} lg:col-span-1`}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black ${rankStyle.text} bg-slate-900/50`}>
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-2xl font-black ${rankStyle.text} bg-slate-900/50`}>
                   {demandProgress?.rank?.name?.[0] || 'R'}
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-white">{user?.name}</h2>
-                  <Badge className={`${rankStyle.text} bg-slate-900/50`}>
+                  <h2 className="text-lg sm:text-2xl font-black text-white">{user?.name}</h2>
+                  <Badge className={`${rankStyle.text} bg-slate-900/50 text-xs`}>
                     {demandProgress?.rank?.name || 'Rookie'} • Level {user?.level || 1}
                   </Badge>
                 </div>
