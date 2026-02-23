@@ -18,6 +18,13 @@ const Profile = () => {
   const [stats, setStats] = useState(null);
   const [replayingTutorial, setReplayingTutorial] = useState(false);
   const [demandProgress, setDemandProgress] = useState(null);
+  const [soundsEnabled, setSoundsEnabled] = useState(isSoundEnabled());
+
+  const handleSoundToggle = (enabled) => {
+    setSoundsEnabled(enabled);
+    setSoundEnabled(enabled);
+    toast.success(enabled ? 'Celebration sounds enabled' : 'Sounds disabled');
+  };
 
   useEffect(() => {
     fetchStats();
