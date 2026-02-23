@@ -42,13 +42,13 @@ const Login = () => {
               className="h-12 w-12 sm:h-16 sm:w-16 rounded-xl"
             />
           </div>
-          <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
-          <CardDescription className="text-slate-400">Sign in to continue earning coins</CardDescription>
+          <CardTitle className="text-xl sm:text-2xl text-white">Welcome Back</CardTitle>
+          <CardDescription className="text-slate-400 text-sm">Sign in to continue earning coins</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-200">Email</Label>
+              <Label htmlFor="email" className="text-slate-200 text-sm">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -56,12 +56,12 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-slate-800 border-slate-700 text-white h-11"
                 data-testid="email-input"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-200">Password</Label>
+              <Label htmlFor="password" className="text-slate-200 text-sm">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -70,7 +70,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-slate-800 border-slate-700 text-white pr-10"
+                  className="bg-slate-800 border-slate-700 text-white pr-10 h-11"
                   data-testid="password-input"
                 />
                 <button
