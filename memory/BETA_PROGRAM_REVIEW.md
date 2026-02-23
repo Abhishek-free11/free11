@@ -249,5 +249,6 @@ FREE11-1JXY32U6
 
 ---
 
-*Document Version: 1.0*
-*Status: PENDING USER APPROVAL*
+*Document Version: 1.1*
+*Status: APPROVED - Ready for Wave 1 Distribution*
+*Last Updated: Feb 23, 2026*
