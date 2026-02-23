@@ -96,10 +96,13 @@ Time → Skill → Coins → Goods → Utility → Repeat
 
 ## Upcoming Phases
 
-### Phase 2: Clans & Leaderboards (Due: Mar 7, 2026)
-- [ ] Clan creation and joining
-- [ ] Clan vs Clan leaderboards
-- [ ] Friend system with challenges
+### Phase 2: Clans & Leaderboards ✅ COMPLETE (Feb 24, 2026)
+- [x] Clan creation and joining (Level 2+ to create, free to join)
+- [x] Clan vs Clan leaderboards (skill-based: accuracy, not coins)
+- [x] Prediction duels (badge rewards, NO coin transfers)
+- [x] Global, Weekly, Streak leaderboards
+- [x] Public profiles (skill stats only, NO coin display)
+- [x] Activity feed for clan achievements
 
 ### Phase 3: Automation & Brand Tools (Due: Mar 14, 2026)
 - [ ] Automated voucher delivery
@@ -128,6 +131,8 @@ Time → Skill → Coins → Goods → Utility → Repeat
 │   ├── server.py          # Main FastAPI app + models
 │   ├── cricket_routes.py  # Cricket prediction APIs
 │   ├── ads_routes.py      # AdMob reward APIs
+│   ├── clans_routes.py    # Clans system APIs
+│   ├── leaderboards_routes.py # Leaderboards & Duels APIs
 │   ├── gift_card_routes.py # Gift card management
 │   └── tests/
 │       └── test_demand_rail.py
@@ -173,3 +178,4 @@ Home → Predict (🏏) → Boost → Redeem → Orders
 
 *Last Updated: February 24, 2026*
 *Sprint Day: 3 of 33*
+*Phase 2 Complete - Ahead of Schedule!*
