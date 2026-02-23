@@ -207,7 +207,7 @@ async def login_brand(data: BrandLoginRequest):
     if not brand:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    if not pwd_context.verify(data.password, brand["password_hash"]):
+    if not verify_brand_password(data.password, brand["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     if not brand.get("is_active"):
