@@ -1252,6 +1252,8 @@ app.include_router(leaderboards_router, prefix="/api")
 app.include_router(fulfillment_router, prefix="/api")
 app.include_router(support_router, prefix="/api")
 app.include_router(brand_router, prefix="/api")
+app.include_router(beta_router)  # Beta routes already have /api prefix
+app.include_router(reports_router)  # Reports routes already have /api prefix
 
 # CORS
 app.add_middleware(
