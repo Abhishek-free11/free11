@@ -271,7 +271,7 @@ async def get_beta_report(days: int = 7, user = Depends(get_current_user)):
 
 
 @reports_router.get("/beta-summary")
-async def get_beta_summary(user: dict = Depends(get_current_user)):
+async def get_beta_summary(user = Depends(get_current_user)):
     """Quick summary for dashboard display"""
     now = datetime.now(timezone.utc)
     week_ago = (now - timedelta(days=7)).isoformat()
