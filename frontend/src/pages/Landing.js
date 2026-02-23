@@ -63,29 +63,29 @@ const Landing = () => {
 
       {/* Features */}
       <section className="container mx-auto px-4 py-12 sm:py-20" data-testid="features-section">
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-yellow-500/50 transition-all">
-            <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
-              <Zap className="h-7 w-7 text-yellow-400" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-yellow-500/50 transition-all">
+            <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
+              <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Call the Action</h3>
-            <p className="text-slate-400">Make ball-by-ball calls during live cricket matches. Get coins for correct calls.</p>
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Call the Action</h3>
+            <p className="text-slate-400 text-sm sm:text-base">Make ball-by-ball calls during live cricket matches. Get coins for correct calls.</p>
           </Card>
 
-          <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-red-500/50 transition-all">
-            <div className="bg-gradient-to-br from-red-500/20 to-pink-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
-              <Gift className="h-7 w-7 text-red-400" />
+          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-red-500/50 transition-all">
+            <div className="bg-gradient-to-br from-red-500/20 to-pink-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
+              <Gift className="h-6 w-6 sm:h-7 sm:w-7 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Get Real Products</h3>
-            <p className="text-slate-400">Use coins for Swiggy, Amazon, Netflix vouchers and more. No cash. No betting.</p>
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Get Real Products</h3>
+            <p className="text-slate-400 text-sm sm:text-base">Use coins for Swiggy, Amazon, Netflix vouchers and more. No cash. No betting.</p>
           </Card>
 
-          <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-blue-500/50 transition-all">
-            <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
-              <Trophy className="h-7 w-7 text-blue-400" />
+          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-blue-500/50 transition-all">
+            <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
+              <Trophy className="h-6 w-6 sm:h-7 sm:w-7 text-blue-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Skill Drives Rewards</h3>
-            <p className="text-slate-400">Your accuracy determines your rank. Better calls = more rewards.</p>
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Skill Drives Rewards</h3>
+            <p className="text-slate-400 text-sm sm:text-base">Your accuracy determines your rank. Better calls = more rewards.</p>
           </Card>
         </div>
       </section>
