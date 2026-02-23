@@ -217,7 +217,7 @@ async def pause_all_invites(user = Depends(get_current_user)):
 
 
 @beta_router.post("/admin/invites/resume")
-async def resume_invites(user: dict = Depends(get_current_user)):
+async def resume_invites(user = Depends(get_current_user)):
     """Resume paused invites"""
     result = await db.beta_invites.update_many(
         {"is_active": False, "is_revoked": False},
