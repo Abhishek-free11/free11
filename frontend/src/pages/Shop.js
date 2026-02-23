@@ -97,10 +97,11 @@ const Shop = () => {
       // Update user balance
       updateUser({ coins_balance: response.data.new_balance });
       
-      // Play celebration sound (respects user preference)
+      // GUARDRAIL: Celebration triggers only once per redemption (inside API success handler)
+      // Sound respects user preference (OFF by default, opt-in via settings)
       playCelebrationSound();
       
-      // Confetti burst for delight
+      // Confetti burst for delight - single trigger per redemption
       confetti({
         particleCount: 100,
         spread: 70,
