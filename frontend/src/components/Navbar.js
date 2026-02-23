@@ -21,9 +21,10 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
-    { path: '/earn', label: 'Earn Coins', icon: Zap },
+    { path: '/cricket', label: 'Cricket', icon: () => <span className="text-lg mr-1">🏏</span> },
+    { path: '/earn', label: 'Earn', icon: Zap },
     { path: '/shop', label: 'Shop', icon: ShoppingBag },
-    { path: '/orders', label: 'My Orders', icon: Package },
+    { path: '/orders', label: 'Orders', icon: Package },
   ];
 
   const isActive = (path) => location.pathname === path;
