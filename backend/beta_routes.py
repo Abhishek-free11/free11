@@ -176,7 +176,7 @@ async def list_invites(
 
 
 @beta_router.post("/admin/invites/{code}/revoke")
-async def revoke_invite(code: str, request: RevokeInviteRequest, user: dict = Depends(get_current_user)):
+async def revoke_invite(code: str, request: RevokeInviteRequest, user = Depends(get_current_user)):
     """Revoke an invite code"""
     invite = await db.beta_invites.find_one({"code": code})
     
