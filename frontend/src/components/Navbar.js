@@ -53,9 +53,19 @@ const Navbar = () => {
                 key={item.path}
                 variant={isActive(item.path) ? 'default' : 'ghost'}
                 onClick={() => navigate(item.path)}
-                className={isActive(item.path) ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' : 'text-slate-300 hover:text-white'}
+                className={
+                  isActive(item.path) 
+                    ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
+                    : item.highlight 
+                      ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10' 
+                      : 'text-slate-300 hover:text-white'
+                }
               >
-                <item.icon className="h-4 w-4 mr-2" />
+                {item.path === '/cricket' ? (
+                  <span className="text-lg mr-1">🏏</span>
+                ) : (
+                  <item.icon className="h-4 w-4 mr-2" />
+                )}
                 {item.label}
               </Button>
             ))}
