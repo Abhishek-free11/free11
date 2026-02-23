@@ -165,16 +165,107 @@ All verification artifacts generated and documented in `/app/memory/phase3_verif
 
 ---
 
-## Next: Phase 4 - Closed Beta + Hardening
+## Phase 4: Closed Beta + Hardening (IN PROGRESS)
 
-Now that Phase 3 exit criteria are met:
-1. Enable production email (`RESEND_API_KEY`)
-2. Configure monitoring alerts
-3. Set `FREE11_ENV=production`
-4. Onboard beta users
-5. Monitor and fix issues
+### Phase 4 Implemented Features (Feb 23, 2026)
+
+#### P0 Features (Complete)
+
+**1. Go Live Script (`/app/scripts/go_live.py`)**
+- `--dry-run` mode to preview changes
+- `--confirm-production` flag required for go-live
+- `--rollback` to revert to sandbox
+- `--status` to check current state
+- Secondary confirmation for live vouchers and email
+- Full logging to `/app/logs/go_live.log`
+- Backup/restore of .env file
+
+**2. Beta Invite System (`/api/beta/*`)**
+- Invite code generation: `FREE11-XXXXXXXX` format
+- Default cap: 200 invites
+- Invite source tracking
+- Revoke/pause functionality
+- Expiration support
+- Single-use and multi-use codes
+- Registration now requires valid invite code
+
+**3. Weekly Beta Report (`/api/admin/reports/beta-report`)**
+- DAU/WAU tracking
+- Total redemptions + period redemptions
+- Voucher failure rate
+- Avg delivery time (minutes)
+- Top support issues
+- Brand-funded redemptions
+- Invite usage stats
+- Funnel metrics: Predict → Earn → Redeem → Receive
+
+#### P1 Features (Planned)
+- Slack alerts (webhook configurable via `SLACK_WEBHOOK_URL` env var)
+- Email fallback for critical alerts
+- UX funnel event tracking
+
+### New API Endpoints
+
+```
+# Beta Invite System
+POST /api/beta/admin/invites/generate
+GET  /api/beta/admin/invites
+POST /api/beta/admin/invites/{code}/revoke
+POST /api/beta/admin/invites/pause
+POST /api/beta/admin/invites/resume
+GET  /api/beta/admin/settings
+PUT  /api/beta/admin/settings
+POST /api/beta/validate-invite
+GET  /api/beta/status
+
+# Reports
+GET  /api/admin/reports/beta-report
+GET  /api/admin/reports/beta-summary
+GET  /api/admin/reports/funnel-metrics
+```
+
+### New Files
+
+```
+/app/scripts/go_live.py          # Production deployment script
+/app/backend/beta_routes.py      # Beta invite system
+/app/backend/reports_routes.py   # Weekly reporting
+/app/backend/alerting_service.py # Slack + email alerts
+/app/logs/go_live.log           # Deployment logs
+```
+
+### Environment Variables
+
+```
+# Production controls (in .env)
+FREE11_ENV=sandbox              # sandbox | production
+ENABLE_LIVE_VOUCHERS=false      # Enable real voucher providers
+ENABLE_LIVE_EMAIL=false         # Enable Resend API
+
+# Optional (for production)
+SLACK_WEBHOOK_URL=              # Slack alerts
+ALERT_EMAIL=                    # Email fallback
+RESEND_API_KEY=                 # Email provider
+```
+
+---
+
+## Phase 4 Guardrails (Non-Negotiable)
+
+DO NOT introduce:
+- Coin cash-out
+- P2P transfers
+- Pooling
+- Discount/coupon framing
+- CPM/CTR language
+
+DO NOT:
+- Optimize for growth hacks
+- Add new features outside beta hardening
+- Change core loops (Skill → Demand → Clearing → Attribution)
 
 ---
 
 *Last updated: Feb 23, 2026*
 *Phase 3 Exit: APPROVED*
+*Phase 4: IN PROGRESS*
