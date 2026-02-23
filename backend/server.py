@@ -326,7 +326,9 @@ async def register(user_data: UserCreate):
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
     
+    # Remove sensitive/internal fields from response
     user_dict.pop('password_hash', None)
+    user_dict.pop('_id', None)  # MongoDB adds _id after insert
     
     return {
         "access_token": access_token,
