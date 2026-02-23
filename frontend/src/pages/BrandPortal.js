@@ -238,13 +238,29 @@ const BrandPortal = () => {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
+            {/* SANDBOX MODE BANNER */}
+            {dashboard?.environment?.is_sandbox && (
+              <div className="mb-6 p-4 bg-amber-500/20 border-2 border-dashed border-amber-500/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="bg-amber-500 text-black px-3 py-1 rounded font-bold text-sm">
+                    SANDBOX / TEST DATA
+                  </div>
+                  <p className="text-amber-300 text-sm">
+                    This dashboard shows test data. ROAS calculations will be available with live brand budgets.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Key Metrics */}
             <div className="grid md:grid-cols-4 gap-6 mb-8">
               <Card className="bg-gradient-to-br from-green-500/20 to-green-500/5 border-green-500/30">
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-400 text-sm">Verified Consumption</p>
+                      <p className="text-green-400 text-sm">
+                        {dashboard?.environment?.is_sandbox ? 'Test Consumption' : 'Verified Consumption'}
+                      </p>
                       <p className="text-3xl font-bold text-white">
                         ₹{(dashboard?.demand_metrics?.verified_consumption_value || 0).toLocaleString()}
                       </p>
@@ -282,16 +298,19 @@ const BrandPortal = () => {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/5 border-yellow-500/30">
+              <Card className={`bg-gradient-to-br ${dashboard?.environment?.is_sandbox ? 'from-slate-500/20 to-slate-500/5 border-slate-500/30' : 'from-yellow-500/20 to-yellow-500/5 border-yellow-500/30'}`}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-yellow-400 text-sm">ROAS</p>
+                      <p className={`text-sm ${dashboard?.environment?.is_sandbox ? 'text-slate-400' : 'text-yellow-400'}`}>ROAS</p>
                       <p className="text-3xl font-bold text-white">
-                        {dashboard?.roas?.value || 0}x
+                        {dashboard?.roas?.sandbox_hidden ? 'N/A' : `${dashboard?.roas?.value || 0}x`}
                       </p>
+                      {dashboard?.roas?.sandbox_hidden && (
+                        <p className="text-xs text-slate-500">Hidden in sandbox</p>
+                      )}
                     </div>
-                    <BarChart3 className="h-8 w-8 text-yellow-400" />
+                    <BarChart3 className={`h-8 w-8 ${dashboard?.environment?.is_sandbox ? 'text-slate-400' : 'text-yellow-400'}`} />
                   </div>
                 </CardContent>
               </Card>
@@ -306,14 +325,32 @@ const BrandPortal = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                  <p className="text-green-300 text-lg">
+                <div className={`p-4 ${dashboard?.environment?.is_sandbox ? 'bg-slate-500/10 border-slate-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-lg`}>
+                  <p className={`text-lg ${dashboard?.environment?.is_sandbox ? 'text-slate-300' : 'text-green-300'}`}>
                     {dashboard?.roas?.description || "Track your verified consumption metrics"}
                   </p>
                   <p className="text-slate-400 text-sm mt-2">
                     {dashboard?.roas?.note || "ROAS = Total Value of Goods Consumed / Budget Invested"}
                   </p>
                 </div>
+                
+                {/* Attribution Integrity Note */}
+                {dashboard?.attribution_integrity && (
+                  <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                    <p className="text-blue-300 text-sm font-medium">Attribution Integrity</p>
+                    <p className="text-slate-400 text-xs mt-1">
+                      {dashboard.attribution_integrity.explanation}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="text-xs text-slate-500">Not based on:</span>
+                      {dashboard.attribution_integrity.not_based_on?.map(item => (
+                        <Badge key={item} variant="outline" className="text-xs border-slate-600 text-slate-400">
+                          {item}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="grid md:grid-cols-2 gap-4 mt-6">
                   <div className="p-4 bg-slate-800/50 rounded-lg">
