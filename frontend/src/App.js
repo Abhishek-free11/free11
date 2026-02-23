@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import EarnCoins from './pages/EarnCoins';
+import Cricket from './pages/Cricket';
 import Shop from './pages/Shop';
 import MyOrders from './pages/MyOrders';
 import Profile from './pages/Profile';
@@ -29,6 +30,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/earn" element={<PrivateRoute><EarnCoins /></PrivateRoute>} />
+            <Route path="/cricket" element={<PrivateRoute><Cricket /></PrivateRoute>} />
             <Route path="/shop" element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
