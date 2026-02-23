@@ -480,7 +480,7 @@ async def spin_wheel(current_user: User = Depends(get_current_user)):
             current_user.id,
             coins_earned,
             "earned",
-            f"Spin the wheel"
+            "Spin the wheel"
         )
     
     activity = Activity(
@@ -520,7 +520,7 @@ async def scratch_card(current_user: User = Depends(get_current_user)):
             current_user.id,
             coins_earned,
             "earned",
-            f"Scratch card"
+            "Scratch card"
         )
     
     activity = Activity(
