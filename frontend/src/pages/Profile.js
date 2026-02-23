@@ -297,6 +297,41 @@ const Profile = () => {
                 )}
               </CardContent>
             </Card>
+
+            {/* Settings */}
+            <Card className="bg-slate-900/50 border-slate-800">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-slate-400" />
+                  Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Sound Settings */}
+                  <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      {soundsEnabled ? (
+                        <Volume2 className="h-5 w-5 text-green-400" />
+                      ) : (
+                        <VolumeX className="h-5 w-5 text-slate-500" />
+                      )}
+                      <div>
+                        <p className="text-white font-medium">Celebration Sounds</p>
+                        <p className="text-xs text-slate-400">
+                          Play sounds on correct predictions and voucher redemptions
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={soundsEnabled}
+                      onCheckedChange={handleSoundToggle}
+                      data-testid="sound-toggle"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
