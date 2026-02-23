@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import EmptyState from '../components/EmptyState';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Coins, Package, ShoppingCart, Tag, Shield, Lock } from 'lucide-react';
+import { Coins, Package, ShoppingCart, Tag, Shield, Lock, Gift, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 
@@ -21,6 +22,8 @@ const Shop = () => {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [isFirstRedemption, setIsFirstRedemption] = useState(true);
+  const [myVouchers, setMyVouchers] = useState([]);
+  const [loadingVouchers, setLoadingVouchers] = useState(false);
 
   const categories = [
     { value: 'all', label: 'All Products' },
