@@ -107,6 +107,10 @@ const Navbar = () => {
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/support')} className="text-slate-200 cursor-pointer">
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  Help & Support
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/admin')} className="text-slate-200 cursor-pointer">
                   <Shield className="mr-2 h-4 w-4" />
                   Admin
