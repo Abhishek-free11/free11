@@ -130,6 +130,16 @@ const Landing = () => {
           <p className="text-lg font-bold text-white mb-2">💯 Nobody Will Ever Lose on FREE11</p>
           <p>© 2025 FREE11.com - Your Time = Free Shopping List</p>
           <p className="text-sm mt-2">Available in English, हिंदी, and 6+ Indian Languages</p>
+          <div className="mt-4">
+            <Button 
+              variant="link" 
+              onClick={() => navigate('/faq')} 
+              className="text-slate-400 hover:text-yellow-400"
+              data-testid="footer-faq-link"
+            >
+              FAQ & Help
+            </Button>
+          </div>
         </div>
       </footer>
     </div>
