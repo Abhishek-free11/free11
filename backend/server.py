@@ -74,6 +74,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     name: str
     password: str
+    invite_code: Optional[str] = None  # Beta invite code
 
 class UserLogin(BaseModel):
     email: EmailStr
