@@ -1,0 +1,145 @@
+<analysis>**original_problem_statement:**
+The user's goal is to build a cricket prediction and engagement platform, FREE11, to capture the 60 million displaced Real Money Gaming (RMG) users in India. The project is a 5-week sprint to have a soft launch ready for the IPL 2026 tournament.
+
+**PRODUCT REQUIREMENTS (Demand Rail Thesis):**
+The initial rewards app concept has been pivoted to a Demand Rail Engine. This is a critical strategic shift.
+*   **Core Loop:** Users convert their time and cricket prediction skill into coins (a non-financial token), which they redeem for real-world goods. This creates a Skill - Rail flywheel.
+*   **Product Identity:** The platform is NOT a generic rewards app. Cricket prediction (Skill) is the primary feature. Ads and mini-games are demoted to Boosters or Accelerators.
+*   **Brand-Funded Model:** The shop's products are structurally brand-funded. Every redemption must be attributable to a brand and campaign for ROAS tracking.
+*   **PRORGA-Safe:** The coin economy is strictly controlled to be a non-financial instrument, compliant with Indian regulations. Coins are non-purchasable, non-withdrawable, and non-transferable. All gambling-related language is forbidden.
+*   **User Experience:** The UI/UX must reinforce the core loop by showing users their progress to the next real-world good, their skill effectiveness (prediction accuracy), and their consumption unlocked (total value of goods redeemed).
+*   **Progression & Ego:** The platform must include user levels, streaks, and badges to drive the Skill and Ego loops. Leaderboards must rank users by skill (accuracy), not by coins earned.
+*   **Impulse Redemption:** The shop must include low-value items (e.g., ₹10-₹50 mobile recharges) to allow users to experience the Consumption Unlock early and frequently.
+
+**User's preferred language**: English
+
+**what currently exists?**
+The application has been successfully refactored to align with the Demand Rail thesis.
+*   **Backend (FastAPI/MongoDB):** Includes user authentication (JWT), a cricket prediction API (mocked), user progression systems (levels, XP, badges), and a brand-funded product schema. A placeholder endpoint for a Brand ROAS dashboard is also implemented.
+*   **Frontend (React/Tailwind/shadcn):** The UI has been completely redesigned.
+    *   **Dashboard:** Highlights live cricket prediction as the primary Skill Earning activity and demotes other earning methods to a Boosters section. It prominently displays the user's rank, skill stats, and progress toward their next redeemable reward.
+    *   **Shop:** Features an impulse rewards tier with low-cost items, Brand-funded tags on products, and nudges for users who are close to affording an item.
+    *   **Profile:** Includes a My Wallet section with a clear PRORGA-safe disclaimer and tracks the total value of Consumption Unlocked.
+    - **Navigation:** The main navigation has been reordered to , reinforcing the product's core user journey.
+
+**Last working item**:
+-   **Last item agent was working:** The user requested one final tweak for Phase 1 before starting Phase 2: to add an FAQ item clarifying that FREE11 Coins are not money and are not withdrawable.
+-   **Status:** NOT STARTED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** backend testing agent for the API and frontend testing agent for the UI component.
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1: Add FAQ for Coin Policy (P0)**
+    -   **Description:** Implement a new FAQ section/page and add an entry with the user-provided text: FREE11 Coins are non-withdrawable reward tokens redeemable only for goods/services. No cash. No betting. Brand-funded rewards.
+    -   **Attempted fixes:** None.
+    -   **Next debug checklist:**
+        1.  **Backend:** Create a new API endpoint (e.g., ) to serve FAQ content, possibly from a new  collection in MongoDB.
+        2.  **Frontend:** Create a new  page component.
+        3.  **Frontend:** Add a route for  in .
+        4.  **Frontend:** Fetch and render the content from the  endpoint.
+        5.  **Frontend:** Add a link to the new FAQ page in a suitable location (e.g., the page footer or profile settings).
+    -   **Why fix this issue and what will be achieved with the fix?** This is a mandatory change requested by the user to enhance legal safety and user clarity.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** No.
+
+**Upcoming and Future Tasks**
+**Upcoming Tasks:**
+*   **P0: Phase 2: Clans & Leaderboards (Due: Mar 7, 2026):** Implement clans and leaderboards with strict guardrails:
+    *   Leaderboards must rank by skill metrics (accuracy, streaks), not total coins.
+    *   Clans are for belonging and challenges, with no coin pooling or P2P transfers.
+*   **P0: Phase 3: Automation & Brand Tools (Due: Mar 14, 2026):** Build the automated voucher delivery system, a simple support chatbot, and the UI for the brand dashboard.
+*   **P1: Phase 4: Beta Testing & Polish (Due: Mar 21, 2026):** Onboard beta users, fix bugs, and stabilize the application.
+*   **P1: Phase 5: Launch Prep & Soft Launch (Due: Mar 26, 2026):** Final server preparations and go live.
+
+**Future Tasks:**
+*   **Full Public Launch & Fundraising (Post-IPL 2026):** Use traction from the soft launch for a public release and to raise a seed round.
+*   **Monetization:** Integrate AdMob and premium subscription features.
+*   **Live Integrations:** Implement live cricket data APIs and ONDC/Q-Comm for fulfillment.
+
+**Completed work in this session**
+*   **Phase 1 Refactor (Demand Rail Alignment):** The entire application was successfully restructured from a generic rewards app into a Demand Rail Engine.
+    -   **Backend:** Updated DB schemas () for brand-funded products and user progression. Added new APIs for progression and a placeholder Brand ROAS dashboard (). Seeded new impulse rewards ().
+    -   **Frontend:** Created a new  hero-ing cricket predictions. Re-labeled  to . Overhauled  with impulse rewards and brand-funded tags. Created a  with a wallet disclaimer. Updated  to reflect the new user journey.
+
+**Known issue recurrence from previous fork**
+*   **Issue:** Agent has previously shown confusion with dates (day, month, year).
+*   **Recurrence count:** High (from initial handoff).
+*   **Status:** RESOLVED. The agent successfully followed the sprint timeline in this session, but this remains a historical risk to be aware of.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+*   **Backend:** FastAPI, Python, MongoDB (with Beanie ODM)
+*   **Frontend:** React, Tailwind CSS, shadcn/ui
+*   **Authentication:** JSON Web Tokens (JWT)
+*   **Core Product Concept:** Demand Rail Engine
+
+**key DB schema**
+*   ****: 
+*   ****: 
+*   ****: 
+*   **To be added**: , , 
+
+**All files of reference**
+*   ****: The main server file containing most of the application logic.
+*   ****: Contains all Pydantic/Beanie models for the database schema.
+*   ****: The new homepage, central to the Demand Rail thesis.
+*   ****: The redesigned shop with impulse rewards.
+*   ****: Contains the user's wallet and progression stats.
+
+**Areas that need refactoring**:
+*   The  file is monolithic and contains logic for auth, users, products, cricket, and progression. It should be broken down into dedicated router files (e.g., , , ) for better maintainability as the application grows.
+
+**key api endpoints**
+*   **Existing:** , , , , ,  (placeholder)
+*   **To be added:** , , 
+
+**Critical Info for New Agent**
+*   **The Thesis is King:** Your primary directive is to build features that align with the Demand Rail Engine thesis. Every decision should reinforce the  loop. Do not revert to generic rewards app patterns.
+*   **User is Strategic:** The user provides high-level strategic direction. Pay close attention to their feedback, as it dictates the product's core identity.
+*   **Timeline is Critical:** The current date is **late February 2026**. You have just completed Phase 1 of a 5-week sprint. Phase 2 (Clans & Leaderboards) is next.
+*   **Start with the FAQ:** Your first task is to implement the FAQ tweak requested by the user before moving on to Phase 2.
+
+**documents and test reports created in this job**
+*   
+*   
+*   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User:** Provided extensive, detailed feedback to pivot the entire application from a rewards app to a Demand Rail Engine. This was a major strategic shift. (Completed)
+2.  **Agent:** Confirmed understanding and proposed a phased implementation plan for the pivot. (Completed)
+3.  **User:** Approved the plan with a minor tweak to the order. (Completed)
+4.  **Agent:** Implemented all the user-facing changes for the pivot (new dashboard, shop, profile, etc.). (Completed)
+5.  **User:** Requested screenshots of the newly implemented UI. (Completed)
+6.  **Agent:** Provided a full suite of screenshots demonstrating the successful pivot. (Completed)
+7.  **User:** Expressed strong approval of the progress, confirming alignment with the thesis. Provided minor feedback and micro-tweaks. (Completed)
+8.  **Agent:** Implemented all micro-tweaks (e.g., Brand-funded tags, coins away nudges, wallet disclaimers). (Completed)
+9.  **User:** Confirmed Phase 1 is locked and gave the green light for Phase 2 (Clans & Leaderboards).
+10. **Pending User Request:** As a final Phase 1 item, the user asked the agent to add an FAQ item clarifying the non-financial nature of the coins before starting Phase 2. This is the immediate next task.
+
+**Project Health Check:**
+*   **Functional:** The application is fully functional and has been successfully refactored to meet the new strategic vision.
+*   **Mocked:** Cricket data and brand campaign data are currently mocked. Live integrations are planned for future phases.
+
+**3rd Party Integrations**
+*   **P0 - To Be Integrated:**
+    *   **Live Cricket Data API:** Required to make the prediction engine real.
+    *   **Amazon Gift Card / Voucher API:** For automating the redemption fulfillment process.
+*   **Future:**
+    *   Google AdMob SDK.
+    *   ONDC / Q-Comm APIs.
+
+**Testing status**
+-   **Testing agent used after significant changes:** YES. The agent successfully used the testing agent twice to validate the major refactoring work.
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None, but test reports are available at .
+
+**Credentials to test flow:**
+- User registration is open. You can create a new user with any email/password combination for testing.
+
+**What agent forgot to execute**
+- The agent has successfully executed all user requests so far. The only outstanding item is the user's final micro-tweak (the FAQ item), which was requested at the very end of the last session.</analysis>
