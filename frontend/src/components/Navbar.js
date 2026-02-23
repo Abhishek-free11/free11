@@ -33,16 +33,17 @@ const Navbar = () => {
 
   return (
     <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-2 sm:px-4">
+        {/* Top bar */}
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
             <img 
               src="/app-icon.png" 
               alt="FREE11" 
-              className="h-10 w-10 rounded-lg"
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg"
             />
-            <span className="text-2xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
+            <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
               FREE11
             </span>
           </div>
@@ -72,23 +73,25 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-3">
-            {/* Language Selector */}
-            <LanguageSelector variant="ghost" />
+          {/* User Menu - Compact on mobile */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Language Selector - Hide on small mobile */}
+            <div className="hidden sm:block">
+              <LanguageSelector variant="ghost" />
+            </div>
             
             {/* Coin Balance */}
-            <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-4 py-2 flex items-center gap-2">
-              <Coins className="h-5 w-5 text-yellow-400" />
-              <span className="font-bold text-white">{user?.coins_balance || 0}</span>
+            <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2">
+              <Coins className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
+              <span className="font-bold text-white text-sm sm:text-base">{user?.coins_balance || 0}</span>
             </div>
 
             {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <Avatar>
-                    <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-black font-bold">
+                <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full p-0">
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                    <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-amber-600 text-black font-bold text-sm sm:text-base">
                       {user?.name?.[0]?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
