@@ -289,7 +289,11 @@ async def validate_invite(request: ValidateInviteRequest):
         if isinstance(expires_at, str):
             expires = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
         else:
-            expires = expires_at
+            # Make timezone-aware if naive
+            if expires_at.tzinfo is None:
+                expires = expires_at.replace(tzinfo=timezone.utc)
+            else:
+                expires = expires_at
         if datetime.now(timezone.utc) > expires:
             raise HTTPException(status_code=400, detail="This invite code has expired")
     
