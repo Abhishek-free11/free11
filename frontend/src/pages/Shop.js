@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Coins, Package, ShoppingCart, Tag, Shield, Lock, Gift, CheckCircle } from 'lucide-react';
+import { Coins, Package, ShoppingCart, Tag, Shield, Lock, Gift, CheckCircle, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+import { playCelebrationSound } from '../utils/sounds';
+import confetti from 'canvas-confetti';
 
 const Shop = () => {
   const { user, updateUser } = useAuth();
@@ -24,6 +26,8 @@ const Shop = () => {
   const [isFirstRedemption, setIsFirstRedemption] = useState(true);
   const [myVouchers, setMyVouchers] = useState([]);
   const [loadingVouchers, setLoadingVouchers] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [lastRedeemedProduct, setLastRedeemedProduct] = useState(null);
 
   const categories = [
     { value: 'all', label: 'All Products' },
