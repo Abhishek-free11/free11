@@ -153,16 +153,42 @@ const Profile = () => {
                         FREE11 Coins are non-withdrawable reward tokens redeemable only for goods/services. 
                         No cash. No betting. Brand-funded rewards.
                       </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate('/faq')}
-                        className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
-                        data-testid="profile-faq-link"
-                      >
-                        <HelpCircle className="h-4 w-4 mr-2" />
-                        View FAQ
-                      </Button>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate('/faq')}
+                          className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                          data-testid="profile-faq-link"
+                        >
+                          <HelpCircle className="h-4 w-4 mr-2" />
+                          View FAQ
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={replayingTutorial}
+                          onClick={async () => {
+                            setReplayingTutorial(true);
+                            try {
+                              await api.resetTutorial();
+                              toast.success('Tutorial reset!', {
+                                description: 'Go to Dashboard to view the tutorial again.'
+                              });
+                              navigate('/');
+                            } catch (error) {
+                              toast.error('Failed to reset tutorial');
+                            } finally {
+                              setReplayingTutorial(false);
+                            }
+                          }}
+                          className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
+                          data-testid="replay-tutorial-btn"
+                        >
+                          <PlayCircle className="h-4 w-4 mr-2" />
+                          {replayingTutorial ? 'Resetting...' : 'Replay Tutorial'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
