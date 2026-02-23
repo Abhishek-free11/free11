@@ -6,13 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target, HelpCircle } from 'lucide-react';
+import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target, HelpCircle, PlayCircle } from 'lucide-react';
 import api from '../utils/api';
+import { toast } from 'sonner';
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
+  const [replayingTutorial, setReplayingTutorial] = useState(false);
   const [demandProgress, setDemandProgress] = useState(null);
 
   useEffect(() => {
