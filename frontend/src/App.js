@@ -15,6 +15,8 @@ import Admin from './pages/Admin';
 import FAQ from './pages/FAQ';
 import Clans from './pages/Clans';
 import Leaderboards from './pages/Leaderboards';
+import Support from './pages/Support';
+import BrandPortal from './pages/BrandPortal';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -41,6 +43,8 @@ function App() {
             <Route path="/faq" element={<FAQ />} />
             <Route path="/clans" element={<PrivateRoute><Clans /></PrivateRoute>} />
             <Route path="/leaderboards" element={<PrivateRoute><Leaderboards /></PrivateRoute>} />
+            <Route path="/support" element={<PrivateRoute><Support /></PrivateRoute>} />
+            <Route path="/brand" element={<BrandPortal />} />
           </Routes>
           <Toaster position="top-center" richColors />
         </div>
