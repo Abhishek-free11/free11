@@ -128,18 +128,18 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Nav */}
-        <div className="md:hidden flex items-center gap-1 pb-2 overflow-x-auto">
+        {/* Mobile Nav - Scrollable tabs */}
+        <div className="md:hidden flex items-center gap-1 pb-2 overflow-x-auto scrollbar-hide -mx-2 px-2">
           {navItems.map((item) => (
             <Button
               key={item.path}
               variant={isActive(item.path) ? 'default' : 'ghost'}
               size="sm"
               onClick={() => navigate(item.path)}
-              className={isActive(item.path) ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-300'}
+              className={`flex-shrink-0 px-3 ${isActive(item.path) ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-300'}`}
             >
-              <item.icon className="h-4 w-4 mr-2" />
-              {item.label}
+              <item.icon className="h-4 w-4 mr-1.5" />
+              <span className="text-xs">{item.label}</span>
             </Button>
           ))}
         </div>
