@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Coins, Package, ShoppingCart } from 'lucide-react';
+import { Coins, Package, ShoppingCart, Tag, Shield, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 
@@ -20,17 +20,22 @@ const Shop = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isFirstRedemption, setIsFirstRedemption] = useState(true);
 
   const categories = [
     { value: 'all', label: 'All Products' },
-    { value: 'electronics', label: 'Electronics' },
+    { value: 'recharge', label: 'Recharge' },
+    { value: 'ott', label: 'OTT' },
+    { value: 'food', label: 'Food' },
     { value: 'vouchers', label: 'Vouchers' },
+    { value: 'electronics', label: 'Electronics' },
     { value: 'fashion', label: 'Fashion' },
     { value: 'groceries', label: 'Groceries' },
   ];
 
   useEffect(() => {
     fetchProducts();
+    checkFirstRedemption();
   }, []);
 
   useEffect(() => {
@@ -44,10 +49,21 @@ const Shop = () => {
   const fetchProducts = async () => {
     try {
       const response = await api.getProducts();
-      setProducts(response.data);
-      setFilteredProducts(response.data);
+      // Sort by coin_price ascending so impulse rewards show first
+      const sorted = response.data.sort((a, b) => a.coin_price - b.coin_price);
+      setProducts(sorted);
+      setFilteredProducts(sorted);
     } catch (error) {
       console.error('Error fetching products:', error);
+    }
+  };
+
+  const checkFirstRedemption = async () => {
+    try {
+      const response = await api.getRedemptions();
+      setIsFirstRedemption(response.data.length === 0);
+    } catch (error) {
+      console.error('Error checking redemptions:', error);
     }
   };
 
@@ -69,12 +85,26 @@ const Shop = () => {
       updateUser({ coins_balance: response.data.new_balance });
       setSelectedProduct(null);
       setDeliveryAddress('');
+      setIsFirstRedemption(false);
       fetchProducts();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Redemption failed');
     } finally {
       setLoading(false);
     }
+  };
+
+  const getCoinsAway = (product) => {
+    const diff = product.coin_price - (user?.coins_balance || 0);
+    return diff > 0 ? diff : 0;
+  };
+
+  const canAfford = (product) => {
+    return (user?.coins_balance || 0) >= product.coin_price;
+  };
+
+  const meetsLevelRequirement = (product) => {
+    return (user?.level || 1) >= (product.min_level_required || 1);
   };
 
   return (
@@ -87,14 +117,14 @@ const Shop = () => {
         </div>
 
         {/* Category Tabs */}
-        <div className="mb-8">
+        <div className="mb-8 overflow-x-auto">
           <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="bg-slate-900/50 border border-slate-800">
+            <TabsList className="bg-slate-900/50 border border-slate-800 inline-flex w-auto">
               {categories.map((cat) => (
                 <TabsTrigger
                   key={cat.value}
                   value={cat.value}
-                  className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400"
+                  className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 whitespace-nowrap"
                   data-testid={`category-${cat.value}`}
                 >
                   {cat.label}
@@ -107,14 +137,42 @@ const Shop = () => {
         {/* Products Grid */}
         <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all" data-testid={`product-${product.id}`}>
-              <CardHeader className="p-0">
-                <div className="aspect-square bg-slate-800 rounded-t-lg overflow-hidden">
+            <Card 
+              key={product.id} 
+              className={`bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all ${
+                !meetsLevelRequirement(product) ? 'opacity-60' : ''
+              }`} 
+              data-testid={`product-${product.id}`}
+            >
+              <CardHeader className="p-0 relative">
+                <div className="aspect-square bg-slate-800 rounded-t-lg overflow-hidden relative">
                   <img
                     src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
+                  {/* Brand-funded tag */}
+                  {product.funded_by_brand && (
+                    <Badge className="absolute top-2 left-2 bg-green-500/90 text-white text-xs">
+                      <Tag className="h-3 w-3 mr-1" />
+                      Brand-funded
+                    </Badge>
+                  )}
+                  {/* Limited drop badge */}
+                  {product.is_limited_drop && (
+                    <Badge className="absolute top-2 right-2 bg-red-500/90 text-white text-xs animate-pulse">
+                      Limited Drop
+                    </Badge>
+                  )}
+                  {/* Level lock overlay */}
+                  {!meetsLevelRequirement(product) && (
+                    <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
+                      <div className="text-center">
+                        <Lock className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <p className="text-sm text-slate-300">Level {product.min_level_required}+ required</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="p-4">
@@ -137,16 +195,26 @@ const Shop = () => {
                     Stock: {product.stock}
                   </Badge>
                 </div>
+                
+                {/* "X coins away" nudge for locked items */}
+                {!canAfford(product) && meetsLevelRequirement(product) && (
+                  <div className="mt-3 p-2 bg-slate-800/50 rounded text-center">
+                    <p className="text-xs text-yellow-400">
+                      ⚡ {getCoinsAway(product)} coins away from unlocking!
+                    </p>
+                  </div>
+                )}
               </CardContent>
               <CardFooter className="p-4 pt-0">
                 <Button
                   onClick={() => setSelectedProduct(product)}
-                  disabled={product.stock === 0 || user?.coins_balance < product.coin_price}
+                  disabled={product.stock === 0 || !canAfford(product) || !meetsLevelRequirement(product)}
                   className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold"
                   data-testid={`redeem-product-${product.id}`}
                 >
                   {product.stock === 0 ? 'Out of Stock' :
-                   user?.coins_balance < product.coin_price ? 'Insufficient Coins' :
+                   !meetsLevelRequirement(product) ? `Level ${product.min_level_required} Required` :
+                   !canAfford(product) ? `${getCoinsAway(product)} Coins Away` :
                    'Redeem Now'}
                 </Button>
               </CardFooter>
@@ -179,11 +247,18 @@ const Shop = () => {
           {selectedProduct && (
             <div className="space-y-6">
               <div className="flex gap-4">
-                <img
-                  src={selectedProduct.image_url}
-                  alt={selectedProduct.name}
-                  className="w-24 h-24 object-cover rounded-lg bg-slate-800"
-                />
+                <div className="relative">
+                  <img
+                    src={selectedProduct.image_url}
+                    alt={selectedProduct.name}
+                    className="w-24 h-24 object-cover rounded-lg bg-slate-800"
+                  />
+                  {selectedProduct.funded_by_brand && (
+                    <Badge className="absolute -top-2 -left-2 bg-green-500 text-white text-xs">
+                      <Tag className="h-3 w-3" />
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-white text-lg">{selectedProduct.name}</h3>
                   <p className="text-sm text-slate-400">{selectedProduct.brand}</p>
@@ -220,6 +295,18 @@ const Shop = () => {
                   <span className="text-white font-bold">{user?.coins_balance - selectedProduct.coin_price} coins</span>
                 </div>
               </div>
+
+              {/* First Redemption Reminder */}
+              {isFirstRedemption && (
+                <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Shield className="h-4 w-4 text-blue-400 mt-0.5" />
+                    <p className="text-xs text-slate-300">
+                      <span className="font-medium">First redemption!</span> FREE11 Coins are brand-funded reward tokens. No cash. No betting. Enjoy your reward!
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
