@@ -259,19 +259,20 @@ const EarnCoins = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-8" data-testid="earn-coins-page">
         <div className="mb-8">
-          <h1 className="text-4xl font-black text-white mb-2">Earn FREE11 Coins 🪙</h1>
-          <p className="text-slate-400">Complete tasks and play games to earn more coins</p>
+          <h1 className="text-4xl font-black text-white mb-2">Coin Boosters ⚡</h1>
+          <p className="text-slate-400">Accelerate your earnings with bonus activities</p>
+          <p className="text-xs text-purple-400 mt-1">These are supplementary to skill-based cricket predictions</p>
         </div>
 
-        <Tabs defaultValue="games" className="space-y-6">
+        <Tabs defaultValue="ads" className="space-y-6">
           <TabsList className="bg-slate-900/50 border border-slate-800">
-            <TabsTrigger value="games" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400">
-              <Zap className="h-4 w-4 mr-2" />
-              Mini Games
-            </TabsTrigger>
             <TabsTrigger value="ads" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
               <Tv className="h-4 w-4 mr-2" />
               Watch Ads
+            </TabsTrigger>
+            <TabsTrigger value="games" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400">
+              <Zap className="h-4 w-4 mr-2" />
+              Mini Games
             </TabsTrigger>
             <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">
               <CheckCircle2 className="h-4 w-4 mr-2" />
