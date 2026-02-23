@@ -1232,6 +1232,14 @@ from leaderboards_routes import leaderboards_router
 from fulfillment_routes import fulfillment_router
 from support_routes import support_router
 from brand_routes import brand_router
+from email_service import EmailService
+
+# Initialize email service
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    EmailService.initialize(db, use_mock=not os.environ.get("RESEND_API_KEY"))
+    logger.info("Email service initialized")
 
 # Include additional routers under /api prefix
 app.include_router(cricket_router, prefix="/api")
