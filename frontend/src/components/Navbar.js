@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target } from 'lucide-react';
+import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target, Users, Trophy } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import {
   DropdownMenu,
@@ -23,9 +23,10 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', label: 'Home', icon: Home },
     { path: '/cricket', label: 'Predict', icon: Target, highlight: true }, // SKILL - Primary
+    { path: '/clans', label: 'Clans', icon: Users }, // NEW - Social
+    { path: '/leaderboards', label: 'Ranks', icon: Trophy }, // NEW - Leaderboards
     { path: '/earn', label: 'Boost', icon: Zap }, // BOOSTERS - Secondary
     { path: '/shop', label: 'Redeem', icon: ShoppingBag },
-    { path: '/orders', label: 'Orders', icon: Package },
   ];
 
   const isActive = (path) => location.pathname === path;
