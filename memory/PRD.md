@@ -1,64 +1,94 @@
-# FREE11 - Cricket Prediction Platform
+# FREE11 - Demand Rail Platform
 ## Product Requirements Document (PRD)
 
 ### Original Problem Statement
-Build a cricket prediction and engagement platform called FREE11 to capture the 60 million displaced Real Money Gaming (RMG) users in India following a government ban. The platform enables users to predict ball-by-ball outcomes during live IPL matches, earn coins, and redeem them for gift cards.
+Build a cricket prediction and engagement platform called FREE11 to capture the 60 million displaced Real Money Gaming (RMG) users in India following a government ban. The platform converts **attention + skill into consumption** (Demand Rail), not a generic earn-and-redeem app.
+
+### Core Thesis (Demand Rail)
+```
+Time → Skill → Coins → Goods → Utility → Repeat
+```
+- **Skill Loop:** Cricket predictions drive earning
+- **Consumption Loop:** Coins redeem for brand-funded goods
+- **Ego Loop:** Progression, badges, leaderboards on skill accuracy
 
 ### Target Audience
 - Former RMG/fantasy cricket users in India
-- Cricket enthusiasts who enjoy prediction-based engagement
-- Users seeking skill-based earning opportunities (PRORGA compliant)
+- Consumption-constrained cohort seeking ability-to-pay unlock
+- Brand partners seeking demand creation + ROAS
 
-### Core Requirements
-1. **Cricket Prediction Engine** - Ball-by-ball and match outcome predictions
-2. **Coin Reward System** - Earn coins for correct predictions
-3. **Watch Ads to Earn** - AdMob integration for additional earning
-4. **Gift Card Redemption** - Convert coins to Amazon gift cards
-5. **Social Features** - Clans and leaderboards (Phase 2)
+### PRORGA Compliance (Non-Financial Instrument)
+- ✅ Coins are **non-purchasable** (no buying with money)
+- ✅ Coins are **non-withdrawable** (no cash conversion)
+- ✅ Coins are **non-transferable** (no P2P transfer)
+- ✅ Coins are **redeemable only for goods/services**
+- ✅ **No gambling language** (no bet, stake, jackpot, win)
+- ✅ Brand-funded rewards (not platform-subsidized)
 
 ---
 
 ## Implementation Status
 
-### Phase 1: Cricket Core ✅ COMPLETE (Feb 23, 2026)
+### Phase 1: Demand Rail Restructure ✅ COMPLETE (Feb 23, 2026)
 
-#### Backend APIs Implemented:
-| Endpoint | Method | Status | Description |
-|----------|--------|--------|-------------|
-| `/api/cricket/matches` | GET | ✅ | List all matches |
-| `/api/cricket/matches/live` | GET | ✅ | Get live matches |
-| `/api/cricket/matches/{id}` | GET | ✅ | Get match details |
-| `/api/cricket/predict/ball` | POST | ✅ | Ball-by-ball prediction |
-| `/api/cricket/predict/match` | POST | ✅ | Match outcome prediction |
-| `/api/cricket/predictions/my` | GET | ✅ | User's predictions |
-| `/api/cricket/leaderboard` | GET | ✅ | Prediction leaderboard |
-| `/api/ads/config` | GET | ✅ | Ad configuration |
-| `/api/ads/status` | GET | ✅ | User's ad watch status |
-| `/api/ads/reward` | POST | ✅ | Claim ad reward |
-| `/api/gift-cards/available` | GET | ✅ | Available gift cards |
-| `/api/gift-cards/redeem` | POST | ✅ | Redeem gift card |
-| `/api/gift-cards/admin/upload-single` | POST | ✅ | Upload single card |
-| `/api/gift-cards/admin/upload-bulk` | POST | ✅ | Bulk CSV upload |
+#### Key Changes:
+1. **Cricket as Hero** - Dashboard centers on Live Cricket Prediction
+2. **Boosters (not Core)** - Ads/Games labeled as "Coin Boosters" 
+3. **PRORGA Disclaimer** - Banner on dashboard
+4. **Brand-Funded Schema** - Products have brand_id, campaign_id
+5. **Impulse Rewards** - Starting at ₹10 (Mobile Recharge)
+6. **Progression System** - Ranks, badges, skill-based leaderboard
+7. **Demand Progress** - Shows path to next real-world reward
 
-#### Frontend Pages:
-- ✅ Cricket.js - Live match display, ball prediction UI, leaderboard
-- ✅ EarnCoins.js - Updated with "Watch Ads" tab (+50 coins/ad, 5/day limit)
-- ✅ Navbar.js - Added Cricket navigation link
+#### Backend Schema Updates:
+| Model | New Fields |
+|-------|-----------|
+| **User** | prediction_streak, total_predictions, correct_predictions, consumption_unlocked, badges |
+| **Product** | brand_id, campaign_id, funded_by_brand, fulfillment_type, min_level_required, is_limited_drop |
+| **Redemption** | brand_id, campaign_id, fulfillment_type, sku, brand_cost |
+| **CoinTransaction** | source (skill/booster/bonus) |
 
-#### Key Features:
-- **Ball Prediction Rewards:** 5 coins (dot/1/2/3), 10 coins (4), 15 coins (6/wicket)
-- **Ad Rewards:** 50 coins per ad, max 5 ads/day (250 potential coins)
-- **Gift Card System:** Admin bulk upload, auto-distribution on redemption
+#### New APIs:
+| Endpoint | Purpose |
+|----------|---------|
+| `/api/user/demand-progress` | Progress to next reward, prediction stats, consumption unlocked |
+| `/api/user/badges` | User's earned badges |
+| `/api/admin/brand-roas` | Brand ROAS dashboard (placeholder) |
+| `/api/leaderboard` | Skill-based leaderboard (accuracy, not coins) |
+
+#### Product Tiers:
+| Tier | Examples | Coin Range | Level Required |
+|------|----------|------------|----------------|
+| Impulse | Mobile Recharge, CCD Coffee, OTT Trials | 10-50 | 1 (Rookie) |
+| Mid-Tier | Swiggy ₹100-200, Amazon ₹100-500, Groceries | 100-500 | 1-2 |
+| Premium | Flipkart ₹1000, Nike Shoes | 1000-5000 | 3-4 (Pro/Expert) |
+| Aspirational | Samsung S24, iPhone 15 Pro | 35000-50000 | 5 (Legend) |
+
+#### User Ranks:
+| Level | Name | Min XP | Color |
+|-------|------|--------|-------|
+| 1 | Rookie | 0 | Slate |
+| 2 | Amateur | 100 | Green |
+| 3 | Pro | 500 | Blue |
+| 4 | Expert | 1500 | Purple |
+| 5 | Legend | 5000 | Gold |
+
+#### Badges System:
+- first_prediction, prediction_pro (50% accuracy), streak_7, streak_30
+- first_redemption, hot_streak (5 correct in a row)
+- level_pro, level_expert, level_legend
+- consumption_100 (₹100 unlocked), consumption_500
+
+### Previous Phase: Cricket Core ✅ (Feb 22, 2026)
+- Ball-by-ball prediction engine
+- Watch ads to earn (50 coins/ad, 5/day)
+- Gift card system with admin bulk upload
 
 ### MVP1 Features (Previously Complete):
-- ✅ User authentication (JWT)
-- ✅ Daily check-in with streak bonus
-- ✅ Mini-games (Quiz, Spin Wheel, Scratch Card)
-- ✅ Task completion system
-- ✅ Product shop with redemption
-- ✅ User profile and leaderboard
-- ✅ Admin dashboard
-- ✅ Multi-language support (8 Indian languages)
+- User authentication (JWT)
+- Daily check-in with streak bonus
+- Mini-games (Quiz, Spin Wheel, Scratch Card)
+- Multi-language support (8 Indian languages)
 
 ---
 
@@ -66,26 +96,25 @@ Build a cricket prediction and engagement platform called FREE11 to capture the 
 
 ### Phase 2: Clans & Leaderboards (Due: Mar 7, 2026)
 - [ ] Clan creation and joining
-- [ ] Clan leaderboards
-- [ ] Friend system
-- [ ] Clan-based challenges
+- [ ] Clan vs Clan leaderboards
+- [ ] Friend system with challenges
 
 ### Phase 3: Automation & Brand Tools (Due: Mar 14, 2026)
-- [ ] Automated voucher delivery notifications
+- [ ] Automated voucher delivery
 - [ ] Customer support chatbot
 - [ ] Brand partner self-service dashboard
-- [ ] Analytics dashboard
+- [ ] Full ROAS analytics
 
-### Phase 4: Beta Testing & Polish (Due: Mar 21, 2026)
-- [ ] Beta user onboarding
-- [ ] Bug fixes and stability
-- [ ] Performance optimization
-- [ ] UI/UX refinements
+### Phase 4: Economy Controls (Due: Mar 21, 2026)
+- [ ] Dynamic pricing on products
+- [ ] Limited-time drops
+- [ ] Shop tiers (unlock better items at higher levels)
+- [ ] Soft expiry warning for inactive coins (30-60 days)
 
-### Phase 5: Launch Prep (Due: Mar 26, 2026)
-- [ ] Server scaling
-- [ ] Monitoring setup
-- [ ] IPL 2026 soft launch
+### Phase 5: ONDC/Q-Comm Integration (Post-IPL)
+- [ ] ONDC BAP adapter
+- [ ] Q-Commerce integration
+- [ ] D2C fulfillment
 
 ---
 
@@ -94,51 +123,49 @@ Build a cricket prediction and engagement platform called FREE11 to capture the 
 ```
 /app/
 ├── backend/
-│   ├── server.py          # Main FastAPI app
+│   ├── server.py          # Main FastAPI app + models
 │   ├── cricket_routes.py  # Cricket prediction APIs
 │   ├── ads_routes.py      # AdMob reward APIs
 │   ├── gift_card_routes.py # Gift card management
-│   └── cricket_service.py  # Cricket data service
+│   └── tests/
+│       └── test_demand_rail.py
 └── frontend/
     └── src/
         ├── pages/
-        │   ├── Cricket.js      # Cricket predictions UI
-        │   ├── EarnCoins.js    # Earn page with Watch Ads
-        │   └── [other pages]
-        └── utils/
-            └── api.js          # API client
+        │   ├── Dashboard.js    # Demand Rail dashboard
+        │   ├── Cricket.js      # Cricket predictions
+        │   ├── EarnCoins.js    # Coin Boosters
+        │   └── Shop.js         # Redemption shop
+        └── components/
+            └── Navbar.js       # Updated hierarchy
 ```
 
-### Database Collections:
-- `users` - User accounts
-- `cricket_matches` - IPL match data
-- `ball_predictions` - Ball-by-ball predictions
-- `match_predictions` - Match outcome predictions
-- `ad_watches` - Ad viewing records
-- `gift_cards` - Gift card inventory
-- `gift_card_redemptions` - Redemption records
+### Navigation Hierarchy (Demand Rail):
+```
+Home → Predict (🏏) → Boost → Redeem → Orders
+        ↑ SKILL        ↑ BONUS    ↑ CONSUMPTION
+```
 
 ---
 
 ## Testing Status
 
-### Test Report: iteration_1.json
-- **Backend:** 22/22 tests passed (100%)
-- **Frontend:** All features working (100%)
-- **Test User:** cricket@free11.com / cricket123
+### Test Reports:
+- `/app/test_reports/iteration_1.json` - Cricket Core (100% pass)
+- `/app/test_reports/iteration_2.json` - Demand Rail (100% pass)
 
-### Known Limitations (Demo Mode):
-- Cricket match data uses mock IPL 2026 fixtures
-- Ball prediction outcomes are randomly simulated
-- AdMob uses test ad unit IDs (3-second simulation)
+### Test Credentials:
+- Email: `cricket@free11.com`
+- Password: `cricket123`
 
 ---
 
-## Key Metrics (Target for Soft Launch)
+## Key Metrics (Soft Launch Target - Mar 26, 2026)
 - DAU: 10,000 users
 - Predictions/day: 50,000+
-- Ad impressions/day: 25,000+
-- Gift cards redeemed/week: 500+
+- Skill accuracy average: 30-40%
+- Impulse redemptions/day: 500+
+- Brand ROAS: 3-5x
 
 ---
 
