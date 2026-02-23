@@ -98,7 +98,7 @@ const Landing = () => {
             { step: '1', title: 'Join Beta', desc: 'Use your invite code to sign up', icon: Users, color: 'yellow' },
             { step: '2', title: 'Make Calls', desc: 'Call ball-by-ball during live matches', icon: Zap, color: 'red' },
             { step: '3', title: 'Get Coins', desc: 'Correct calls earn FREE11 Coins', icon: Gift, color: 'blue' },
-            { step: '4', title: 'Redeem & Enjoy', desc: 'Get products delivered to you', icon: TrendingUp, color: 'yellow' }
+            { step: '4', title: 'Get Products', desc: 'Use coins for real vouchers', icon: TrendingUp, color: 'yellow' }
           ].map((item) => (
             <div key={item.step} className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center">
@@ -114,11 +114,11 @@ const Landing = () => {
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
-        <Card className="bg-gradient-to-r from-yellow-600 via-red-600 to-blue-600 p-12 text-center border-0">
-          <h2 className="text-4xl font-black text-white mb-4">Ready to Start Earning?</h2>
-          <p className="text-xl text-white/90 mb-8">Join thousands of users transforming their time into real value</p>
+        <Card className="bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-600 p-12 text-center border-0">
+          <h2 className="text-4xl font-black text-white mb-4">Make the right calls. Get real products.</h2>
+          <p className="text-xl text-white/90 mb-8">Join the IPL 2026 Beta with your invite code</p>
           <Button size="lg" onClick={() => navigate('/register')} className="bg-black hover:bg-slate-900 text-white font-bold text-lg px-10 py-6" data-testid="final-cta-btn">
-            Get Started Free
+            Join Beta Now
             <Coins className="ml-2 h-5 w-5" />
           </Button>
         </Card>
@@ -127,7 +127,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-slate-800 bg-slate-950/50 backdrop-blur-sm py-8 mt-20">
         <div className="container mx-auto px-4 text-center text-slate-400">
-          <p className="text-lg font-bold text-white mb-2">💯 Nobody Will Ever Lose on FREE11</p>
+          <p className="text-lg font-bold text-white mb-2">Skill → Coins → Real Products</p>
           <p>© 2025 FREE11.com - Your Time = Free Shopping List</p>
           <p className="text-sm mt-2">Available in English, हिंदी, and 6+ Indian Languages</p>
           <div className="mt-4">
