@@ -1229,6 +1229,9 @@ from gift_card_routes import gift_card_router
 from ads_routes import ads_router
 from clans_routes import clans_router
 from leaderboards_routes import leaderboards_router
+from fulfillment_routes import fulfillment_router
+from support_routes import support_router
+from brand_routes import brand_router
 
 # Include additional routers under /api prefix
 app.include_router(cricket_router, prefix="/api")
@@ -1236,6 +1239,9 @@ app.include_router(gift_card_router, prefix="/api")
 app.include_router(ads_router, prefix="/api")
 app.include_router(clans_router, prefix="/api")
 app.include_router(leaderboards_router, prefix="/api")
+app.include_router(fulfillment_router, prefix="/api")
+app.include_router(support_router, prefix="/api")
+app.include_router(brand_router, prefix="/api")
 
 # CORS
 app.add_middleware(
