@@ -126,6 +126,13 @@ class Redemption(BaseModel):
     status: str = "pending"  # pending, confirmed, shipped, delivered
     order_date: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     delivery_address: Optional[str] = None
+    # Brand attribution (Demand Rail)
+    brand_id: Optional[str] = None
+    campaign_id: Optional[str] = None
+    fulfillment_type: str = "direct"
+    # For ROAS tracking
+    sku: Optional[str] = None
+    brand_cost: Optional[int] = None  # Cost to brand in paise
 
 class RedemptionCreate(BaseModel):
     product_id: str
