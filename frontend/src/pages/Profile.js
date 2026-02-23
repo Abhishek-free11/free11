@@ -11,6 +11,7 @@ import api from '../utils/api';
 
 const Profile = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [demandProgress, setDemandProgress] = useState(null);
 
