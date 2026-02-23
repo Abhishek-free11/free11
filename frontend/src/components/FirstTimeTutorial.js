@@ -10,7 +10,7 @@ const TUTORIAL_SCREENS = [
     iconBg: 'bg-red-500/20',
     title: 'Make the right calls.',
     subtitle: 'Get real products.',
-    description: 'Call ball-by-ball outcomes during live IPL matches. Your accuracy determines your rewards.',
+    description: 'Call ball-by-ball outcomes during live cricket matches. Your accuracy determines your rewards.',
   },
   {
     id: 2,

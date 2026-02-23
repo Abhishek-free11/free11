@@ -79,7 +79,7 @@ Hey [Name]!
 You're invited to try FREE11 — Make the right calls. Get real products.
 
 🏏 What you'll do:
-- Call ball-by-ball outcomes during IPL matches
+- Call ball-by-ball outcomes during cricket matches
 - Get FREE11 Coins for correct calls
 - Use coins to get vouchers (Swiggy, Amazon, recharges)
 
