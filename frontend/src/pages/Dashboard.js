@@ -317,7 +317,7 @@ const Dashboard = () => {
                   <p className="text-xs text-slate-500 text-center">{liveMatch.venue}</p>
                 </div>
                 
-                {/* Quick Predict CTA */}
+                {/* Quick Predict CTA - Enhanced */}
                 <div className="flex flex-col justify-center items-center">
                   <p className="text-slate-400 mb-3">Predict the next ball outcome</p>
                   <Button 
@@ -326,10 +326,10 @@ const Dashboard = () => {
                     data-testid="predict-now-btn"
                   >
                     <Target className="mr-2 h-5 w-5" />
-                    Predict Now
+                    Start Predicting
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
-                  <p className="text-xs text-slate-500 mt-2">Earn 5-15 coins per correct prediction</p>
+                  <p className="text-xs text-green-400 mt-2 font-medium">Earn 5-15 coins per correct prediction</p>
                 </div>
               </div>
             ) : (
