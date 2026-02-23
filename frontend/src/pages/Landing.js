@@ -47,7 +47,7 @@ const Landing = () => {
             </span>
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Call ball-by-ball outcomes during IPL matches. Earn FREE11 Coins for correct calls. Use coins for vouchers, recharges, and more.
+            Call ball-by-ball outcomes during cricket matches. Earn FREE11 Coins for correct calls. Use coins for vouchers, recharges, and more.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6">
             <Button size="lg" onClick={() => navigate('/register')} className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-bold text-lg px-8 py-6" data-testid="hero-cta-btn">
@@ -69,7 +69,7 @@ const Landing = () => {
               <Zap className="h-7 w-7 text-yellow-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Call the Action</h3>
-            <p className="text-slate-400">Make ball-by-ball calls during live IPL matches. Get coins for correct calls.</p>
+            <p className="text-slate-400">Make ball-by-ball calls during live cricket matches. Get coins for correct calls.</p>
           </Card>
 
           <Card className="bg-slate-900/50 border-slate-800 p-8 hover:border-red-500/50 transition-all">
