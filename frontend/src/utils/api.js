@@ -47,6 +47,9 @@ export const api = {
   getAnalytics: () => axios.get(`${API}/admin/analytics`, { headers: getAuthHeader() }),
   getBrandRoas: () => axios.get(`${API}/admin/brand-roas`, { headers: getAuthHeader() }),
 
+  // FAQ
+  getFAQ: () => axios.get(`${API}/faq`),
+
   // ==================== CRICKET APIs ====================
   // Matches
   getMatches: (status) => axios.get(`${API}/cricket/matches${status ? `?status=${status}` : ''}`),

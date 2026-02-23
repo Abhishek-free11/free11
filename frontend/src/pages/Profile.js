@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target, HelpCircle } from 'lucide-react';
 import api from '../utils/api';
 
 const Profile = () => {
