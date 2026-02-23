@@ -37,7 +37,7 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="inline-block">
             <div className="bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30 rounded-full px-6 py-2 mb-6">
-              <span className="text-yellow-400 font-semibold">IPL 2026 Beta is Live 🏏</span>
+              <span className="text-yellow-400 font-semibold">Closed Beta is Live 🏏</span>
             </div>
           </div>
           <h1 className="text-6xl md:text-7xl font-black text-white leading-tight">
