@@ -99,11 +99,16 @@ class TestLoadRedemptions:
                 ) as resp:
                     products = await resp.json()
                 
-                if not products.get("products"):
-                    # No products available - still counts as successful API response
-                    return {"success": True, "error": "No products", "time": time.time() - start}
+                # Products endpoint returns a list directly
+                if not products or (isinstance(products, dict) and not products.get("products")):
+                    return {"success": True, "reason": "No products", "time": time.time() - start}
                 
-                product = products["products"][0]
+                # Get the actual products list
+                product_list = products if isinstance(products, list) else products.get("products", [])
+                if not product_list:
+                    return {"success": True, "reason": "Empty product list", "time": time.time() - start}
+                
+                product = product_list[0]
                 
                 # Attempt redemption (will fail due to coins, but tests the flow)
                 async with session.post(
