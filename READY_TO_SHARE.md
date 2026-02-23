@@ -18,7 +18,7 @@ Your friends and family can:
 
 ### **Live URL:**
 ```
-https://decl-gateway.preview.emergentagent.com/
+https://prediction-hub-67.preview.emergentagent.com/
 ```
 
 ### **Test Credentials** (or create new account):
@@ -291,7 +291,7 @@ When testing with friends/family, ask:
 
 ## 🔗 **Quick Links**
 
-- **Live App**: https://decl-gateway.preview.emergentagent.com/
+- **Live App**: https://prediction-hub-67.preview.emergentagent.com/
 - **Backend API**: Running on port 8001
 - **Test Account**: demo@free11.com / password123
 
