@@ -6,9 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target, HelpCircle, PlayCircle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { User, Mail, Coins, Trophy, Flame, TrendingUp, Award, Wallet, Shield, Target, HelpCircle, PlayCircle, Volume2, VolumeX, Settings } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'sonner';
+import { isSoundEnabled, setSoundEnabled } from '../utils/sounds';
 
 const Profile = () => {
   const { user } = useAuth();
