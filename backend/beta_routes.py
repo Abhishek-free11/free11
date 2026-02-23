@@ -232,7 +232,7 @@ async def resume_invites(user = Depends(get_current_user)):
 
 
 @beta_router.get("/admin/settings")
-async def get_beta_settings_endpoint(user: dict = Depends(get_current_user)):
+async def get_beta_settings_endpoint(user = Depends(get_current_user)):
     """Get current beta settings"""
     settings = await get_beta_settings()
     
