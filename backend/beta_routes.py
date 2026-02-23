@@ -129,7 +129,7 @@ async def list_invites(
     status: Optional[str] = None,  # active, used, revoked, expired
     source: Optional[str] = None,
     limit: int = 50,
-    user: dict = Depends(get_current_user)
+    user = Depends(get_current_user)
 ):
     """List all invite codes with filters"""
     query = {}
