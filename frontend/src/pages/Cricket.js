@@ -14,8 +14,16 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
-import { playCoinSound, playCelebrationSound } from '../utils/sounds';
+import { playCorrectPredictionSound, playCelebrationSound } from '../utils/sounds';
 import confetti from 'canvas-confetti';
+
+// Celebration messages for correct predictions
+const CELEBRATION_MESSAGES = [
+  { title: 'Nice call! 🎯', description: 'Your prediction was spot on!' },
+  { title: 'Well played! 🏏', description: 'You read that one perfectly!' },
+  { title: 'Sharp eye! 👁️', description: 'Great prediction!' },
+  { title: 'Nailed it! ✨', description: 'Your cricket instincts are on point!' },
+];
 
 const Cricket = () => {
   const { user, updateUser } = useAuth();
@@ -27,6 +35,7 @@ const Cricket = () => {
   const [myPredictions, setMyPredictions] = useState({ ball_predictions: [], match_predictions: [], stats: {} });
   const [leaderboard, setLeaderboard] = useState([]);
   const [predictDialogOpen, setPredictDialogOpen] = useState(false);
+  const [correctPredictionCount, setCorrectPredictionCount] = useState(0);
 
   // Ball prediction outcomes
   const BALL_OUTCOMES = [
