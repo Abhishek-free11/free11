@@ -513,7 +513,21 @@ const BrandPortal = () => {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics">
-            <Card className="bg-slate-900/50 border-slate-800">
+            {/* SANDBOX MODE BANNER */}
+            {analytics?.environment?.is_sandbox && (
+              <div className="mb-6 p-4 bg-amber-500/20 border-2 border-dashed border-amber-500/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="bg-amber-500 text-black px-3 py-1 rounded font-bold text-sm">
+                    SANDBOX / TEST DATA
+                  </div>
+                  <p className="text-amber-300 text-sm">
+                    Analytics shown are from test data. Production metrics will be available with live campaigns.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <Card className="bg-slate-900/50 border-slate-800 mb-6">
               <CardHeader>
                 <CardTitle className="text-white">Demand Analytics</CardTitle>
                 <CardDescription className="text-slate-400">
@@ -521,20 +535,65 @@ const BrandPortal = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Top Products */}
+                {/* Attribution Note */}
+                {analytics?.attribution_note && (
+                  <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                    <p className="text-blue-300 text-sm">{analytics.attribution_note}</p>
+                  </div>
+                )}
+
+                {/* ROAS by Campaign */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-bold text-white mb-4">Top Performing Products</h3>
-                  {analytics?.top_products?.length > 0 ? (
+                  <h3 className="text-lg font-bold text-white mb-4">ROAS by Campaign</h3>
+                  {analytics?.roas_by_campaign?.length > 0 ? (
                     <div className="space-y-3">
-                      {analytics.top_products.map((product, idx) => (
+                      {analytics.roas_by_campaign.map((campaign, idx) => (
+                        <div key={idx} className="p-4 bg-slate-800/50 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white font-medium">{campaign.campaign_name}</span>
+                            <span className={`font-bold ${analytics?.environment?.is_sandbox ? 'text-slate-400' : 'text-green-400'}`}>
+                              {campaign.roas_display || 'N/A'}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <p className="text-slate-500">Redemptions</p>
+                              <p className="text-blue-400 font-medium">{campaign.redemptions}</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500">Value Delivered</p>
+                              <p className="text-green-400 font-medium">₹{campaign.value_delivered}</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-500">Budget</p>
+                              <p className="text-yellow-400 font-medium">₹{campaign.budget_allocated}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-slate-400">No campaign data yet</p>
+                  )}
+                </div>
+
+                {/* ROAS by SKU (Top Products) */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-bold text-white mb-4">ROAS by SKU (Top Products)</h3>
+                  {(analytics?.roas_by_sku || analytics?.top_products)?.length > 0 ? (
+                    <div className="space-y-3">
+                      {(analytics.roas_by_sku || analytics.top_products).map((product, idx) => (
                         <div key={idx} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                           <div className="flex items-center gap-3">
                             <span className="text-slate-500 font-mono w-6">#{idx + 1}</span>
-                            <span className="text-white">{product.product_name}</span>
+                            <div>
+                              <span className="text-white">{product.product_name || product.name}</span>
+                              <p className="text-xs text-slate-500">₹{product.value_per_unit || product.cost_per_redemption} per redemption</p>
+                            </div>
                           </div>
                           <div className="text-right">
                             <p className="text-blue-400 font-bold">{product.redemptions} redeemed</p>
-                            <p className="text-xs text-slate-500">₹{product.value_per_unit} per unit</p>
+                            <p className="text-xs text-green-400">₹{product.total_value_delivered || (product.redemptions * (product.value_per_unit || 0))} delivered</p>
                           </div>
                         </div>
                       ))}
@@ -543,6 +602,22 @@ const BrandPortal = () => {
                     <p className="text-slate-400">No product data yet</p>
                   )}
                 </div>
+
+                {/* ROAS by Day - Daily Trend */}
+                {analytics?.roas_by_day?.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold text-white mb-4">Daily Redemptions (Last 14 Days)</h3>
+                    <div className="grid grid-cols-7 gap-2">
+                      {analytics.roas_by_day.slice(0, 14).map((day, idx) => (
+                        <div key={idx} className="text-center p-2 bg-slate-800/50 rounded-lg">
+                          <p className="text-xs text-slate-500">{day.date?.split('-').slice(1).join('/')}</p>
+                          <p className="text-sm font-bold text-blue-400">{day.redemptions}</p>
+                          <p className="text-xs text-green-400">₹{day.value_delivered}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Consumer Segments */}
                 <div>
