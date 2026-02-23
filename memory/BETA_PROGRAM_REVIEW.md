@@ -53,6 +53,11 @@
    - Do they feel achievement on correct predictions?
    - Any gambling-adjacent confusion?
 
+4. **Do users clearly understand this is not gambling or cash-out?**
+   - No confusion between FREE11 Coins and real money
+   - No expectation of "winning" or "betting"
+   - Clear understanding: skill → coins → goods (not cash)
+
 ### How Feedback is Collected
 
 | Channel | Purpose | Setup |
