@@ -42,6 +42,11 @@ export const api = {
   getDemandProgress: () => axios.get(`${API}/user/demand-progress`, { headers: getAuthHeader() }),
   getUserBadges: () => axios.get(`${API}/user/badges`, { headers: getAuthHeader() }),
   getLeaderboard: () => axios.get(`${API}/leaderboard`),
+  
+  // Tutorial
+  getTutorialStatus: () => axios.get(`${API}/user/tutorial-status`, { headers: getAuthHeader() }),
+  completeTutorial: () => axios.post(`${API}/user/complete-tutorial`, {}, { headers: getAuthHeader() }),
+  resetTutorial: () => axios.post(`${API}/user/reset-tutorial`, {}, { headers: getAuthHeader() }),
 
   // Admin
   getAnalytics: () => axios.get(`${API}/admin/analytics`, { headers: getAuthHeader() }),
