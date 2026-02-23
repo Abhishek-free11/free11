@@ -361,7 +361,54 @@ DO NOT:
 
 ---
 
+## CLOSED BETA LAUNCHED - Feb 23, 2026
+
+### Beta Launch Status
+- **Status:** OPEN
+- **Invite Cap:** 200 users
+- **Invites Generated:** 58 (50 for wave 1)
+- **Invites Used:** 3
+- **Beta Users Onboarded:** 0 (awaiting distribution)
+
+### Initial Invite Codes (Wave 1 - 10 samples)
+```
+FREE11-Z2QL1GSR
+FREE11-T294PKU7
+FREE11-ODTMFJWI
+FREE11-XCLUXQL4
+FREE11-XYWMDFMW
+FREE11-3ASRK8OY
+FREE11-B2QAM9WP
+FREE11-6CLYSTE6
+FREE11-SBS6D8MS
+FREE11-1JXY32U6
+```
+*Source: beta_launch_wave1 | Expires: 30 days*
+
+### Pilot Brand Onboarded
+- **Brand:** Swiggy
+- **Email:** pilot@swiggy.in / pilot123
+- **Campaign:** IPL 2026 Beta Trial
+- **Budget:** ₹25,000 allocated
+- **Product:** Swiggy ₹100 Voucher (200 coins)
+- **Status:** Active, Verified
+
+### Guardrails Implemented
+1. ✅ Confetti/sound trigger only once per redemption (inside API success handler)
+2. ✅ Celebration sound default OFF (opt-in via Profile → Settings)
+3. ✅ First-correct-prediction tracked via user.correct_predictions (persisted)
+
+### Monitoring Checklist (48-72 hours)
+- [ ] Track user registrations via invite codes
+- [ ] Monitor redemption flow completion
+- [ ] Identify support ticket patterns
+- [ ] Capture first beta report
+- [ ] Document top 3 friction points
+
+---
+
 *Last updated: Feb 23, 2026*
 *Phase 3 Exit: APPROVED*
 *Phase 4: IN PROGRESS*
 *Pre-Beta UX: COMPLETE*
+*CLOSED BETA: LAUNCHED*
