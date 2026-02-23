@@ -39,6 +39,7 @@ Time → Skill → Coins → Goods → Utility → Repeat
 5. **Impulse Rewards** - Starting at ₹10 (Mobile Recharge)
 6. **Progression System** - Ranks, badges, skill-based leaderboard
 7. **Demand Progress** - Shows path to next real-world reward
+8. **FAQ Page** - PRORGA-compliant coin policy disclaimer prominently displayed ✅ (Added Feb 2026)
 
 #### Backend Schema Updates:
 | Model | New Fields |
@@ -55,6 +56,7 @@ Time → Skill → Coins → Goods → Utility → Repeat
 | `/api/user/badges` | User's earned badges |
 | `/api/admin/brand-roas` | Brand ROAS dashboard (placeholder) |
 | `/api/leaderboard` | Skill-based leaderboard (accuracy, not coins) |
+| `/api/faq` | FAQ items with PRORGA-compliant coin policy |
 
 #### Product Tiers:
 | Tier | Examples | Coin Range | Level Required |
@@ -169,5 +171,5 @@ Home → Predict (🏏) → Boost → Redeem → Orders
 
 ---
 
-*Last Updated: February 23, 2026*
-*Sprint Day: 2 of 33*
+*Last Updated: February 24, 2026*
+*Sprint Day: 3 of 33*
