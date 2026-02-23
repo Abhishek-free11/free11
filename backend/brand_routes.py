@@ -182,7 +182,7 @@ async def register_brand(data: BrandRegisterRequest):
     # Create account
     brand = BrandAccount(
         email=data.email,
-        password_hash=pwd_context.hash(data.password),
+        password_hash=hash_brand_password(data.password),
         company_name=data.company_name,
         contact_name=data.contact_name,
         brand_name=data.brand_name,
