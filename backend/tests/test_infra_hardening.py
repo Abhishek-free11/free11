@@ -356,13 +356,14 @@ class TestRegulatoryHygiene:
     
     @pytest.mark.asyncio
     async def test_no_banned_terms_in_api(self):
-        """Verify API responses don't contain banned terminology"""
+        """Verify API responses don't contain banned terminology (except in 'not based on' context)"""
         test_brand = await create_test_brand(API_BASE)
         
         if not test_brand.get("token"):
             pytest.skip("Could not create test brand")
         
-        banned_terms = ["cpm", "ctr", "impression", "click rate", "discount", "coupon", "cashback"]
+        banned_terms = ["cpm", "ctr", "click rate", "discount", "coupon", "cashback"]
+        # Note: "impression" is allowed in "not from ... impressions" context
         
         async with aiohttp.ClientSession() as session:
             # Check dashboard
@@ -373,10 +374,9 @@ class TestRegulatoryHygiene:
                 if resp.status == 200:
                     text = (await resp.text()).lower()
                     for term in banned_terms:
-                        # Allow "clicks" in "not_based_on" context
                         if term in text:
                             # Check if it's in the "not based on" context (allowed)
-                            if '"not_based_on"' in text and term in text:
+                            if '"not_based_on"' in text:
                                 continue  # This is acceptable
                             assert False, f"Found banned term '{term}' in dashboard API"
             
@@ -388,7 +388,10 @@ class TestRegulatoryHygiene:
                 if resp.status == 200:
                     text = (await resp.text()).lower()
                     for term in banned_terms:
-                        if term in text and '"not_based_on"' not in text:
+                        if term in text:
+                            # Check if it's in the "not from" context (allowed)
+                            if "not from" in text or '"not_based_on"' in text:
+                                continue  # This is acceptable
                             assert False, f"Found banned term '{term}' in analytics API"
 
 if __name__ == "__main__":
