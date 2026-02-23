@@ -99,18 +99,39 @@ const Cricket = () => {
       });
 
       if (response.data.is_correct) {
-        playCelebrationSound();
+        // Track correct predictions for first-time message
+        const newCount = correctPredictionCount + 1;
+        setCorrectPredictionCount(newCount);
+        
+        // Play celebration sound (respects user preference)
+        playCorrectPredictionSound();
+        
+        // Confetti burst
         confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#10b981', '#fbbf24', '#3b82f6']
         });
-        toast.success(response.data.message, {
-          description: `+${response.data.coins_earned} coins! 🏏`
-        });
+        
+        // Choose celebration message
+        const isFirstCorrect = newCount === 1;
+        if (isFirstCorrect) {
+          // First correct prediction - special message
+          toast.success('Nice call! 🎯', {
+            description: `Nice start. +${response.data.coins_earned} coins!`
+          });
+        } else {
+          // Random celebration message
+          const celebration = CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
+          toast.success(celebration.title, {
+            description: `+${response.data.coins_earned} coins earned!`
+          });
+        }
+        
         updateUser({ coins_balance: response.data.new_balance });
       } else {
-        toast.info(response.data.message);
+        toast.info(response.data.message || 'Not this time — keep predicting!');
       }
 
       // Refresh predictions
