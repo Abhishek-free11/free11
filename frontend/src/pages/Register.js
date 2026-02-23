@@ -154,7 +154,7 @@ const Register = () => {
                     onChange={(e) => {
                       const code = e.target.value.toUpperCase();
                       setInviteCode(code);
-                      if (code.length >= 10) {
+                      if (code.length >= 5) {
                         validateInviteCode(code);
                       } else {
                         setInviteValid(null);
