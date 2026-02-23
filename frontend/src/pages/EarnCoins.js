@@ -269,11 +269,92 @@ const EarnCoins = () => {
               <Zap className="h-4 w-4 mr-2" />
               Mini Games
             </TabsTrigger>
+            <TabsTrigger value="ads" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
+              <Tv className="h-4 w-4 mr-2" />
+              Watch Ads
+            </TabsTrigger>
             <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">
               <CheckCircle2 className="h-4 w-4 mr-2" />
               Tasks
             </TabsTrigger>
           </TabsList>
+
+          {/* Watch Ads Tab */}
+          <TabsContent value="ads" className="space-y-6">
+            <Card className="bg-gradient-to-br from-green-500/10 via-slate-900/50 to-slate-900/50 border-green-500/30" data-testid="watch-ads-section">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-green-500/20 rounded-xl">
+                      <Tv className="h-8 w-8 text-green-400" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl text-white">Watch & Earn</CardTitle>
+                      <CardDescription className="text-slate-400">
+                        Watch short video ads to earn coins instantly!
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-green-500/20 text-green-400 text-lg px-4 py-2">
+                    +{adStatus?.reward_per_ad || 50} coins/ad
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Ad Status */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
+                    <p className="text-3xl font-bold text-green-400">{adStatus?.ads_remaining || 0}</p>
+                    <p className="text-sm text-slate-400">Ads Left Today</p>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
+                    <p className="text-3xl font-bold text-yellow-400">{adStatus?.ads_watched_today || 0}</p>
+                    <p className="text-sm text-slate-400">Watched Today</p>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
+                    <p className="text-3xl font-bold text-blue-400">{adStatus?.potential_earnings || 0}</p>
+                    <p className="text-sm text-slate-400">Potential Coins</p>
+                  </div>
+                </div>
+
+                {/* Watch Button */}
+                {watchingAd ? (
+                  <div className="space-y-4">
+                    <div className="bg-slate-800 rounded-lg p-8 text-center">
+                      <div className="text-6xl animate-pulse mb-4">📺</div>
+                      <p className="text-white font-medium mb-2">Watching Ad...</p>
+                      <Progress value={adProgress} className="h-3" />
+                      <p className="text-sm text-slate-400 mt-2">{Math.round(adProgress)}% complete</p>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={handleWatchAd}
+                    disabled={!adStatus?.can_watch || watchingAd}
+                    className="w-full h-16 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg"
+                    data-testid="watch-ad-btn"
+                  >
+                    <Play className="h-6 w-6 mr-2" />
+                    {adStatus?.can_watch ? `Watch Ad (+${adStatus?.reward_per_ad} coins)` : 'Daily Limit Reached'}
+                  </Button>
+                )}
+
+                {/* Daily Progress */}
+                <div className="bg-slate-800/30 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-slate-400">Daily Progress</span>
+                    <span className="text-white font-medium">
+                      {adStatus?.ads_watched_today || 0}/{adStatus?.max_per_day || 5}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={((adStatus?.ads_watched_today || 0) / (adStatus?.max_per_day || 5)) * 100} 
+                    className="h-2"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Mini Games Tab */}
           <TabsContent value="games" className="space-y-6">
