@@ -86,12 +86,31 @@ const Shop = () => {
         product_id: selectedProduct.id,
         delivery_address: deliveryAddress
       });
-      toast.success('🎉 Redemption successful!', {
-        description: `${selectedProduct.name} will be delivered soon`
-      });
-      updateUser({ coins_balance: response.data.new_balance });
+      
+      // Store product for success dialog
+      setLastRedeemedProduct(selectedProduct);
+      
+      // Close redemption dialog
       setSelectedProduct(null);
       setDeliveryAddress('');
+      
+      // Update user balance
+      updateUser({ coins_balance: response.data.new_balance });
+      
+      // Play celebration sound (respects user preference)
+      playCelebrationSound();
+      
+      // Confetti burst for delight
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#fbbf24', '#10b981', '#3b82f6', '#a855f7']
+      });
+      
+      // Show success dialog with delight message
+      setShowSuccessDialog(true);
+      
       setIsFirstRedemption(false);
       fetchProducts();
     } catch (error) {
