@@ -1,29 +1,78 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Coins } from 'lucide-react';
+import { Coins, Ticket, CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import api from '../utils/api';
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { register } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
+  const [inviteValid, setInviteValid] = useState(null);
+  const [inviteChecking, setInviteChecking] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [betaRequired, setBetaRequired] = useState(true);
+
+  // Check if invite code is in URL
+  useEffect(() => {
+    const codeFromUrl = searchParams.get('invite') || searchParams.get('code');
+    if (codeFromUrl) {
+      setInviteCode(codeFromUrl);
+      validateInviteCode(codeFromUrl);
+    }
+    
+    // Check beta status
+    const checkBetaStatus = async () => {
+      try {
+        const response = await api.getBetaStatus();
+        setBetaRequired(response.data.require_invite_code);
+      } catch (error) {
+        console.error('Error checking beta status:', error);
+      }
+    };
+    checkBetaStatus();
+  }, [searchParams]);
+
+  const validateInviteCode = async (code) => {
+    if (!code || code.length < 5) {
+      setInviteValid(null);
+      return;
+    }
+    
+    setInviteChecking(true);
+    try {
+      const response = await api.validateInvite(code);
+      setInviteValid(response.data.valid);
+    } catch (error) {
+      setInviteValid(false);
+    } finally {
+      setInviteChecking(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (betaRequired && !inviteValid) {
+      toast.error('Valid invite code required for beta access');
+      return;
+    }
+    
     setLoading(true);
 
     try {
-      await register(email, name, password);
+      await register(email, name, password, inviteCode || null);
       toast.success('🎉 Welcome! You got 50 FREE coins!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Registration failed');
     } finally {
