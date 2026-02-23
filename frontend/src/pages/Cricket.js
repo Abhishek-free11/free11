@@ -99,14 +99,10 @@ const Cricket = () => {
       });
 
       if (response.data.is_correct) {
-        // Track correct predictions for first-time message
-        const newCount = correctPredictionCount + 1;
-        setCorrectPredictionCount(newCount);
-        
-        // Play celebration sound (respects user preference)
+        // Play celebration sound (respects user preference - OFF by default)
         playCorrectPredictionSound();
         
-        // Confetti burst
+        // Confetti burst - triggers only once per successful prediction
         confetti({
           particleCount: 80,
           spread: 60,
@@ -114,15 +110,15 @@ const Cricket = () => {
           colors: ['#10b981', '#fbbf24', '#3b82f6']
         });
         
-        // Choose celebration message
-        const isFirstCorrect = newCount === 1;
-        if (isFirstCorrect) {
-          // First correct prediction - special message
+        // First-ever correct prediction check (persisted via user.correct_predictions)
+        const isFirstEverCorrect = (user?.correct_predictions || 0) === 0;
+        if (isFirstEverCorrect) {
+          // First correct prediction ever - special message
           toast.success('Nice call! 🎯', {
             description: `Nice start. +${response.data.coins_earned} coins!`
           });
         } else {
-          // Random celebration message
+          // Random celebration message for subsequent predictions
           const celebration = CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)];
           toast.success(celebration.title, {
             description: `+${response.data.coins_earned} coins earned!`
