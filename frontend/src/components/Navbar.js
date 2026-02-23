@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target, Users, Trophy } from 'lucide-react';
+import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target, Users, Trophy, MessageCircle } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import {
   DropdownMenu,
