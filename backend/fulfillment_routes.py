@@ -23,6 +23,32 @@ logger = logging.getLogger(__name__)
 
 fulfillment_router = APIRouter(prefix="/fulfillment", tags=["Fulfillment"])
 
+# Lazy imports to avoid circular dependency
+_db = None
+_get_current_user = None
+_User = None
+
+def _get_imports():
+    """Lazy import to avoid circular dependency"""
+    global _db, _get_current_user, _User
+    if _db is None:
+        from server import db, get_current_user, User
+        _db = db
+        _get_current_user = get_current_user
+        _User = User
+    return _db, _get_current_user, _User
+
+# Convenience accessors
+@property
+def db():
+    return _get_imports()[0]
+
+def get_current_user():
+    return _get_imports()[1]
+
+def User():
+    return _get_imports()[2]
+
 # Constants for retry logic
 MAX_RETRY_ATTEMPTS = 3
 RETRY_DELAY_SECONDS = [30, 120, 300]  # 30s, 2min, 5min
