@@ -145,12 +145,22 @@ const Profile = () => {
                 <div className="p-4 bg-slate-800/50 border border-slate-700 rounded-lg" data-testid="coin-disclaimer">
                   <div className="flex items-start gap-3">
                     <Shield className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm text-slate-300 font-medium mb-1">About FREE11 Coins</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-400 mb-3">
                         FREE11 Coins are non-withdrawable reward tokens redeemable only for goods/services. 
                         No cash. No betting. Brand-funded rewards.
                       </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/faq')}
+                        className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+                        data-testid="profile-faq-link"
+                      >
+                        <HelpCircle className="h-4 w-4 mr-2" />
+                        View FAQ
+                      </Button>
                     </div>
                   </div>
                 </div>
