@@ -10,7 +10,6 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone, timedelta
-from passlib.context import CryptContext
 import jwt
 import uuid
 import os
