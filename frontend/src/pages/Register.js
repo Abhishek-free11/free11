@@ -111,7 +111,7 @@ const Register = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-200">Email</Label>
+              <Label htmlFor="email" className="text-slate-200 text-sm">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -119,12 +119,12 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-slate-800 border-slate-700 text-white"
+                className="bg-slate-800 border-slate-700 text-white h-11"
                 data-testid="email-input"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-200">Password</Label>
+              <Label htmlFor="password" className="text-slate-200 text-sm">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -134,7 +134,7 @@ const Register = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-slate-800 border-slate-700 text-white pr-10"
+                  className="bg-slate-800 border-slate-700 text-white pr-10 h-11"
                   data-testid="password-input"
                 />
                 <button
