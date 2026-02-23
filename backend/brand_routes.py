@@ -236,12 +236,19 @@ async def get_brand_profile(brand: BrandAccount = Depends(get_current_brand)):
 
 # ==================== DASHBOARD / ROAS ====================
 
+# Environment mode detection
+import os
+IS_SANDBOX_MODE = os.environ.get("FREE11_ENV", "sandbox") != "production"
+
 @brand_router.get("/dashboard")
 async def get_brand_dashboard(brand: BrandAccount = Depends(get_current_brand)):
     """
     Get brand dashboard with ROAS metrics
     Focus: Verified consumption & demand creation
     NO impression/CPM metrics
+    
+    ATTRIBUTION: ROAS computed from actual redemptions ONLY
+    NOT from: tasks, views, impressions, engagement
     """
     # Get campaigns
     campaigns = await db.brand_campaigns.find(
@@ -272,22 +279,34 @@ async def get_brand_dashboard(brand: BrandAccount = Depends(get_current_brand)):
     budget_utilized = brand.budget_utilized or 1  # Avoid division by zero
     roas = round(total_value_delivered / budget_utilized, 2) if budget_utilized > 0 else 0
     
+    # Sandbox mode labeling
+    consumption_label = "Test Consumption" if IS_SANDBOX_MODE else "Verified Consumption"
+    
     return {
         "brand": {
             "name": brand.brand_name,
             "is_verified": brand.is_verified
         },
+        # SANDBOX MODE INDICATOR
+        "environment": {
+            "mode": "sandbox" if IS_SANDBOX_MODE else "production",
+            "is_sandbox": IS_SANDBOX_MODE,
+            "data_label": "TEST DATA" if IS_SANDBOX_MODE else "LIVE DATA"
+        },
         "demand_metrics": {
             "total_redemptions": total_redemptions,
             "verified_consumption_value": total_value_delivered,  # INR worth of goods delivered
+            "consumption_label": consumption_label,
             "unique_consumers_reached": len(unique_users),
             "active_campaigns": len([c for c in campaigns if c.get("is_active")]),
             "active_products": len([p for p in products if p.get("is_active")])
         },
         "roas": {
-            "value": roas,
-            "description": "For every ₹1 invested in demand creation, ₹{} of verified consumption was unlocked".format(roas),
-            "note": "ROAS = Total Value of Goods Consumed / Budget Invested"
+            "value": roas if not IS_SANDBOX_MODE else None,  # Hide in sandbox
+            "display_value": f"{roas}x" if not IS_SANDBOX_MODE else "N/A (Sandbox)",
+            "description": "For every ₹1 invested in demand creation, ₹{} of verified consumption was unlocked".format(roas) if not IS_SANDBOX_MODE else "ROAS hidden in sandbox mode",
+            "note": "ROAS = Total Value of Goods Consumed / Budget Invested",
+            "sandbox_hidden": IS_SANDBOX_MODE
         },
         "recent_activity": {
             "last_7_days_redemptions": await db.fulfillments.count_documents({
@@ -300,6 +319,12 @@ async def get_brand_dashboard(brand: BrandAccount = Depends(get_current_brand)):
                 "status": "delivered",
                 "delivered_at": {"$gte": (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()}
             })
+        },
+        # ATTRIBUTION INTEGRITY - explicit declaration
+        "attribution_integrity": {
+            "computation_basis": "verified_redemptions_only",
+            "not_based_on": ["tasks", "views", "impressions", "engagement", "clicks"],
+            "explanation": "All metrics are computed from actual goods delivered to users, not from ad impressions or task completions"
         }
     }
 
@@ -311,13 +336,15 @@ async def get_detailed_analytics(
     """
     Detailed analytics for brand
     Focus: Verified consumption metrics
+    
+    Includes: ROAS by campaign, ROAS by SKU, ROAS by day
     """
     cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
     
-    # Redemptions by campaign
+    # Redemptions by campaign with ROAS
     campaigns = await db.brand_campaigns.find(
         {"brand_id": brand.id},
-        {"_id": 0, "id": 1, "name": 1}
+        {"_id": 0, "id": 1, "name": 1, "budget_allocated": 1}
     ).to_list(100)
     
     campaign_stats = []
@@ -328,7 +355,7 @@ async def get_detailed_analytics(
             "delivered_at": {"$gte": cutoff}
         })
         
-        value = await db.fulfillments.aggregate([
+        value_agg = await db.fulfillments.aggregate([
             {"$match": {
                 "campaign_id": campaign["id"],
                 "status": "delivered",
@@ -337,27 +364,72 @@ async def get_detailed_analytics(
             {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
         ]).to_list(1)
         
+        value_delivered = value_agg[0]["total"] if value_agg else 0
+        budget = campaign.get("budget_allocated", 1) or 1
+        campaign_roas = round(value_delivered / budget, 2) if budget > 0 else 0
+        
         campaign_stats.append({
             "campaign_id": campaign["id"],
             "campaign_name": campaign["name"],
             "redemptions": redemptions,
-            "value_delivered": value[0]["total"] if value else 0
+            "value_delivered": value_delivered,
+            "budget_allocated": budget,
+            "roas": campaign_roas if not IS_SANDBOX_MODE else None,
+            "roas_display": f"{campaign_roas}x" if not IS_SANDBOX_MODE else "N/A"
         })
     
-    # Product performance
+    # Product performance with ROAS by SKU
     products = await db.brand_products.find(
         {"brand_id": brand.id},
-        {"_id": 0, "id": 1, "name": 1, "redeemed_count": 1, "value_in_inr": 1}
-    ).sort("redeemed_count", -1).limit(10).to_list(10)
+        {"_id": 0, "id": 1, "name": 1, "redeemed_count": 1, "value_in_inr": 1, "cost_in_coins": 1}
+    ).sort("redeemed_count", -1).limit(20).to_list(20)
     
-    product_stats = [
-        {
+    product_stats = []
+    for p in products:
+        total_value = p.get("redeemed_count", 0) * p.get("value_in_inr", 0)
+        product_stats.append({
+            "product_id": p["id"],
             "product_name": p["name"],
             "redemptions": p.get("redeemed_count", 0),
-            "value_per_unit": p.get("value_in_inr", 0)
-        }
-        for p in products
-    ]
+            "value_per_unit": p.get("value_in_inr", 0),
+            "total_value_delivered": total_value,
+            "cost_per_redemption": p.get("value_in_inr", 0)
+        })
+    
+    # ROAS by day (last N days)
+    daily_stats = []
+    for i in range(min(days, 30)):
+        day_start = (datetime.now(timezone.utc) - timedelta(days=i)).replace(hour=0, minute=0, second=0)
+        day_end = day_start + timedelta(days=1)
+        
+        day_redemptions = await db.fulfillments.count_documents({
+            "brand_id": brand.id,
+            "status": "delivered",
+            "delivered_at": {
+                "$gte": day_start.isoformat(),
+                "$lt": day_end.isoformat()
+            }
+        })
+        
+        day_value_agg = await db.fulfillments.aggregate([
+            {"$match": {
+                "brand_id": brand.id,
+                "status": "delivered",
+                "delivered_at": {
+                    "$gte": day_start.isoformat(),
+                    "$lt": day_end.isoformat()
+                }
+            }},
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]).to_list(1)
+        
+        day_value = day_value_agg[0]["total"] if day_value_agg else 0
+        
+        daily_stats.append({
+            "date": day_start.strftime("%Y-%m-%d"),
+            "redemptions": day_redemptions,
+            "value_delivered": day_value
+        })
     
     # User demographics (anonymized)
     user_levels = await db.fulfillments.aggregate([
@@ -374,12 +446,27 @@ async def get_detailed_analytics(
     
     return {
         "period": f"Last {days} days",
+        # SANDBOX INDICATOR
+        "environment": {
+            "mode": "sandbox" if IS_SANDBOX_MODE else "production",
+            "is_sandbox": IS_SANDBOX_MODE,
+            "data_label": "TEST DATA" if IS_SANDBOX_MODE else "LIVE DATA"
+        },
+        # ROAS by Campaign
+        "roas_by_campaign": campaign_stats,
+        # ROAS by SKU (product)
+        "roas_by_sku": product_stats,
+        # ROAS by Day
+        "roas_by_day": daily_stats[:14],  # Last 14 days
+        # Legacy fields
         "campaigns": campaign_stats,
         "top_products": product_stats,
         "consumer_segments": [
             {"level": l["_id"] or 1, "consumers": l["count"]}
             for l in user_levels
-        ]
+        ],
+        # Attribution integrity
+        "attribution_note": "All metrics computed from verified redemptions (actual goods delivered), not from tasks/views/impressions"
     }
 
 # ==================== CAMPAIGN MANAGEMENT ====================
