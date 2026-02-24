@@ -54,6 +54,7 @@ class User(BaseModel):
     name: str
     password_hash: Optional[str] = None
     google_id: Optional[str] = None
+    is_admin: bool = False
     coins_balance: int = 0
     level: int = 1
     xp: int = 0
