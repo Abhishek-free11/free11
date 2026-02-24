@@ -109,6 +109,23 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Age validation
+    if (!ageValid) {
+      toast.error('You must be 18 years or older to use FREE11');
+      return;
+    }
+    
+    // State validation
+    if (stateBlocked) {
+      toast.error('Fantasy sports are not available in your state');
+      return;
+    }
+    
+    if (!state) {
+      toast.error('Please select your state');
+      return;
+    }
+    
     if (betaRequired && !inviteValid) {
       toast.error('Valid invite code required for beta access');
       return;
