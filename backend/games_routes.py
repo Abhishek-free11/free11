@@ -1,16 +1,26 @@
 """
 Card Games Routes for FREE11
 Rummy, Teen Patti, Poker - all coins only
+WebSocket-based real-time multiplayer
 """
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, WebSocket, WebSocketDisconnect, Query
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict
 from datetime import datetime, timezone
 import uuid
 import random
+import json
+import logging
 
 from server import db, get_current_user, add_coins, User
+from websocket_manager import game_manager, GameSession
+from card_game_logic import (
+    get_teen_patti_hand_name, get_poker_hand_name, get_best_poker_hand
+)
+
+logger = logging.getLogger(__name__)
 
 games_router = APIRouter(prefix="/games", tags=["Card Games"])
 
