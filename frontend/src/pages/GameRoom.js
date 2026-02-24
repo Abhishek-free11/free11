@@ -344,6 +344,53 @@ const GameRoom = () => {
     }
   };
   
+  // Generate invite link
+  const getInviteLink = () => {
+    const baseUrl = window.location.origin;
+    const code = room?.room_code || roomId;
+    return `${baseUrl}/games?join=${code}`;
+  };
+  
+  // Share invite link
+  const shareInvite = async () => {
+    const inviteLink = getInviteLink();
+    const gameName = gameInfo.name;
+    const shareText = `Join my ${gameName} game on FREE11! 🎴\n\n${room?.room_code ? `Room Code: ${room.room_code}\n` : ''}Click to join: ${inviteLink}`;
+    
+    // Try native share API first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Join ${gameName} on FREE11`,
+          text: shareText,
+          url: inviteLink
+        });
+        toast.success('Invite shared!');
+        return;
+      } catch (err) {
+        // User cancelled or share failed, fall back to clipboard
+        if (err.name !== 'AbortError') {
+          console.log('Share failed, copying to clipboard');
+        }
+      }
+    }
+    
+    // Fallback: copy to clipboard
+    try {
+      await navigator.clipboard.writeText(shareText);
+      toast.success('Invite link copied! Share it with your friends.');
+    } catch (err) {
+      toast.error('Failed to copy invite link');
+    }
+  };
+  
+  // Copy just the invite link
+  const copyInviteLink = () => {
+    const inviteLink = getInviteLink();
+    navigator.clipboard.writeText(inviteLink);
+    toast.success('Invite link copied!');
+  };
+  
   // Determine if it's user's turn
   const isMyTurn = gameState?.current_player === user?.id;
   const myHand = gameState?.hands?.[user?.id] || [];
