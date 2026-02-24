@@ -1435,7 +1435,7 @@ async def startup_event():
 app.include_router(cricket_router, prefix="/api")
 app.include_router(gift_card_router, prefix="/api")
 app.include_router(clans_router, prefix="/api")
-app.include_router(leaderboards_routes, prefix="/api")
+app.include_router(leaderboards_router, prefix="/api")
 app.include_router(fulfillment_router, prefix="/api")
 app.include_router(support_router, prefix="/api")
 app.include_router(brand_router, prefix="/api")
