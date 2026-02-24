@@ -231,7 +231,7 @@ async def predict_ball(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Make a ball-by-ball prediction
+    Make a ball-by-ball prediction (LIMITED to 20 per match)
     Valid predictions: 0, 1, 2, 3, 4, 6, wicket, wide, no_ball, dot
     """
     valid_predictions = ['0', '1', '2', '3', '4', '6', 'wicket', 'wide', 'no_ball', 'dot']
@@ -244,6 +244,18 @@ async def predict_ball(
         raise HTTPException(status_code=404, detail="Match not found")
     if match.get("status") != "live":
         raise HTTPException(status_code=400, detail="Can only predict on live matches")
+    
+    # Check ball prediction limit per match
+    user_ball_count = await db.ball_predictions.count_documents({
+        "user_id": current_user.id,
+        "match_id": prediction_data.match_id
+    })
+    
+    if user_ball_count >= BALL_PREDICTION_LIMIT_PER_MATCH:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Ball prediction limit reached ({BALL_PREDICTION_LIMIT_PER_MATCH} per match). Try Over Outcome or Match Winner predictions!"
+        )
     
     # Check if already predicted for this ball
     existing = await db.ball_predictions.find_one({
