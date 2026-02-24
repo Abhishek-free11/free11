@@ -162,17 +162,17 @@ const CardGames = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-950 pb-20 md:pb-0">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Club className="h-8 w-8 text-yellow-400" />
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
+            <Club className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
             Card Games
           </h1>
-          <p className="text-slate-400 mt-2">
+          <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
             Play classic card games and earn coins. FREE to play!
           </p>
         </div>
