@@ -266,9 +266,9 @@ const EarnCoins = () => {
 
         <Tabs defaultValue="ads" className="space-y-6">
           <TabsList className="bg-slate-900/50 border border-slate-800">
-            <TabsTrigger value="ads" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
+            <TabsTrigger value="howto" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
               <Tv className="h-4 w-4 mr-2" />
-              Watch Ads
+              How to Earn
             </TabsTrigger>
             <TabsTrigger value="games" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400">
               <Zap className="h-4 w-4 mr-2" />
@@ -280,78 +280,71 @@ const EarnCoins = () => {
             </TabsTrigger>
           </TabsList>
 
-          {/* Watch Ads Tab */}
-          <TabsContent value="ads" className="space-y-6">
-            <Card className="bg-gradient-to-br from-green-500/10 via-slate-900/50 to-slate-900/50 border-green-500/30" data-testid="watch-ads-section">
+          {/* How to Earn Tab */}
+          <TabsContent value="howto" className="space-y-6">
+            <Card className="bg-gradient-to-br from-green-500/10 via-slate-900/50 to-slate-900/50 border-green-500/30" data-testid="how-to-earn-section">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-green-500/20 rounded-xl">
-                      <Tv className="h-8 w-8 text-green-400" />
+                <CardTitle className="text-2xl text-white">Ways to Earn Coins</CardTitle>
+                <CardDescription className="text-slate-400">
+                  FREE11 coins are earned through skill and engagement - never purchased!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="bg-slate-800/50 rounded-lg p-4 flex items-start gap-4">
+                    <div className="p-2 bg-yellow-500/20 rounded-lg">
+                      <Trophy className="h-6 w-6 text-yellow-400" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl text-white">Watch & Earn</CardTitle>
-                      <CardDescription className="text-slate-400">
-                        Watch short video ads to earn coins instantly!
-                      </CardDescription>
+                      <h4 className="font-bold text-white">Fantasy Contests</h4>
+                      <p className="text-sm text-slate-400">Build your dream team and compete in contests. Top performers win big coins!</p>
+                      <p className="text-xs text-yellow-400 mt-1">Up to 500 coins per contest</p>
                     </div>
                   </div>
-                  <Badge className="bg-green-500/20 text-green-400 text-lg px-4 py-2">
-                    +{adStatus?.reward_per_ad || 50} coins/ad
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Ad Status */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-3xl font-bold text-green-400">{adStatus?.ads_remaining || 0}</p>
-                    <p className="text-sm text-slate-400">Ads Left Today</p>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-3xl font-bold text-yellow-400">{adStatus?.ads_watched_today || 0}</p>
-                    <p className="text-sm text-slate-400">Watched Today</p>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-3xl font-bold text-blue-400">{adStatus?.potential_earnings || 0}</p>
-                    <p className="text-sm text-slate-400">Potential Coins</p>
-                  </div>
-                </div>
-
-                {/* Watch Button */}
-                {watchingAd ? (
-                  <div className="space-y-4">
-                    <div className="bg-slate-800 rounded-lg p-8 text-center">
-                      <div className="text-6xl animate-pulse mb-4">📺</div>
-                      <p className="text-white font-medium mb-2">Watching Ad...</p>
-                      <Progress value={adProgress} className="h-3" />
-                      <p className="text-sm text-slate-400 mt-2">{Math.round(adProgress)}% complete</p>
+                  
+                  <div className="bg-slate-800/50 rounded-lg p-4 flex items-start gap-4">
+                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                      <Target className="h-6 w-6 text-blue-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">Match Winner Predictions</h4>
+                      <p className="text-sm text-slate-400">Predict the winning team before or during the match.</p>
+                      <p className="text-xs text-blue-400 mt-1">50 coins per correct prediction</p>
                     </div>
                   </div>
-                ) : (
-                  <Button
-                    onClick={handleWatchAd}
-                    disabled={!adStatus?.can_watch || watchingAd}
-                    className="w-full h-16 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg"
-                    data-testid="watch-ad-btn"
-                  >
-                    <Play className="h-6 w-6 mr-2" />
-                    {adStatus?.can_watch ? `Watch Ad (+${adStatus?.reward_per_ad} coins)` : 'Daily Limit Reached'}
-                  </Button>
-                )}
-
-                {/* Daily Progress */}
-                <div className="bg-slate-800/30 rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-slate-400">Daily Progress</span>
-                    <span className="text-white font-medium">
-                      {adStatus?.ads_watched_today || 0}/{adStatus?.max_per_day || 5}
-                    </span>
+                  
+                  <div className="bg-slate-800/50 rounded-lg p-4 flex items-start gap-4">
+                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                      <Zap className="h-6 w-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">Over Outcome Predictions</h4>
+                      <p className="text-sm text-slate-400">Predict runs scored in each over during live matches.</p>
+                      <p className="text-xs text-purple-400 mt-1">25 coins per correct prediction</p>
+                    </div>
                   </div>
-                  <Progress 
-                    value={((adStatus?.ads_watched_today || 0) / (adStatus?.max_per_day || 5)) * 100} 
-                    className="h-2"
-                  />
+                  
+                  <div className="bg-slate-800/50 rounded-lg p-4 flex items-start gap-4">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <Gift className="h-6 w-6 text-green-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">Ball-by-Ball (Limited)</h4>
+                      <p className="text-sm text-slate-400">Predict delivery outcomes - 20 predictions per match.</p>
+                      <p className="text-xs text-green-400 mt-1">5-15 coins per correct call</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 rounded-lg p-4 flex items-start gap-4">
+                    <div className="p-2 bg-red-500/20 rounded-lg">
+                      <Star className="h-6 w-6 text-red-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">Mini Games & Tasks</h4>
+                      <p className="text-sm text-slate-400">Play daily games and complete tasks for bonus coins.</p>
+                      <p className="text-xs text-red-400 mt-1">10-100 coins per activity</p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
