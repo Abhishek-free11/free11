@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://free11-beta.preview.emergentagent.com**
+**https://cricket-coins.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**

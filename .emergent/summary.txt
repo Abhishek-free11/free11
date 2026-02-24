@@ -1,159 +1,167 @@
 <analysis>**original_problem_statement:**
-The user's goal is to build a cricket prediction and engagement platform, FREE11, designed to capture the 60 million displaced Real Money Gaming (RMG) users in India. The platform's core loop involves users converting their prediction skills into non-financial coins to redeem for real-world, brand-funded goods. The project is structured as a multi-week sprint to prepare for a soft launch.
+The user's goal is to build FREE11, a cricket prediction and social entertainment platform. The project has undergone several scope resets. The final, locked scope for Phase 1 (Beta) is a single, consolidated product drop.
 
-**PRODUCT REQUIREMENTS (Demand Rail Thesis):**
-*   **Core Loop:** Users convert their time and cricket prediction skill into coins (a non-financial token), which they redeem for real-world goods.
-*   **Product Identity:** Cricket prediction is the primary feature. Ads and mini-games are secondary Boosters.
-*   **Brand-Funded Model:** The shop's products are brand-funded, with every redemption tracked for Return on Ad Spend (ROAS).
-*   **PRORGA-Safe:** The coin economy is a non-financial instrument (non-purchasable, non-withdrawable, non-transferable) to comply with Indian regulations.
-*   **User Experience:** The UI must emphasize user skill, progression towards real-world goods, and the total value of Consumption Unlocked.
-*   **Progression & Ego:** The platform must include user levels, streaks, badges, and skill-based leaderboards.
-*   **Impulse Redemption:** The shop must include low-value items to drive early and frequent redemptions.
+**PRODUCT REQUIREMENTS (Locked Phase 1 Beta Scope):**
+*   **Positioning:** A sports fan community/social entertainment product, NOT a real-money gaming (RMG) or betting app.
+*   **Core Loop:** Users participate in free-to-play contests to earn non-financial coins, which are redeemable for real-world goods from a brand-funded catalog.
+*   **Core Features:**
+    *   **Fantasy Team Contests:** Dream11-style UX for player selection and scoring.
+    *   **Prediction Games:** Over Outcome, Match Winner, and limited Ball-by-Ball predictions.
+    *   **Card Games:** Rummy, Teen Patti, and Poker (using the same coin economy).
+    *   **Social Features:** Private Leagues (P2P, no money), Clans, and Leaderboards.
+*   **System Controls:**
+    *   **Access:** India-only access (via IP geo-fencing), with no state-level blocking.
+    *   **User Gating:** 18+ age gate at registration.
+    *   **Economy:** Earn-only coins (non-purchasable, non-withdrawable, non-transferable).
+    *   **Admin:** Full admin, support, abuse controls, and feature flags.
+*   **Explicitly Excluded:** Cash deposits/withdrawals, buy-ins, ads (AdMob), live player trading, and coin gifting.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is in a closed beta stage. All core features are implemented, including user/brand authentication, a brand-funded shop, prediction mechanics (with mock data), a support system, and a beta invite system. A comprehensive admin-only Beta Dashboard has been built to monitor user activity, funnel conversion, and key metrics in real-time. The UI has been made mobile-responsive across all key pages.
+The application is a functional Progressive Web App (PWA) with a FastAPI backend and React frontend. Core systems like user authentication (with age/country gates), the non-financial coin ledger, a brand-funded shop, and admin controls are in place. The major feature sets required by the Phase 1 scope reset have been stubbed out: backend routes and placeholder frontend pages exist for Fantasy contests, Private Leagues, new prediction types, and most recently, Card Games (Rummy, Teen Patti, Poker). The UI copy has been updated to reflect a social entertainment positioning.
 
 **Last working item**:
--   **Last item agent was working:** Fixing the Admin Beta Dashboard. The user reported that the dashboard displays all metrics as zero, despite a few users having already signed up and performed actions. The agent confirmed the backend API () returns correct data, but the frontend () is not yet making the API call to fetch and display this data.
+-   **Last item agent was working:** Upgrading the Beta scope to include card games. The agent created the basic backend routes (), frontend pages (, ), updated the main server and navigation, and took screenshots of the new placeholder UI to confirm the structure for Rummy, Teen Patti, and Poker.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Manual testing. Log in as the admin user, navigate to the  page, and verify that the dashboard populates with non-zero data. A screenshot will be required for user verification.
+-   **Which testing method agent to use?** Both. The backend game logic will require a backend testing agent, and the interactive game UI will require a frontend testing agent.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Admin Beta Dashboard Shows Zero Data (P0)**
-    -   **Attempted fixes:** The agent confirmed the backend API at  is working correctly and returning valid JSON data. The issue was isolated to the frontend component  not calling this API.
-    -   **Next debug checklist:**
-        1.  Edit .
-        2.  Implement a  hook to call the  endpoint when the component mounts.
-        3.  Use the  utility and store the response in a state variable (e.g., ).
-        4.  Update the JSX to render the data from the  state object instead of placeholders or initial zero values.
-    -   **Why fix this issue and what will be achieved with the fix?** The user needs this dashboard to monitor the health and progress of the closed beta, track user behavior, and identify friction points. A working dashboard is critical for validating the beta.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None
+-   There are no outstanding bugs. All work is focused on implementing the new, expanded feature set.
 
 **In progress Task List**:
--   None. The current focus is the P0 bug fix.
+-   **Task 1: Implement Card Game Logic (P0)**
+    -   **Where to resume:**
+        1.  **Backend:** Flesh out the placeholder routes in . This requires implementing the full game logic for Rummy, Teen Patti, and Poker, including room creation, state management, player actions, winner determination, and coin distribution.
+        2.  **Frontend:** Develop the placeholder  into a functional, interactive user interface for playing the card games. Connect this UI to the new backend endpoints.
+    -   **What will be achieved with this?** This will complete the final, upgraded scope for the Phase 1 Beta, making the product feature-complete for user validation.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-*   **P0: Monitor Closed Beta:** After the dashboard is fixed, the primary task is to monitor the beta program.
-*   **P0: Generate First Beta Report:** After 48-72 hours of user activity, generate and share the first beta report, highlighting the top 3 user friction points.
-*   **P1: Address Beta Feedback:** Systematically fix bugs and address confusion points reported by beta users.
+*   **P1: Implement Fantasy Team Builder:** The UI () and backend routes are placeholders. Full implementation of the Dream11-style player selection, team validation, and scoring logic is required.
+*   **P1: Implement Private Leagues:** The UI () and backend routes () are placeholders. Logic for creating, joining, and managing user-created leagues needs to be built.
+*   **P2: Final Beta Validation Deliverables:** After all features are implemented, deliver a final package to the user for sign-off, including a working build, test credentials, a full set of UI screenshots, a user flow document, and a list of known gaps.
 
 **Future Tasks:**
-*   **Phase 2: Soft Launch Prep**
-    *   Integrate a live cricket data API (e.g., CricAPI, SportRadar).
-    *   Integrate a real voucher delivery mechanism (e.g., Amazon Gift Card API).
-    *   Build a payment system/dashboard for brands to fund campaigns.
-*   **Phase 3: Public Launch**
-    *   Set up production-grade deployment.
-    *   Scale marketing and user acquisition efforts.
+*   **Phase 2: Final MVP:** After user sign-off on the beta, Phase 2 will focus on polishing the UI/UX and ensuring production-grade stability. No new core features will be added.
+*   **Native Build:** Create a native Android build (APK/AAB) using a wrapper technology like Capacitor or React Native.
 
 **Completed work in this session**
--   **Beta Launch Readiness:**
-    *   **Delight Moments:** Implemented UI celebrations (confetti, sound) for correct predictions and voucher redemptions.
-    -   **UI/UX Polish:** Added a show/hide password toggle to Login and Register pages and implemented auto-login after successful registration.
-    -   **Mobile Responsiveness:** Optimized all key pages (Landing, Register, Login, Dashboard, Tutorial, Navbar) for mobile devices.
--   **Closed Beta Launch:**
-    *   **Program Definition:** Created and refined a  document outlining goals, user cohorts, feedback mechanisms, and success metrics.
-    *   **Invite System:** Generated 50 simple, memorable, case-insensitive invite codes (e.g., ) for distribution.
-    *   **Copy & Messaging:** Refined all user-facing copy to be clear, compelling, and regulation-safe, with the main hook: Make the right calls. Get real products.
--   **Admin Beta Dashboard:**
-    *   Created a new backend endpoint () to aggregate all key beta statistics.
-    *   Built a new frontend page at  to display these metrics.
-    -   Implemented an  and fixed the user authentication context to ensure only admin users can access the dashboard via a link in the profile dropdown.
--   **Critical Bug Fixes:**
-    *   **Signup Flow:** Resolved multiple signup blockers, including invite code validation logic (length, spaces) and a backend crash related to  and  fields.
-    *   **Password Hashing:** Fixed a recurring / compatibility issue for both user and brand authentication by implementing a direct  verification method.
+-   **Admin Dashboard Fix:** Resolved an issue where the Admin Beta Dashboard showed all-zero metrics by implementing the missing frontend API call.
+-   **Phase 1 Scope Reset Implementation:**
+    -   **New Prediction Formats:** Added Over Outcome and Match Winner predictions to the frontend and backend, and capped Ball-by-Ball predictions.
+    -   **Access Control:** Implemented an 18+ age gate and an IP-based geo-fence to restrict access to India-only. Removed all state-level blocking.
+    -   **Feature Stubs:** Created placeholder routes and UI pages for Fantasy Team Contests, Private Leagues, and Feature Flags.
+    -   **Refactoring:** Removed all Ads related features, routes, and UI components (, etc.) to align with the new scope. Updated UI copy to reflect a social entertainment positioning.
+-   **MVP 1.5 Scope Merge:**
+    -   **Card Games Integration:** Integrated Rummy, Teen Patti, and Poker into the beta. Created backend routes () and placeholder frontend pages (, ), and updated the site navigation.
+-   **Beta Invite Management:** Reset all 50 beta invite codes with fresh uses and new expiration dates.
+-   **UX Audit & Reporting:** Provided multiple sets of UI screenshots, a composite image, and updated documentation (, ) to reflect the evolving scope for user validation.
 
 **Earlier issues found/mentioned but not fixed**
--   None. The agent was responsive and addressed all user-reported issues during this session.
+-   None.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** Password verification failure due to  and  version incompatibility.
--   **Recurrence count:** 2 (once for user auth, once for brand auth in this session).
--   **Status:** RESOLVED. The agent created a stable workaround by bypassing  and using  directly for hashing and verification in  and .
+-   None. The previously recurring / issue was resolved and did not reappear.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Backend:** FastAPI, MongoDB, Pydantic Models.
-*   **Frontend:** React, Tailwind CSS, shadcn/ui, React Context API.
-*   **Authentication:** JWT, with direct  hashing/verification as a workaround for  issues.
-*   **Admin Gating:** Role-based access control using an  flag in the user model and a custom  component on the frontend.
+*   **Backend:** FastAPI, MongoDB, Pydantic
+*   **Frontend:** React, Tailwind CSS, shadcn/ui
+*   **Authentication:** JWT, Role-based access (Admin)
+*   **Access Control:** IP-based geo-fencing for country restriction, age verification at signup.
+*   **System Design:** Feature Flags for toggling functionality.
 
 **key DB schema**
 -   ****: 
 -   ****: 
+-   ****: (Schema to be defined)
+-   ****: (Schema to be defined for game state, rooms, etc.)
 
 **changes in tech stack**
--   None.
+-    was installed in the backend for image manipulation.
+-   An external IP geolocation service () is used for country-blocking.
 
 **All files of reference**
-*   ****: (NEEDS FIX) The primary file for the current P0 bug. It needs the API call to be implemented.
-*   ****: Contains the working backend endpoint for the beta dashboard.
-*   ****: Contains the routing logic, including the new .
-*   ****: Contains the logic for managing user state, including the  flag.
-*   ****: Contains the logic for user login, which now returns the  flag.
-*   ****: Heavily modified to fix signup bugs and improve mobile UX.
-*   ****: Modified to handle case-insensitive codes and trim whitespace.
+*   **Card Game Files (In Progress):**
+    *   : Backend logic placeholder.
+    *   : Card game selection hub UI.
+    *   : Game table UI placeholder.
+*   **Access Control Files:**
+    *   : Contains the server-side India-only IP check.
+    *   : Contains the frontend UI for age and country selection.
+*   **New Prediction Format Files:**
+    *   : Contains backend logic for Over/Winner predictions.
+    *   : Contains frontend UI for the new prediction types.
+*   **Core Route Files:**
+    *   : Main router including all new route modules.
+    *   : Main frontend router including all new pages.
 
 **Areas that need refactoring**
--   The password hashing and verification functions (, ) are duplicated in  and . This logic should be extracted into a shared utility file (e.g., ) to follow the DRY principle.
+-   The password hashing logic is duplicated in  and  and should be moved to a shared utility.
+-   The new game logic for Rummy, Poker, and Teen Patti should be structured in a modular way within  to avoid creating a monolithic and unmaintainable file.
 
 **key api endpoints**
-*   : **(GET)** Retrieves aggregated data for the admin beta dashboard. (Working)
-*   : **(POST)** Registers a new user. Now includes auto-login.
-*   : **(GET)** Validates an invite code. Now case-insensitive and trims whitespace.
+*   : **(POST)** Registers a user, now with server-side checks for age (18+) and country (India-only).
+*   : **(POST)** New endpoint to submit an Over Outcome prediction.
+*   : **(POST)** New endpoint to submit a Match Winner prediction.
+*   : **(GET)** New endpoint to fetch details for a specific card game.
+*   : **(GET)** New endpoint to fetch the status of all feature flags.
+*   : **(GET/POST)** New endpoints for managing private leagues.
 
 **Critical Info for New Agent**
-*   **Top Priority:** The user is blocked from monitoring the live beta because the Admin Dashboard shows all zeros. You must fix  to fetch and display data from the  endpoint.
-*   **Admin Credentials:** Use  /  to test admin functionality. A fresh login is required to get the  flag.
-*   **Project State:** The project is in a live (but closed) beta. Real users are on the platform. Stability and responsiveness to user-reported issues are paramount. Do not introduce any new features until instructed.
+*   **Primary Goal:** The immediate priority is to implement the full gameplay logic for the three card games: Rummy, Teen Patti, and Poker. The current implementation is only a non-functional placeholder.
+*   **Scope Lock:** The user has locked the scope for Phase 1 Beta. Do not introduce new features. Focus on implementing the defined list: Fantasy, Private Leagues, and the card games.
+*   **Product Positioning:** All new development and copy must adhere to the social entertainment and fan community model. Avoid any language or features related to betting, gambling, or real-money gaming.
+*   **Consolidated Delivery:** The user expects all remaining Phase 1 features to be delivered in a single, consolidated drop, not piecemeal.
 
 **documents and test reports created in this job**
 *   
-*    (updated)
+*    (repeatedly updated)
+*   
 *   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** link? - Asks for the admin dashboard URL.
-2.  **User:** (Image) Shows the user profile dropdown, which is missing the Beta Dashboard link.
-3.  **Agent:** Explains the user needs to log out and log back in to refresh the  flag.
-4.  **User:** (Image) Shows the dropdown again, still missing the link after re-login.
-5.  **Agent:** Investigates and finds the  endpoint wasn't returning the  flag. Fixes it.
-6.  **Agent:** Confirms the fix and instructs the user to re-login one more time.
-7.  **User:** (Image) Shows the Beta Dashboard is now accessible but all metrics are zero.
-8.  **Agent:** Investigates and finds the backend API is returning data, but the frontend isn't calling it.
-9.  **Agent:** Starts to add the API call to . (This is where the agent left off).
-10. **PENDING HUMAN MESSAGE:** The user is waiting for the dashboard to be fixed so they can see the real beta metrics.
+1.  **User:** Requests a composite screenshot of all major flows.
+2.  **Agent:** Creates and provides the composite image.
+3.  **User:** Re-requests real manual screenshots, stating bot logs don't count.
+4.  **Agent:** Takes and provides a series of manual screenshots for all key pages.
+5.  **User:** **Upgrades scope.** Merges MVP 1.5 into the Beta, requesting the addition of Rummy, Teen Patti, and Poker with the same coin model.
+6.  **Agent:** Acknowledges the scope upgrade and begins implementation.
+7.  **Agent:** (after implementation) Shares screenshots of the new Card Games hub and game selection screens.
+8.  **User:** No pending messages. The user is waiting for the implementation of the card games.
 
 **Project Health Check:**
-*   **Broken:** The Admin Beta Dashboard UI () is not displaying data.
-*   **Mocked:** Live cricket data, real voucher delivery, and brand payment systems are still mocked as planned for the beta phase.
+*   **Broken:**
+    *   **Card Games:** The entire card game module is non-functional. Routes and UI are placeholders.
+    *   **Fantasy Contests:** The fantasy team builder is a non-functional placeholder page.
+    *   **Private Leagues:** The private leagues feature is a non-functional placeholder.
+*   **Mocked:**
+    *   Live cricket data is still from a static mock file.
+    *   Voucher/product delivery upon redemption is mocked.
 
 **3rd Party Integrations**
-*   **Active:** Resend (for transactional emails).
-*   **Planned:** Slack (via webhook), Live Cricket Data API, Amazon Gift Card / Voucher API.
-*   **Future:** Google AdMob SDK, ONDC / Q-Comm APIs.
+*   **Resend:** For transactional emails.
+*   **ip-api.com:** A free geo-IP service used for enforcing India-only access.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, used once for the voucher redemption flow.
+-   **Testing agent used after significant changes:** YES, but this was *before* the card game scope was added.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None.
--   **Known regressions:** None.
+-   **Test files created:** None
+-   **Known regressions:** None
 
 **Credentials to test flow:**
 *   **Admin User:**
     *   Email: 
     *   Password: 
-*   **Beta Invite Codes:** , , etc., are available for creating new test users.
+*   **Beta Invite Codes:** , , ...,  (case-insensitive).
 
 **What agent forgot to execute**
--   The agent did not finish implementing the API call in  to populate the Beta Dashboard with data. This is the immediate next step.</analysis>
+-   The agent correctly followed the user's instructions to stub out the card game features. The next logical step, which has not yet been executed, is the full implementation of the game logic for Rummy, Poker, and Teen Patti.</analysis>
