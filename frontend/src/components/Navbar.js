@@ -114,10 +114,12 @@ const Navbar = () => {
                   <MessageCircle className="mr-2 h-4 w-4" />
                   Help & Support
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/admin')} className="text-slate-200 cursor-pointer">
-                  <Shield className="mr-2 h-4 w-4" />
-                  Admin
-                </DropdownMenuItem>
+                {user?.is_admin && (
+                  <DropdownMenuItem onClick={() => navigate('/admin')} className="text-green-400 cursor-pointer">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Beta Dashboard
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator className="bg-slate-800" />
                 <DropdownMenuItem onClick={logout} className="text-red-400 cursor-pointer">
                   <LogOut className="mr-2 h-4 w-4" />
