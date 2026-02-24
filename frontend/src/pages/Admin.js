@@ -27,12 +27,26 @@ const Admin = () => {
   });
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     fetchAnalytics();
     fetchBetaMetrics();
     fetchAllOrders();
   }, []);
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    if (!autoRefresh) return;
+    
+    const interval = setInterval(() => {
+      fetchBetaMetrics();
+      setLastUpdated(new Date());
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   const fetchAnalytics = async () => {
     try {
