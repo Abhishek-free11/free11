@@ -217,14 +217,24 @@ async def reset_feature_flags():
 async def full_compliance_check(
     date_of_birth: str,
     state: str,
+    country: str = "India",
     state_code: Optional[str] = None
 ):
     """
     Full compliance check for registration:
-    1. Age verification (18+)
-    2. Geo-blocking (state check)
+    1. Country must be India
+    2. Age verification (18+)
+    3. All Indian states allowed
     """
     errors = []
+    
+    # Country check - must be India
+    if not is_country_allowed(country):
+        errors.append({
+            "type": "country",
+            "message": "FREE11 is currently available only in India",
+            "details": {"country": country, "allowed": ["India"]}
+        })
     
     # Age check
     try:
@@ -240,20 +250,6 @@ async def full_compliance_check(
             "type": "age",
             "message": str(e.detail),
             "details": {}
-        })
-    
-    # Geo check
-    if state_code and state_code.upper() in BLOCKED_STATES:
-        errors.append({
-            "type": "geo",
-            "message": f"Fantasy sports are not available in {BLOCKED_STATES[state_code.upper()]}",
-            "details": {"state": state, "state_code": state_code}
-        })
-    elif is_state_blocked(state):
-        errors.append({
-            "type": "geo",
-            "message": f"Fantasy sports are not available in {state}",
-            "details": {"state": state}
         })
     
     if errors:
