@@ -5,9 +5,24 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Coins, Ticket, CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react';
+import { Coins, Ticket, CheckCircle, XCircle, Eye, EyeOff, Calendar, MapPin, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+
+// Blocked states for fantasy sports
+const BLOCKED_STATES = [
+  "Andhra Pradesh", "Telangana", "Assam", "Odisha", "Sikkim", "Nagaland"
+];
+
+const INDIAN_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli", "Daman and Diu", "Delhi",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand",
+  "Karnataka", "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra",
+  "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab",
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
+  "Uttarakhand", "West Bengal"
+];
 
 const Register = () => {
   const navigate = useNavigate();
@@ -22,6 +37,14 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [betaRequired, setBetaRequired] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Age gate fields
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [ageValid, setAgeValid] = useState(null);
+  
+  // Geo-blocking fields
+  const [state, setState] = useState('');
+  const [stateBlocked, setStateBlocked] = useState(false);
 
   // Check if invite code is in URL
   useEffect(() => {
