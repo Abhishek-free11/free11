@@ -1071,6 +1071,31 @@ async def get_beta_metrics():
     total_tickets = await db.support_tickets.count_documents({})
     open_tickets = await db.support_tickets.count_documents({"status": "open"})
     
+    # === CARD GAME METRICS ===
+    total_game_rooms = await db.game_rooms.count_documents({})
+    active_game_rooms = await db.game_rooms.count_documents({"status": {"$in": ["waiting", "playing"]}})
+    completed_games = await db.game_results.count_documents({})
+    
+    # Game type breakdown
+    rummy_games = await db.game_results.count_documents({"game_type": "rummy"})
+    teen_patti_games = await db.game_results.count_documents({"game_type": "teen_patti"})
+    poker_games = await db.game_results.count_documents({"game_type": "poker"})
+    
+    # Unique game players
+    game_players = await db.game_stats.distinct("user_id")
+    game_adoption = round((len(game_players) / beta_users * 100), 1) if beta_users > 0 else 0
+    
+    # Total coins earned from games
+    game_coins_pipeline = [
+        {"$group": {"_id": None, "total": {"$sum": "$total_coins_earned"}}}
+    ]
+    game_coins_result = await db.game_stats.aggregate(game_coins_pipeline).to_list(1)
+    total_game_coins = game_coins_result[0]["total"] if game_coins_result else 0
+    
+    # === CLAN METRICS ===
+    total_clans = await db.clans.count_documents({})
+    active_clans = await db.clans.count_documents({"member_count": {"$gte": 2}})
+    
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "summary": {
