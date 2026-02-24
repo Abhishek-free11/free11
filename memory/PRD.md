@@ -529,6 +529,7 @@ Card Games (Rummy, Teen Patti, Poker) added to Phase 1 Beta with the FREE11 coin
 4. **Rewards**: Automatic coin distribution on game completion
 5. **Stats Tracking**: Games played, won, win rate, total coins earned
 6. **Leaderboards**: Per-game type leaderboards by win rate
+7. **Invite Friends**: Share button with native share API + clipboard fallback, direct join via `?join=CODE` URL parameter
 
 ### API Endpoints
 - `GET /api/games/config` - Game configuration and rewards
