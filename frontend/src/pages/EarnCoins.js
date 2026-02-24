@@ -255,27 +255,27 @@ const EarnCoins = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="earn-coins-page">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-white mb-2">Coin Boosters ⚡</h1>
-          <p className="text-slate-400">Accelerate your earnings with bonus activities</p>
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2">Coin Boosters ⚡</h1>
+          <p className="text-slate-400 text-sm sm:text-base">Accelerate your earnings with bonus activities</p>
           <p className="text-xs text-purple-400 mt-1">These are supplementary to skill-based cricket predictions</p>
         </div>
 
-        <Tabs defaultValue="ads" className="space-y-6">
-          <TabsList className="bg-slate-900/50 border border-slate-800">
-            <TabsTrigger value="howto" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
-              <Tv className="h-4 w-4 mr-2" />
-              How to Earn
+        <Tabs defaultValue="ads" className="space-y-4 sm:space-y-6">
+          <TabsList className="bg-slate-900/50 border border-slate-800 w-full sm:w-auto overflow-x-auto">
+            <TabsTrigger value="howto" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 text-xs sm:text-sm">
+              <Tv className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">How to</span> Earn
             </TabsTrigger>
-            <TabsTrigger value="games" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400">
-              <Zap className="h-4 w-4 mr-2" />
-              Mini Games
+            <TabsTrigger value="games" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 text-xs sm:text-sm">
+              <Zap className="h-4 w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Mini</span> Games
             </TabsTrigger>
-            <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">
-              <CheckCircle2 className="h-4 w-4 mr-2" />
+            <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400 text-xs sm:text-sm">
+              <CheckCircle2 className="h-4 w-4 mr-1 sm:mr-2" />
               Tasks
             </TabsTrigger>
           </TabsList>
