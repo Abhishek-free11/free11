@@ -1,10 +1,58 @@
-# FREE11 - Cricket Prediction & Demand Rail Platform
+# FREE11 - Sports Fan Community Platform
+
+## Positioning (Non-Negotiable)
+**FREE11 is a sports fan community / social entertainment product, NOT a gaming app.**
+- App store category: Community + Participation + Consumption
+- Language: Avoid win / bet / odds / prize money
+- UX: Dream11-familiar for reduced learning curve
 
 ## Original Problem Statement
 Build a cricket prediction and engagement platform for capturing 60 million displaced RMG users in India. Designed as a "Demand Rail Engine" where users convert skill (cricket predictions) into coins, redeemable for brand-funded real goods.
 
+## Delivery Model (LOCKED)
+- **Phase 1 = Beta** — ONE consolidated drop (COMPLETE)
+- **Phase 2 = Final MVP** — ONE consolidated drop (polish + stability)
+- **MVP 1.5** — Rummy / Poker / Teen Patti (coins only) — May 1, 2026
+- No piecemeal releases. No weekly drops.
+
+---
+
+## Phase 1 (Beta) — COMPLETE ✅
+
+### BUILD (New) — All Complete
+| Feature | Status |
+|---------|--------|
+| Fantasy Team Contests (Dream11-style) | ✅ |
+| Over Outcome Predictions (0-5, 6-10, 11-15, 16+, Wicket) | ✅ |
+| Match Winner Predictions (Team A / Team B) | ✅ |
+| Limited Ball-by-Ball (20 per match cap) | ✅ |
+| Private Leagues (user-created P2P, no money) | ✅ |
+| Age Gate (18+ at registration) | ✅ |
+| Geo-blocking (AP, TG, AS, OD, SK, NL) | ✅ |
+| Feature Flags (kill switches) | ✅ |
+
+### SALVAGE (Refactored) — All Complete
+| Component | Status |
+|-----------|--------|
+| Auth / Onboarding | ✅ |
+| Coin Ledger (earn-only) | ✅ |
+| Catalog + Redemption | ✅ |
+| Orders + Fulfilment | ✅ |
+| Admin + Support | ✅ |
+| Clans + Leaderboards | ✅ |
+
+### EXPLICITLY OUT OF BETA
+- ❌ Cash deposits
+- ❌ Cash-out
+- ❌ Buy-ins
+- ❌ Ads / AdMob (REMOVED)
+- ❌ Live player trading
+- ❌ Coin gifting
+
+---
+
 ## Core Product Thesis
-- **Demand Rail Engine**: Cricket prediction is PRIMARY, ads/mini-games are secondary boosters
+- **Demand Rail Engine**: Cricket prediction is PRIMARY, mini-games are secondary boosters
 - **Brand-Funded Model**: All rewards are brand-sponsored with tracked ROAS
 - **PRORGA-Safe**: Coins are non-financial (non-purchasable, non-withdrawable, non-transferable)
 - **Skill-First**: Rankings based on prediction ACCURACY, not coin balance
