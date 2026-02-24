@@ -148,35 +148,6 @@ const Navbar = () => {
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Button>
             ))}
-            {/* More menu for remaining items */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex-col h-auto py-1.5 px-2 gap-0.5 text-slate-400"
-                >
-                  <div className="flex gap-0.5">
-                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
-                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
-                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
-                  </div>
-                  <span className="text-[10px] font-medium">More</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-slate-900 border-slate-800 mb-2" align="end">
-                {navItems.slice(5).map((item) => (
-                  <DropdownMenuItem 
-                    key={item.path}
-                    onClick={() => navigate(item.path)} 
-                    className="text-slate-200 cursor-pointer"
-                  >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </div>
