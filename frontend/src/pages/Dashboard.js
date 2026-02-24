@@ -468,29 +468,39 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Boosters Section */}
+          {/* Ways to Engage */}
           <Card className="bg-slate-900/50 border-slate-800">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-white">
                 <Zap className="h-5 w-5 text-purple-400" />
-                Boosters
-                <Badge className="bg-purple-500/20 text-purple-400 text-xs">BONUS</Badge>
+                Join the Community
               </CardTitle>
               <CardDescription className="text-slate-500 text-xs">
-                Boosters help you earn faster. Skill drives your rewards.
+                Compete with friends and earn rewards
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button
-                onClick={() => navigate('/earn')}
+                onClick={() => navigate('/fantasy/match-1')}
                 variant="outline"
-                className="w-full justify-between border-slate-700 hover:bg-purple-500/10"
+                className="w-full justify-between border-slate-700 hover:bg-yellow-500/10"
               >
                 <span className="flex items-center gap-2">
-                  <Tv className="h-4 w-4 text-green-400" />
-                  Watch Ads
+                  <Trophy className="h-4 w-4 text-yellow-400" />
+                  Fantasy Teams
                 </span>
-                <span className="text-green-400 text-sm">+50 coins</span>
+                <span className="text-yellow-400 text-sm">Up to 500</span>
+              </Button>
+              <Button
+                onClick={() => navigate('/leagues')}
+                variant="outline"
+                className="w-full justify-between border-slate-700 hover:bg-blue-500/10"
+              >
+                <span className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-blue-400" />
+                  Private Leagues
+                </span>
+                <span className="text-blue-400 text-sm">Invite Friends</span>
               </Button>
               <Button
                 onClick={() => navigate('/earn')}
@@ -498,10 +508,10 @@ const Dashboard = () => {
                 className="w-full justify-between border-slate-700 hover:bg-purple-500/10"
               >
                 <span className="flex items-center gap-2">
-                  <Play className="h-4 w-4 text-yellow-400" />
+                  <Play className="h-4 w-4 text-purple-400" />
                   Mini Games
                 </span>
-                <span className="text-yellow-400 text-sm">Up to 100</span>
+                <span className="text-purple-400 text-sm">Up to 100</span>
               </Button>
             </CardContent>
           </Card>
