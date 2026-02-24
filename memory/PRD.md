@@ -399,7 +399,7 @@ FREE11-1JXY32U6
 3. ✅ First-correct-prediction tracked via user.correct_predictions (persisted)
 
 ### Monitoring Checklist (48-72 hours)
-- [ ] Track user registrations via invite codes
+- [x] Track user registrations via invite codes
 - [ ] Monitor redemption flow completion
 - [ ] Identify support ticket patterns
 - [ ] Capture first beta report
@@ -407,8 +407,38 @@ FREE11-1JXY32U6
 
 ---
 
-*Last updated: Feb 23, 2026*
+## Admin Beta Dashboard - FIXED (Feb 24, 2026)
+
+### Issue Fixed
+The Admin Beta Dashboard (`/admin`) was displaying all metrics as zero despite having real user data.
+
+**Root Cause:** The frontend `api.js` utility was missing a generic `get()` method. The `Admin.js` component was calling `api.get('/admin/beta-metrics')` but this method didn't exist.
+
+**Fix Applied:** Added generic `get()` and `post()` methods to `/app/frontend/src/utils/api.js`:
+```javascript
+get: (endpoint) => axios.get(`${API}${endpoint}`, { headers: getAuthHeader() }),
+post: (endpoint, data) => axios.post(`${API}${endpoint}`, data, { headers: getAuthHeader() }),
+```
+
+### Current Beta Metrics (as of Feb 24, 2026)
+- **Beta Users:** 5
+- **Invites Used:** 4
+- **Predictions:** 0
+- **Redemptions:** 4 (40% adoption)
+- **Coins in Circulation:** 15,400
+- **Loop Completion:** 0% (no users completed Predict → Redeem)
+- **Beta Health Status:** "Needs Work"
+
+### Invite Codes Status
+- **Generated:** 50 (Wave 1 - simple format: BETA01-BETA50)
+- **Used:** 4
+- **Available:** 46
+
+---
+
+*Last updated: Feb 24, 2026*
 *Phase 3 Exit: APPROVED*
 *Phase 4: IN PROGRESS*
 *Pre-Beta UX: COMPLETE*
 *CLOSED BETA: LAUNCHED*
+*Admin Dashboard: WORKING*
