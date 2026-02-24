@@ -233,6 +233,10 @@ const Admin = () => {
               <TrendingUp className="h-4 w-4 mr-1 sm:mr-2" />
               Beta Metrics
             </TabsTrigger>
+            <TabsTrigger value="games" className="data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400 text-xs sm:text-sm">
+              <Gamepad2 className="h-4 w-4 mr-1 sm:mr-2" />
+              Card Games
+            </TabsTrigger>
             <TabsTrigger value="products" className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 text-xs sm:text-sm">
               <Plus className="h-4 w-4 mr-1 sm:mr-2" />
               Products
