@@ -382,6 +382,133 @@ const Admin = () => {
             </div>
           </TabsContent>
 
+          {/* Card Games Tab */}
+          <TabsContent value="games">
+            <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+              {/* Game Overview */}
+              <Card className="bg-slate-900/50 border-slate-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg flex items-center gap-2">
+                    <Gamepad2 className="h-5 w-5 text-purple-400" />
+                    Card Games Overview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="bg-purple-500/10 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-purple-400">{betaMetrics?.card_games?.completed_games || 0}</div>
+                      <div className="text-xs text-slate-400">Games Completed</div>
+                    </div>
+                    <div className="bg-green-500/10 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-green-400">{betaMetrics?.card_games?.active_rooms || 0}</div>
+                      <div className="text-xs text-slate-400">Active Rooms</div>
+                    </div>
+                    <div className="bg-blue-500/10 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-blue-400">{betaMetrics?.card_games?.unique_players || 0}</div>
+                      <div className="text-xs text-slate-400">Unique Players</div>
+                    </div>
+                    <div className="bg-yellow-500/10 rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold text-yellow-400">{betaMetrics?.card_games?.total_coins_distributed || 0}</div>
+                      <div className="text-xs text-slate-400">Coins Distributed</div>
+                    </div>
+                  </div>
+                  <div className="bg-slate-800/50 rounded-lg p-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Player Adoption Rate</span>
+                      <Badge className="bg-purple-500/20 text-purple-400">{betaMetrics?.card_games?.adoption_rate || '0%'}</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Games by Type */}
+              <Card className="bg-slate-900/50 border-slate-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg">Games by Type</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between bg-red-500/10 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <Spade className="h-6 w-6 text-red-400" />
+                      <div>
+                        <div className="text-white font-medium">Rummy</div>
+                        <div className="text-xs text-slate-400">Classic 13-card</div>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-red-400">{betaMetrics?.card_games?.by_type?.rummy || 0}</div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between bg-purple-500/10 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <Heart className="h-6 w-6 text-purple-400" />
+                      <div>
+                        <div className="text-white font-medium">Teen Patti</div>
+                        <div className="text-xs text-slate-400">3-card poker</div>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-purple-400">{betaMetrics?.card_games?.by_type?.teen_patti || 0}</div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between bg-green-500/10 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <Diamond className="h-6 w-6 text-green-400" />
+                      <div>
+                        <div className="text-white font-medium">Poker</div>
+                        <div className="text-xs text-slate-400">Texas Hold'em</div>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-green-400">{betaMetrics?.card_games?.by_type?.poker || 0}</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Clans Overview */}
+              <Card className="bg-slate-900/50 border-slate-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg flex items-center gap-2">
+                    <Users className="h-5 w-5 text-blue-400" />
+                    Clans
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className="bg-slate-800/50 rounded-lg p-4">
+                      <div className="text-2xl font-bold text-white">{betaMetrics?.clans?.total || 0}</div>
+                      <div className="text-xs text-slate-400">Total Clans</div>
+                    </div>
+                    <div className="bg-blue-500/10 rounded-lg p-4">
+                      <div className="text-2xl font-bold text-blue-400">{betaMetrics?.clans?.active || 0}</div>
+                      <div className="text-xs text-slate-400">Active (2+ members)</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Room Stats */}
+              <Card className="bg-slate-900/50 border-slate-800">
+                <CardHeader>
+                  <CardTitle className="text-white text-lg">Room Statistics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Total Rooms Created</span>
+                      <span className="text-white font-bold">{betaMetrics?.card_games?.total_rooms_created || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Currently Active</span>
+                      <span className="text-green-400 font-bold">{betaMetrics?.card_games?.active_rooms || 0}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-300">Games Completed</span>
+                      <span className="text-purple-400 font-bold">{betaMetrics?.card_games?.completed_games || 0}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Add Product Tab */}
           <TabsContent value="products">
             <Card className="bg-slate-900/50 border-slate-800">
