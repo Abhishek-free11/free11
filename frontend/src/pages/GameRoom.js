@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { 
   Spade, Heart, Diamond, Club, Users, Trophy, Coins, 
   Play, ArrowLeft, Crown, Copy, Send, Eye, EyeOff,
-  HandMetal, XCircle, Check, RefreshCw, MessageSquare
+  HandMetal, XCircle, Check, RefreshCw, MessageSquare,
+  Share2, UserPlus, Link2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
