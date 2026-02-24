@@ -3,6 +3,28 @@
 **Date:** February 24, 2026  
 **Status:** BETA BUILD COMPLETE  
 **Positioning:** Sports Fan Community / Social Entertainment
+**Geo-blocking:** REMOVED (FREE11 is not RMG/betting/cash)
+
+---
+
+## Access Information
+
+### Web App URL
+**https://free11-beta.preview.emergentagent.com**
+
+### Test Credentials
+- **Admin Account:**
+  - Email: `abhishek@free11.com`
+  - Password: `admin123`
+  
+- **Beta Invite Codes (for new users):**
+  - `BETA01`, `BETA02`, `BETA03` ... `BETA50`
+  - 50 codes available, case-insensitive
+
+### Android Build
+⚠️ **Note:** This is currently a **Progressive Web App (PWA)**, not a native APK.
+- **To install on Android:** Open Chrome → Visit the URL → Tap "Add to Home Screen"
+- **Native APK:** Requires React Native wrapper or Capacitor build (Phase 2 deliverable)
 
 ---
 
