@@ -24,12 +24,31 @@ import GameRoom from './pages/GameRoom';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  
+  // Show nothing while loading auth state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+  
   return user ? children : <Navigate to="/login" />;
 };
 
 const AdminRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+  
   if (!user) return <Navigate to="/login" />;
   if (!user.is_admin) return <Navigate to="/dashboard" />;
   return children;
