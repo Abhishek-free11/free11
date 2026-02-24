@@ -32,7 +32,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-slate-900/50 border-slate-800 mx-4" data-testid="login-card">
         <CardHeader className="space-y-3 text-center px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">

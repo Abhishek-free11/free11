@@ -42,9 +42,9 @@ const MyOrders = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
       <Navbar />
-      <div className="container mx-auto px-4 py-8" data-testid="orders-page">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="orders-page">
         <div className="mb-8">
           <h1 className="text-4xl font-black text-white mb-2">My Orders 📦</h1>
           <p className="text-slate-400">Track your redemptions and deliveries</p>

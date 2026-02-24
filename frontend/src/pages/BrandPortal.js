@@ -121,7 +121,7 @@ const BrandPortal = () => {
   // Login Page
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950 flex items-center justify-center p-4">
         <Card className="w-full max-w-md bg-slate-900/80 border-slate-800 backdrop-blur-sm">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-4">
@@ -178,7 +178,7 @@ const BrandPortal = () => {
   // Loading
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto"></div>
           <p className="text-slate-400 mt-4">Loading dashboard...</p>
@@ -189,7 +189,7 @@ const BrandPortal = () => {
 
   // Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950">
       {/* Header */}
       <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -215,7 +215,7 @@ const BrandPortal = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8" data-testid="brand-dashboard">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="brand-dashboard">
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="bg-slate-800/50 border border-slate-700">
             <TabsTrigger value="overview" className="data-[state=active]:bg-blue-500">

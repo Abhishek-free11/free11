@@ -137,7 +137,7 @@ const Dashboard = () => {
   const rankStyle = RANK_COLORS[user?.level || 1];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 pb-20 md:pb-0">
       {/* First-Time Tutorial */}
       {showTutorial && (
         <FirstTimeTutorial 
