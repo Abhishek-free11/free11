@@ -60,7 +60,7 @@ class GeoCheckResponse(BaseModel):
     message: str
 
 class FeatureFlagResponse(BaseModel):
-    flags: Dict[str, bool]
+    flags: Dict[str, Any]
     environment: str
 
 # ==================== HELPER FUNCTIONS ====================
