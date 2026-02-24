@@ -49,6 +49,8 @@ function App() {
             <Route path="/cricket" element={<PrivateRoute><Cricket /></PrivateRoute>} />
             <Route path="/fantasy/:matchId" element={<PrivateRoute><Fantasy /></PrivateRoute>} />
             <Route path="/leagues" element={<PrivateRoute><PrivateLeagues /></PrivateRoute>} />
+            <Route path="/games" element={<PrivateRoute><CardGames /></PrivateRoute>} />
+            <Route path="/games/:gameType/room/:roomId" element={<PrivateRoute><GameRoom /></PrivateRoute>} />
             <Route path="/shop" element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
