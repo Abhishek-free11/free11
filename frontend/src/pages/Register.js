@@ -210,6 +210,71 @@ const Register = () => {
               </div>
             </div>
             
+            {/* Age Gate - Date of Birth */}
+            <div className="space-y-2">
+              <Label htmlFor="dob" className="text-slate-200 text-sm flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Date of Birth
+                <span className="text-red-400 text-xs">(18+ only)</span>
+              </Label>
+              <Input
+                id="dob"
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => {
+                  setDateOfBirth(e.target.value);
+                  validateAge(e.target.value);
+                }}
+                required
+                max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+                className={`bg-slate-800 border-slate-700 text-white h-11 ${
+                  ageValid === true ? 'border-green-500' : 
+                  ageValid === false ? 'border-red-500' : ''
+                }`}
+                data-testid="dob-input"
+              />
+              {ageValid === false && (
+                <p className="text-xs text-red-400 flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  You must be 18 years or older
+                </p>
+              )}
+            </div>
+            
+            {/* Geo-blocking - State Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="state" className="text-slate-200 text-sm flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                State
+              </Label>
+              <select
+                id="state"
+                value={state}
+                onChange={(e) => {
+                  setState(e.target.value);
+                  checkStateBlocked(e.target.value);
+                }}
+                required
+                className={`w-full h-11 rounded-md bg-slate-800 border px-3 text-white ${
+                  stateBlocked ? 'border-red-500' : 'border-slate-700'
+                }`}
+                data-testid="state-select"
+              >
+                <option value="">Select your state</option>
+                {INDIAN_STATES.map((s) => (
+                  <option key={s} value={s} disabled={BLOCKED_STATES.includes(s)}>
+                    {s} {BLOCKED_STATES.includes(s) ? '(Not Available)' : ''}
+                  </option>
+                ))}
+              </select>
+              {stateBlocked && (
+                <p className="text-xs text-red-400 flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  Fantasy sports are not available in {state}
+                </p>
+              )}
+            </div>
+            
             {/* Beta Invite Code Field */}
             {betaRequired && (
               <div className="space-y-2">
