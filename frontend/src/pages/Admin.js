@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Users, ShoppingBag, Coins, TrendingUp, Package, Plus, Target, Ticket, RefreshCw, Trophy, AlertCircle } from 'lucide-react';
+import { Users, ShoppingBag, Coins, TrendingUp, Package, Plus, Target, Ticket, RefreshCw, Trophy, AlertCircle, Gamepad2, Spade, Heart, Diamond } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 
