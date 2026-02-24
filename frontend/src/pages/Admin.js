@@ -78,6 +78,7 @@ const Admin = () => {
   const handleRefresh = async () => {
     setRefreshing(true);
     await Promise.all([fetchAnalytics(), fetchBetaMetrics(), fetchAllOrders()]);
+    setLastUpdated(new Date());
     setRefreshing(false);
     toast.success('Data refreshed!');
   };
