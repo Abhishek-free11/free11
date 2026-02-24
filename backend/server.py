@@ -1422,6 +1422,7 @@ from reports_routes import reports_router
 from feature_routes import feature_router
 from fantasy_routes import fantasy_router
 from leagues_routes import leagues_router
+from games_routes import games_router
 from email_service import EmailService
 
 # Initialize email service
