@@ -28,8 +28,12 @@ Build a cricket prediction and engagement platform for capturing 60 million disp
 | Limited Ball-by-Ball (20 per match cap) | ✅ |
 | Private Leagues (user-created P2P, no money) | ✅ |
 | Age Gate (18+ at registration) | ✅ |
-| Geo-blocking (AP, TG, AS, OD, SK, NL) | ✅ |
+| **Country Restriction (India only)** | ✅ |
 | Feature Flags (kill switches) | ✅ |
+
+### Geo-Restrictions
+- **Country:** India only (non-India access blocked)
+- **States:** All Indian states allowed (no state-level blocking)
 
 ### SALVAGE (Refactored) — All Complete
 | Component | Status |
