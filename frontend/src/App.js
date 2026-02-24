@@ -19,6 +19,8 @@ import Support from './pages/Support';
 import BrandPortal from './pages/BrandPortal';
 import Fantasy from './pages/Fantasy';
 import PrivateLeagues from './pages/PrivateLeagues';
+import CardGames from './pages/CardGames';
+import GameRoom from './pages/GameRoom';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
