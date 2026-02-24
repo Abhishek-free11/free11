@@ -494,3 +494,68 @@ post: (endpoint, data) => axios.post(`${API}${endpoint}`, data, { headers: getAu
 *Pre-Beta UX: COMPLETE*
 *CLOSED BETA: LAUNCHED*
 *Admin Dashboard: WORKING*
+*Card Games: IMPLEMENTED*
+
+---
+
+## MVP 1.5: Card Games - IMPLEMENTED (Feb 24, 2026)
+
+### Scope
+Card Games (Rummy, Teen Patti, Poker) added to Phase 1 Beta with the FREE11 coin model:
+- **Multiplayer room-based play** (real-time with other users)
+- **Simplified/casual rule-sets** for beta
+- **WebSocket-based real-time communication**
+- **Same coin wallet, catalog, redemption, fulfilment**
+
+### Game Types & Rewards
+| Game | Win | 2nd | Participate | Min Players | Max Players |
+|------|-----|-----|-------------|-------------|-------------|
+| Rummy | 50 coins | 20 coins | 5 coins | 2 | 6 |
+| Teen Patti | 40 coins | 15 coins | 5 coins | 3 | 6 |
+| Poker | 60 coins | 25 coins | 5 coins | 2 | 9 |
+
+### Architecture
+```
+/app/backend/
+├── card_game_logic.py     # Card game state machines (Rummy, Teen Patti, Poker)
+├── websocket_manager.py   # WebSocket session management
+└── games_routes.py        # REST + WebSocket endpoints
+```
+
+### Key Features
+1. **Room Management**: Create public/private rooms, join by code, quick play
+2. **Real-time Communication**: WebSocket at `/api/games/ws/{room_id}`
+3. **Game State**: Full game logic for each card game type
+4. **Rewards**: Automatic coin distribution on game completion
+5. **Stats Tracking**: Games played, won, win rate, total coins earned
+6. **Leaderboards**: Per-game type leaderboards by win rate
+
+### API Endpoints
+- `GET /api/games/config` - Game configuration and rewards
+- `GET /api/games/{type}/info` - Detailed game info with hand rankings
+- `POST /api/games/{type}/rooms/create` - Create public/private room
+- `POST /api/games/{type}/quick-play` - Auto-join or create room
+- `GET /api/games/{type}/rooms` - Available public rooms
+- `POST /api/games/rooms/join-by-code` - Join private room
+- `GET /api/games/my-rooms` - User's active rooms
+- `GET /api/games/{type}/stats/my` - User's game stats
+- `GET /api/games/{type}/leaderboard` - Game leaderboard
+- `WS /api/games/ws/{room_id}` - WebSocket for real-time gameplay
+
+### Frontend Pages
+- `/games` - Card Games Hub (CardGames.js)
+- `/games/{type}/room/{roomId}` - Game Room (GameRoom.js)
+
+### Test Results
+```
+Backend: 24/24 tests PASSED (100%)
+Frontend: All UI features working
+WebSocket: Connection established successfully
+```
+
+### Explicitly NOT Included
+- ❌ AI/single-player mode
+- ❌ Cash buy-ins
+- ❌ Real-money wagering
+- ❌ Coin transfers between players
+
