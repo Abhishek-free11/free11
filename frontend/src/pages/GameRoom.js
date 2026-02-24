@@ -774,6 +774,49 @@ const GameRoom = () => {
                     </Button>
                   )}
                   
+                  {/* Invite Friends Section */}
+                  <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
+                    <h4 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+                      <UserPlus className="h-4 w-4 text-green-400" />
+                      Invite Friends
+                    </h4>
+                    <p className="text-xs text-slate-400 mb-3">
+                      Share the invite link to bring friends directly into this game!
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={shareInvite}
+                        className="flex-1 bg-green-500 hover:bg-green-600"
+                        data-testid="share-invite-btn"
+                      >
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share Invite
+                      </Button>
+                      <Button
+                        onClick={copyInviteLink}
+                        variant="outline"
+                        className="border-slate-600"
+                        data-testid="copy-link-btn"
+                      >
+                        <Link2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {room?.room_code && (
+                      <div className="mt-3 flex items-center justify-between bg-slate-900/50 rounded px-3 py-2">
+                        <span className="text-xs text-slate-400">Code:</span>
+                        <span className="font-mono font-bold text-yellow-400">{room.room_code}</span>
+                        <Button
+                          onClick={copyRoomCode}
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  
                   {room?.host_id !== user?.id && (
                     <div className="text-center py-4">
                       <RefreshCw className="h-8 w-8 text-blue-400 mx-auto mb-2 animate-spin" />
