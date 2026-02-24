@@ -1,9 +1,27 @@
-# FREE11 Phase 1 (Beta) — Consolidated Drop
+# FREE11 Phase 1 (Beta) — UPGRADED SCOPE
 
 **Date:** February 24, 2026  
-**Status:** BETA BUILD COMPLETE  
+**Status:** BETA BUILD COMPLETE (UPGRADED)
 **Positioning:** Sports Fan Community / Social Entertainment
-**Geo-blocking:** REMOVED (FREE11 is not RMG/betting/cash)
+**Geo-restriction:** India only (all states allowed)
+
+---
+
+## Scope Upgrade: MVP 1.0 + MVP 1.5 Merged into Beta
+
+### Card Games Added (Coins Only)
+| Game | Entry | 1st Place | 2nd Place | Participate |
+|------|-------|-----------|-----------|-------------|
+| **Rummy** | FREE | 50 coins | 20 coins | 5 coins |
+| **Teen Patti** | FREE | 40 coins | 15 coins | 5 coins |
+| **Poker** | FREE | 60 coins | 25 coins | 5 coins |
+
+**All games use the same:**
+- ✅ Coin wallet (earn-only, non-cash, non-withdrawable)
+- ✅ Catalog + Redemption + Fulfilment
+- ✅ Admin + Support + Abuse controls
+- ✅ No ads, no cash-out, no buy-ins
+- ✅ India-only availability
 
 ---
 
@@ -20,11 +38,6 @@
 - **Beta Invite Codes (for new users):**
   - `BETA01`, `BETA02`, `BETA03` ... `BETA50`
   - 50 codes available, case-insensitive
-
-### Android Build
-⚠️ **Note:** This is currently a **Progressive Web App (PWA)**, not a native APK.
-- **To install on Android:** Open Chrome → Visit the URL → Tap "Add to Home Screen"
-- **Native APK:** Requires React Native wrapper or Capacitor build (Phase 2 deliverable)
 
 ---
 
