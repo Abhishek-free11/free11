@@ -1139,6 +1139,23 @@ async def get_beta_metrics():
             "total_tickets": total_tickets,
             "open_tickets": open_tickets
         },
+        "card_games": {
+            "total_rooms_created": total_game_rooms,
+            "active_rooms": active_game_rooms,
+            "completed_games": completed_games,
+            "by_type": {
+                "rummy": rummy_games,
+                "teen_patti": teen_patti_games,
+                "poker": poker_games
+            },
+            "unique_players": len(game_players),
+            "adoption_rate": f"{game_adoption}%",
+            "total_coins_distributed": total_game_coins
+        },
+        "clans": {
+            "total": total_clans,
+            "active": active_clans
+        },
         "leaderboard": {
             "top_predictors": top_predictors
         },
