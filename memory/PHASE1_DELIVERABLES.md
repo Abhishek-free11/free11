@@ -229,8 +229,9 @@
 
 | Requirement | Status |
 |-------------|--------|
-| 18+ Age Gate | ✅ Enforced at registration |
-| Geo-blocking (6 states) | ✅ AP, TG, AS, OD, SK, NL blocked |
+| **India-only access** | ✅ Enforced (non-India blocked) |
+| **18+ Age Gate** | ✅ Enforced at registration |
+| **All Indian states allowed** | ✅ No state blocking |
 | No cash deposits | ✅ Not implemented |
 | No cash-out | ✅ Not implemented |
 | No buy-ins | ✅ All contests FREE entry |
