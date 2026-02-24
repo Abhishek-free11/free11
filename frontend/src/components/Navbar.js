@@ -131,20 +131,55 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Nav - Scrollable tabs */}
-        <div className="md:hidden flex items-center gap-1 pb-2 overflow-x-auto scrollbar-hide -mx-2 px-2">
-          {navItems.map((item) => (
-            <Button
-              key={item.path}
-              variant={isActive(item.path) ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => navigate(item.path)}
-              className={`flex-shrink-0 px-3 ${isActive(item.path) ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-300'}`}
-            >
-              <item.icon className="h-4 w-4 mr-1.5" />
-              <span className="text-xs">{item.label}</span>
-            </Button>
-          ))}
+        {/* Mobile Nav - Bottom fixed tabs */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 z-50 safe-area-bottom">
+          <div className="flex items-center justify-around py-2 px-1">
+            {navItems.slice(0, 5).map((item) => (
+              <Button
+                key={item.path}
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(item.path)}
+                className={`flex-col h-auto py-1.5 px-2 gap-0.5 ${
+                  isActive(item.path) 
+                    ? 'text-yellow-400 bg-yellow-500/10' 
+                    : 'text-slate-400'
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="text-[10px] font-medium">{item.label}</span>
+              </Button>
+            ))}
+            {/* More menu for remaining items */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-col h-auto py-1.5 px-2 gap-0.5 text-slate-400"
+                >
+                  <div className="flex gap-0.5">
+                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                    <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                  </div>
+                  <span className="text-[10px] font-medium">More</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-slate-900 border-slate-800 mb-2" align="end">
+                {navItems.slice(5).map((item) => (
+                  <DropdownMenuItem 
+                    key={item.path}
+                    onClick={() => navigate(item.path)} 
+                    className="text-slate-200 cursor-pointer"
+                  >
+                    <item.icon className="mr-2 h-4 w-4" />
+                    {item.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </nav>
