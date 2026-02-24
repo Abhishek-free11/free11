@@ -590,3 +590,276 @@ async def quick_play(
             "message": f"Created new {config['name']} room. Waiting for players...",
             "room": new_room.model_dump()
         }
+
+
+# ==================== WEBSOCKET ENDPOINTS ====================
+
+@games_router.websocket("/ws/{room_id}")
+async def websocket_game_endpoint(
+    websocket: WebSocket,
+    room_id: str,
+    token: str = Query(None),
+    player_id: str = Query(None),
+    player_name: str = Query("Player")
+):
+    """WebSocket endpoint for real-time game play"""
+    await websocket.accept()
+    
+    try:
+        # Validate room exists
+        room = await db.game_rooms.find_one({"id": room_id}, {"_id": 0})
+        if not room:
+            await websocket.send_json({"error": "Room not found"})
+            await websocket.close()
+            return
+        
+        game_type = room["game_type"]
+        host_id = room["host_id"]
+        
+        # Get or create session
+        session = game_manager.get_session(room_id)
+        
+        if session:
+            # Join existing session
+            session = await game_manager.join_session(room_id, player_id, player_name, websocket)
+        else:
+            # Create new session (first player)
+            session = await game_manager.create_session(
+                room_id, game_type, host_id, player_name, websocket
+            )
+        
+        if not session:
+            await websocket.send_json({"error": "Failed to join game"})
+            await websocket.close()
+            return
+        
+        # Send initial state
+        await websocket.send_json({
+            "type": "connected",
+            "room_id": room_id,
+            "game_type": game_type,
+            "player_id": player_id,
+            "is_host": player_id == host_id,
+            "players": [
+                {"id": pid, "name": session.player_names.get(pid, "Player")}
+                for pid in session.player_ids
+            ],
+            "status": session.status
+        })
+        
+        # Notify others
+        await game_manager.broadcast(room_id, {
+            "type": "player_joined",
+            "player_id": player_id,
+            "player_name": player_name,
+            "player_count": session.get_player_count()
+        }, exclude=player_id)
+        
+        # Main message loop
+        while True:
+            try:
+                data = await websocket.receive_text()
+                message = json.loads(data)
+                
+                msg_type = message.get("type")
+                
+                if msg_type == "start_game":
+                    # Only host can start
+                    if player_id != host_id:
+                        await websocket.send_json({"error": "Only host can start the game"})
+                        continue
+                    
+                    # Check minimum players
+                    min_players = GAME_CONFIG[game_type]["min_players"]
+                    if session.get_player_count() < min_players:
+                        await websocket.send_json({
+                            "error": f"Need at least {min_players} players to start"
+                        })
+                        continue
+                    
+                    # Update room status in DB
+                    await db.game_rooms.update_one(
+                        {"id": room_id},
+                        {"$set": {"status": "playing", "started_at": datetime.now(timezone.utc).isoformat()}}
+                    )
+                    
+                    # Start the game
+                    success = await game_manager.start_game(room_id)
+                    if not success:
+                        await websocket.send_json({"error": "Failed to start game"})
+                
+                elif msg_type == "action":
+                    # Handle game action
+                    result = await game_manager.handle_action(room_id, player_id, message)
+                    
+                    if result.get("error"):
+                        await websocket.send_json({"type": "error", "message": result["error"]})
+                    
+                    # Check if game is complete
+                    if session.game_state and session.game_state.is_complete:
+                        # Award coins to players
+                        await _award_game_coins(session)
+                
+                elif msg_type == "chat":
+                    # Broadcast chat message
+                    await game_manager.broadcast(room_id, {
+                        "type": "chat",
+                        "player_id": player_id,
+                        "player_name": player_name,
+                        "message": message.get("message", "")[:200]
+                    })
+                
+                elif msg_type == "ping":
+                    await websocket.send_json({"type": "pong"})
+                
+            except WebSocketDisconnect:
+                break
+            except json.JSONDecodeError:
+                await websocket.send_json({"error": "Invalid JSON"})
+            except Exception as e:
+                logger.error(f"WebSocket error: {e}")
+                await websocket.send_json({"error": str(e)})
+    
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        logger.error(f"WebSocket connection error: {e}")
+    finally:
+        # Clean up
+        await game_manager.leave_session(room_id, player_id)
+        
+        # Notify others
+        session = game_manager.get_session(room_id)
+        if session:
+            await game_manager.broadcast(room_id, {
+                "type": "player_left",
+                "player_id": player_id,
+                "player_name": player_name,
+                "player_count": session.get_player_count()
+            })
+
+async def _award_game_coins(session: GameSession):
+    """Award coins to players after game completion"""
+    game_state = session.game_state
+    if not game_state or not game_state.is_complete:
+        return
+    
+    game_type = session.game_type
+    winner_id = game_state.winner_id
+    player_ids = session.player_ids
+    
+    # Reward config
+    rewards = GAME_CONFIG[game_type]["coins_reward"]
+    
+    for i, player_id in enumerate(player_ids):
+        if player_id == winner_id:
+            coins = rewards["win"]
+            description = f"{GAME_CONFIG[game_type]['name']} - Winner!"
+        elif i == 1:
+            coins = rewards["second"]
+            description = f"{GAME_CONFIG[game_type]['name']} - 2nd Place"
+        else:
+            coins = rewards["participate"]
+            description = f"{GAME_CONFIG[game_type]['name']} - Participated"
+        
+        # Add coins to user
+        await add_coins(player_id, coins, "earned", description)
+        
+        # Update game stats
+        existing_stats = await db.game_stats.find_one({
+            "user_id": player_id,
+            "game_type": game_type
+        })
+        
+        if existing_stats:
+            games_played = existing_stats.get("games_played", 0) + 1
+            games_won = existing_stats.get("games_won", 0) + (1 if player_id == winner_id else 0)
+            total_coins = existing_stats.get("total_coins_earned", 0) + coins
+            
+            await db.game_stats.update_one(
+                {"user_id": player_id, "game_type": game_type},
+                {"$set": {
+                    "games_played": games_played,
+                    "games_won": games_won,
+                    "total_coins_earned": total_coins,
+                    "win_rate": round((games_won / games_played) * 100, 1)
+                }}
+            )
+        else:
+            await db.game_stats.insert_one({
+                "user_id": player_id,
+                "game_type": game_type,
+                "games_played": 1,
+                "games_won": 1 if player_id == winner_id else 0,
+                "total_coins_earned": coins,
+                "win_rate": 100 if player_id == winner_id else 0
+            })
+    
+    # Update room status in DB
+    await db.game_rooms.update_one(
+        {"id": session.room_id},
+        {"$set": {
+            "status": "completed",
+            "completed_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Save game result
+    await db.game_results.insert_one({
+        "id": str(uuid.uuid4()),
+        "room_id": session.room_id,
+        "game_type": game_type,
+        "winner_id": winner_id,
+        "player_results": [
+            {
+                "user_id": pid,
+                "rank": 1 if pid == winner_id else (2 if i == 1 else i + 1),
+                "coins_earned": rewards["win"] if pid == winner_id else (rewards["second"] if i == 1 else rewards["participate"])
+            }
+            for i, pid in enumerate(player_ids)
+        ],
+        "completed_at": datetime.now(timezone.utc).isoformat()
+    })
+
+# ==================== GET ROOM STATE (REST) ====================
+
+@games_router.get("/{game_type}/rooms/{room_id}/state")
+async def get_room_state(
+    game_type: str,
+    room_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get current state of a game room (for reconnection)"""
+    session = game_manager.get_session(room_id)
+    
+    if not session:
+        # Check DB for room
+        room = await db.game_rooms.find_one({"id": room_id}, {"_id": 0})
+        if not room:
+            raise HTTPException(status_code=404, detail="Room not found")
+        
+        return {
+            "room": room,
+            "game_active": False,
+            "players": [
+                {"id": pid, "name": f"Player {i+1}"}
+                for i, pid in enumerate(room.get("player_ids", []))
+            ]
+        }
+    
+    # Return current game state
+    state = None
+    if session.game_state:
+        state = session.game_state.to_dict(for_player=current_user.id)
+    
+    return {
+        "room_id": room_id,
+        "game_type": game_type,
+        "status": session.status,
+        "players": [
+            {"id": pid, "name": session.player_names.get(pid, "Player")}
+            for pid in session.player_ids
+        ],
+        "game_active": session.game_state is not None,
+        "game_state": state
+    }
