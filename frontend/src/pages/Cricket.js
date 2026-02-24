@@ -244,35 +244,35 @@ const Cricket = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
       <Navbar />
-      <div className="container mx-auto px-4 py-8" data-testid="cricket-page">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="cricket-page">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-4 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-white mb-2 flex items-center gap-3">
-              <span className="text-5xl">🏏</span> Cricket Predictions
+            <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
+              <span className="text-3xl sm:text-5xl">🏏</span> Cricket Predictions
             </h1>
-            <p className="text-slate-400">Predict ball-by-ball outcomes and win coins!</p>
+            <p className="text-slate-400 text-sm sm:text-base">Predict ball-by-ball outcomes and win coins!</p>
           </div>
           {myPredictions.stats && (
             <Card className="bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-yellow-500/30">
-              <CardContent className="p-4 flex items-center gap-4">
-                <Target className="h-8 w-8 text-yellow-400" />
+              <CardContent className="p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
+                <Target className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
                 <div>
-                  <p className="text-sm text-slate-400">Accuracy</p>
-                  <p className="text-2xl font-bold text-yellow-400">{myPredictions.stats.accuracy || 0}%</p>
+                  <p className="text-xs sm:text-sm text-slate-400">Accuracy</p>
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-400">{myPredictions.stats.accuracy || 0}%</p>
                 </div>
-                <div className="border-l border-slate-700 pl-4">
-                  <p className="text-sm text-slate-400">Coins Won</p>
-                  <p className="text-2xl font-bold text-yellow-400">{myPredictions.stats.total_coins_earned || 0}</p>
+                <div className="border-l border-slate-700 pl-3 sm:pl-4">
+                  <p className="text-xs sm:text-sm text-slate-400">Coins Won</p>
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-400">{myPredictions.stats.total_coins_earned || 0}</p>
                 </div>
               </CardContent>
             </Card>
           )}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Live Match Section */}
           <div className="lg:col-span-2 space-y-6">
             {/* Live Match Card */}
