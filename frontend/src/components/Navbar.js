@@ -19,32 +19,30 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Demand Rail hierarchy: Cricket (Skill) > Card Games > Boosters > Shop
+  // New navigation structure - Contests first!
   const navItems = [
-    { path: '/dashboard', label: 'Home', icon: Home },
-    { path: '/cricket', label: 'Predict', icon: Target, highlight: true }, // SKILL - Primary
-    { path: '/games', label: 'Cards', icon: Spade }, // NEW - Card Games
-    { path: '/clans', label: 'Clans', icon: Users }, // NEW - Social
-    { path: '/leaderboards', label: 'Ranks', icon: Trophy }, // NEW - Leaderboards
-    { path: '/earn', label: 'Boost', icon: Zap }, // BOOSTERS - Secondary
-    { path: '/shop', label: 'Redeem', icon: ShoppingBag },
+    { path: '/contests', label: 'Contests', icon: Trophy, highlight: true }, // Dream11-style - PRIMARY
+    { path: '/cricket', label: 'Predict', icon: Target }, // Ball-by-ball predictions
+    { path: '/games', label: 'Cards', icon: Spade }, // Card Games
+    { path: '/leaderboards', label: 'Ranks', icon: Users }, // Leaderboards
+    { path: '/profile', label: 'Profile', icon: User }, // Profile with logout
   ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
+    <nav className="border-b border-slate-700 bg-slate-900/95 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-2 sm:px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/contests')}>
             <img 
               src="/app-icon.png" 
               alt="FREE11" 
               className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg"
             />
-            <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-yellow-400 via-red-500 to-blue-500 bg-clip-text text-transparent">
+            <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
               FREE11
             </span>
           </div>
