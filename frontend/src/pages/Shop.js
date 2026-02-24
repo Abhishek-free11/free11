@@ -135,23 +135,23 @@ const Shop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
       <Navbar />
-      <div className="container mx-auto px-4 py-8" data-testid="shop-page">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-white mb-2">Shop 🛍️</h1>
-          <p className="text-slate-400">Redeem your FREE11 Coins for real products</p>
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="shop-page">
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2">Shop 🛍️</h1>
+          <p className="text-slate-400 text-sm sm:text-base">Redeem your FREE11 Coins for real products</p>
         </div>
 
         {/* Category Tabs */}
-        <div className="mb-8 overflow-x-auto">
+        <div className="mb-4 sm:mb-8 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
           <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
             <TabsList className="bg-slate-900/50 border border-slate-800 inline-flex w-auto">
               {categories.map((cat) => (
                 <TabsTrigger
                   key={cat.value}
                   value={cat.value}
-                  className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 whitespace-nowrap"
+                  className="data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 whitespace-nowrap text-xs sm:text-sm"
                   data-testid={`category-${cat.value}`}
                 >
                   {cat.label}
@@ -162,7 +162,7 @@ const Shop = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
           {filteredProducts.map((product) => (
             <Card 
               key={product.id} 
