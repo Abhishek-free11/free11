@@ -1,5 +1,5 @@
 <analysis>**original_problem_statement:**
-The user's goal is to build a cricket prediction and engagement platform, FREE11, designed to capture the 60 million displaced Real Money Gaming (RMG) users in India. The project is a 5-week sprint to have a soft launch ready for the IPL 2026 tournament.
+The user's goal is to build a cricket prediction and engagement platform, FREE11, designed to capture the 60 million displaced Real Money Gaming (RMG) users in India. The platform's core loop involves users converting their prediction skills into non-financial coins to redeem for real-world, brand-funded goods. The project is structured as a multi-week sprint to prepare for a soft launch.
 
 **PRODUCT REQUIREMENTS (Demand Rail Thesis):**
 *   **Core Loop:** Users convert their time and cricket prediction skill into coins (a non-financial token), which they redeem for real-world goods.
@@ -13,63 +13,71 @@ The user's goal is to build a cricket prediction and engagement platform, FREE11
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack platform (FastAPI/MongoDB backend, React/Tailwind frontend) that is feature-complete for its closed beta launch. All core infrastructure and user-facing features have been built and hardened. This includes user/brand authentication, a brand-funded shop, skill-based leaderboards, a support system, an auditable voucher delivery rail, a beta invite system, and admin reporting endpoints. The final pre-beta tasks, including a first-time user tutorial and various UX polishes, have also been implemented.
+The application is in a closed beta stage. All core features are implemented, including user/brand authentication, a brand-funded shop, prediction mechanics (with mock data), a support system, and a beta invite system. A comprehensive admin-only Beta Dashboard has been built to monitor user activity, funnel conversion, and key metrics in real-time. The UI has been made mobile-responsive across all key pages.
 
 **Last working item**:
--   **Last item agent was working:** The agent was implementing the final pre-beta task: adding light emotional design / delight touches to the UI. This included adding micro-celebrations for user achievements and improving copy. The agent was in the process of adding a delight moment for successful voucher redemptions.
+-   **Last item agent was working:** Fixing the Admin Beta Dashboard. The user reported that the dashboard displays all metrics as zero, despite a few users having already signed up and performed actions. The agent confirmed the backend API () returns correct data, but the frontend () is not yet making the API call to fetch and display this data.
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?**  to capture the final UI changes for user verification.
+-   **Which testing method agent to use?** Manual testing. Log in as the admin user, navigate to the  page, and verify that the dashboard populates with non-zero data. A screenshot will be required for user verification.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no known technical issues or bugs. The only pending item is the completion of the light emotional design task.
+-   **Issue 1: Admin Beta Dashboard Shows Zero Data (P0)**
+    -   **Attempted fixes:** The agent confirmed the backend API at  is working correctly and returning valid JSON data. The issue was isolated to the frontend component  not calling this API.
+    -   **Next debug checklist:**
+        1.  Edit .
+        2.  Implement a  hook to call the  endpoint when the component mounts.
+        3.  Use the  utility and store the response in a state variable (e.g., ).
+        4.  Update the JSX to render the data from the  state object instead of placeholders or initial zero values.
+    -   **Why fix this issue and what will be achieved with the fix?** The user needs this dashboard to monitor the health and progress of the closed beta, track user behavior, and identify friction points. A working dashboard is critical for validating the beta.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: Implement Light Emotional Design Touches (P0)**
-    -   **Where to resume:** The agent needs to modify  to add a delight moment on successful voucher delivery. This should be a toast or similar notification with the copy: Unlocked! Your reward is ready 🎉 and You earned this through skill. Enjoy!.
-    -   **What will be achieved with this?** This will make the beta experience more inviting and engaging for early users, ensuring feedback focuses on core product learning rather than a cold user experience.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on something:** Nothing.
+-   None. The current focus is the P0 bug fix.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
-*   **P0: Final Pre-Beta Sign-off:** After completing the current task, provide screenshots of the celebration moment on a correct prediction and the voucher delivery delight screen for final user approval.
-*   **P0: Open Closed Beta:** Once approved, begin onboarding the first 50-200 beta users using the invite system.
-*   **P0: Phase 4: Closed Beta Monitoring & Hardening:**
-    *   Onboard a pilot brand campaign.
-    *   Monitor application performance, user friction, and support tickets.
-    *   Fix P0/P1 bugs based on beta feedback.
-    *   Generate weekly beta reports for the user.
-*   **P1: Implement Phase 4 P1 Items:**
-    *   Integrate Slack/Email alerts for critical system failures.
-    *   Implement basic UX funnel tracking.
+*   **P0: Monitor Closed Beta:** After the dashboard is fixed, the primary task is to monitor the beta program.
+*   **P0: Generate First Beta Report:** After 48-72 hours of user activity, generate and share the first beta report, highlighting the top 3 user friction points.
+*   **P1: Address Beta Feedback:** Systematically fix bugs and address confusion points reported by beta users.
 
 **Future Tasks:**
-*   Full Public Launch & Fundraising.
-*   Monetization: Integrate AdMob and premium subscription features.
-*   Live Integrations: Implement live cricket data APIs and ONDC/Q-Comm for fulfillment.
-*   Deeper UI/UX and visual polish based on beta feedback.
+*   **Phase 2: Soft Launch Prep**
+    *   Integrate a live cricket data API (e.g., CricAPI, SportRadar).
+    *   Integrate a real voucher delivery mechanism (e.g., Amazon Gift Card API).
+    *   Build a payment system/dashboard for brands to fund campaigns.
+*   **Phase 3: Public Launch**
+    *   Set up production-grade deployment.
+    *   Scale marketing and user acquisition efforts.
 
 **Completed work in this session**
--   **Phase 3 Hardening Verification:** Debugged login issues and generated all required verification artifacts (payloads, screenshots, test outputs) to secure user approval for Phase 3 completion.
--   **Phase 4 (P0 Features) Implementation:**
-    *   **Go Live Script:** Built  with safety checks (, dry-run).
-    *   **Beta Invite System:** Implemented backend routes () and frontend UI () for a capped, invite-only beta.
-    *   **Weekly Beta Report:** Created an admin endpoint () for user reporting.
-    *   **Alerting Service:** Stubbed out an  for future webhook integration.
--   **Pre-Beta UX Polish:**
-    *   **First-Time Tutorial:** Created a server-side persistent, multi-screen tutorial for new users with a replay option.
-    *   **Zero-State & UI Polish:** Added friendly empty states to key screens and made the Progress to Next Reward bar more prominent.
--   **Bug Fixes:**
-    *   Resolved a  password verification issue preventing brand login.
-    *   Fixed a MongoDB  serialization error in the user registration API response.
+-   **Beta Launch Readiness:**
+    *   **Delight Moments:** Implemented UI celebrations (confetti, sound) for correct predictions and voucher redemptions.
+    -   **UI/UX Polish:** Added a show/hide password toggle to Login and Register pages and implemented auto-login after successful registration.
+    -   **Mobile Responsiveness:** Optimized all key pages (Landing, Register, Login, Dashboard, Tutorial, Navbar) for mobile devices.
+-   **Closed Beta Launch:**
+    *   **Program Definition:** Created and refined a  document outlining goals, user cohorts, feedback mechanisms, and success metrics.
+    *   **Invite System:** Generated 50 simple, memorable, case-insensitive invite codes (e.g., ) for distribution.
+    *   **Copy & Messaging:** Refined all user-facing copy to be clear, compelling, and regulation-safe, with the main hook: Make the right calls. Get real products.
+-   **Admin Beta Dashboard:**
+    *   Created a new backend endpoint () to aggregate all key beta statistics.
+    *   Built a new frontend page at  to display these metrics.
+    -   Implemented an  and fixed the user authentication context to ensure only admin users can access the dashboard via a link in the profile dropdown.
+-   **Critical Bug Fixes:**
+    *   **Signup Flow:** Resolved multiple signup blockers, including invite code validation logic (length, spaces) and a backend crash related to  and  fields.
+    *   **Password Hashing:** Fixed a recurring / compatibility issue for both user and brand authentication by implementing a direct  verification method.
+
+**Earlier issues found/mentioned but not fixed**
+-   None. The agent was responsive and addressed all user-reported issues during this session.
 
 **Known issue recurrence from previous fork**
--   **Issue:** Frontend authentication context was lost during programmatic navigation by tools.
--   **Recurrence count:** High (in previous forks)
--   **Status:** RESOLVED. A stable pattern of API-based login followed by client-side navigation or direct local storage manipulation has proven effective.
+-   **Issue recurrence in previous fork:** Password verification failure due to  and  version incompatibility.
+-   **Recurrence count:** 2 (once for user auth, once for brand auth in this session).
+-   **Status:** RESOLVED. The agent created a stable workaround by bypassing  and using  directly for hashing and verification in  and .
 
 **Code Architecture**
 
@@ -77,11 +85,10 @@ There are no known technical issues or bugs. The only pending item is the comple
 **Key Technical Concepts**
 *   **Backend:** FastAPI, MongoDB, Pydantic Models.
 *   **Frontend:** React, Tailwind CSS, shadcn/ui, React Context API.
-*   **Core Concepts:** Demand Rail Engine, Idempotency, Audit Trails, ROAS, PRORGA-safe tokenization, Beta Gating, Server-side Feature Flagging (for tutorial).
-*   **Integrations:** Resend for transactional emails.
+*   **Authentication:** JWT, with direct  hashing/verification as a workaround for  issues.
+*   **Admin Gating:** Role-based access control using an  flag in the user model and a custom  component on the frontend.
 
 **key DB schema**
--   ****: 
 -   ****: 
 -   ****: 
 
@@ -89,41 +96,47 @@ There are no known technical issues or bugs. The only pending item is the comple
 -   None.
 
 **All files of reference**
--   ****: File to be modified next to add the voucher delivery delight moment.
--   ****: Recently modified to add a micro-celebration on correct predictions.
--   ****: Recently modified to enhance progress visualization and add brand voice lines.
--   ****: Core component for the new user onboarding flow.
--   ****: Contains the new endpoint for managing the  flag.
--   ****: Contains the logic for the beta invite system.
--   ****: Updated to include the mandatory invite code field.
+*   ****: (NEEDS FIX) The primary file for the current P0 bug. It needs the API call to be implemented.
+*   ****: Contains the working backend endpoint for the beta dashboard.
+*   ****: Contains the routing logic, including the new .
+*   ****: Contains the logic for managing user state, including the  flag.
+*   ****: Contains the logic for user login, which now returns the  flag.
+*   ****: Heavily modified to fix signup bugs and improve mobile UX.
+*   ****: Modified to handle case-insensitive codes and trim whitespace.
+
+**Areas that need refactoring**
+-   The password hashing and verification functions (, ) are duplicated in  and . This logic should be extracted into a shared utility file (e.g., ) to follow the DRY principle.
 
 **key api endpoints**
-*   : (Admin) Creates new invite codes.
-*   : Checks if an invite code is valid before registration.
-*   : (Admin) Gets the weekly beta report data.
-*   : GET/POST to manage a user's tutorial completion status.
-*   : Updated to accept and validate an .
+*   : **(GET)** Retrieves aggregated data for the admin beta dashboard. (Working)
+*   : **(POST)** Registers a new user. Now includes auto-login.
+*   : **(GET)** Validates an invite code. Now case-insensitive and trims whitespace.
 
 **Critical Info for New Agent**
-*   **Top Priority:** You are on the final task before the Closed Beta launch. Complete the light emotional design feature by adding the voucher delivery celebration in .
-*   **User Verification:** After implementation, the user requires screenshots of the correct prediction celebration and the voucher delivery delight moment for final sign-off.
-*   **Guardrails:** Adhere strictly to the user's copy and design guidelines. The goal is light polish, not a redesign. No gambling-like language or dark patterns.
-*   **Next Step:** Once this final UX task is approved, the project moves into Closed Beta.
+*   **Top Priority:** The user is blocked from monitoring the live beta because the Admin Dashboard shows all zeros. You must fix  to fetch and display data from the  endpoint.
+*   **Admin Credentials:** Use  /  to test admin functionality. A fresh login is required to get the  flag.
+*   **Project State:** The project is in a live (but closed) beta. Real users are on the platform. Stability and responsiveness to user-reported issues are paramount. Do not introduce any new features until instructed.
 
 **documents and test reports created in this job**
-*    was updated to reflect the completion of Phase 3 and the start of Phase 4.
-*    was updated to include  and  variables.
+*   
+*    (updated)
+*   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Greenlights opening Closed Beta after a successful pre-beta UX polish review. Asks for two final micro-checks.
-2.  **Agent:** Runs the checks, finds and fixes a backend serialization bug, and confirms both checks passed with a screenshot.
-3.  **User:** Adds one final, small pre-beta task: implement light emotional design / delight touches to make the app feel more inviting.
-4.  **Agent:** Proposes a plan to add the emotional design touches.
-5.  **PENDING User Request:** User approves the plan with minor copy refinements and requests screenshots of the celebration and voucher delivery screens for final sign-off before officially starting the beta.
+1.  **User:** link? - Asks for the admin dashboard URL.
+2.  **User:** (Image) Shows the user profile dropdown, which is missing the Beta Dashboard link.
+3.  **Agent:** Explains the user needs to log out and log back in to refresh the  flag.
+4.  **User:** (Image) Shows the dropdown again, still missing the link after re-login.
+5.  **Agent:** Investigates and finds the  endpoint wasn't returning the  flag. Fixes it.
+6.  **Agent:** Confirms the fix and instructs the user to re-login one more time.
+7.  **User:** (Image) Shows the Beta Dashboard is now accessible but all metrics are zero.
+8.  **Agent:** Investigates and finds the backend API is returning data, but the frontend isn't calling it.
+9.  **Agent:** Starts to add the API call to . (This is where the agent left off).
+10. **PENDING HUMAN MESSAGE:** The user is waiting for the dashboard to be fixed so they can see the real beta metrics.
 
 **Project Health Check:**
-*   **Broken:** No features are broken.
-*   **Mocked:** Cricket data, brand campaign data, and the actual fulfillment provider logic () remain mocked as per the project plan for beta.
+*   **Broken:** The Admin Beta Dashboard UI () is not displaying data.
+*   **Mocked:** Live cricket data, real voucher delivery, and brand payment systems are still mocked as planned for the beta phase.
 
 **3rd Party Integrations**
 *   **Active:** Resend (for transactional emails).
@@ -131,13 +144,16 @@ There are no known technical issues or bugs. The only pending item is the comple
 *   **Future:** Google AdMob SDK, ONDC / Q-Comm APIs.
 
 **Testing status**
--   **Testing agent used after significant changes:** NO
--   **Test files created:** None in this session.
+-   **Testing agent used after significant changes:** YES, used once for the voucher redemption flow.
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** None.
 -   **Known regressions:** None.
 
 **Credentials to test flow:**
--   User registration is gated by an invite code. An admin user must first generate a code using the  endpoint.
--   Admin credentials can be created via direct database insertion if needed.
+*   **Admin User:**
+    *   Email: 
+    *   Password: 
+*   **Beta Invite Codes:** , , etc., are available for creating new test users.
 
 **What agent forgot to execute**
--   The agent has been diligent and has not forgotten or missed any user requests.</analysis>
+-   The agent did not finish implementing the API call in  to populate the Beta Dashboard with data. This is the immediate next step.</analysis>
