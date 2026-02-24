@@ -208,32 +208,32 @@ const Dashboard = () => {
 
           {/* ENHANCED: Demand Progress - Next Reward (More Prominent) */}
           <Card className="bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-teal-500/10 border-2 border-green-500/40 lg:col-span-2 shadow-lg shadow-green-500/10">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               {/* Header with coins balance prominently displayed */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                 <div>
-                  <h3 className="text-xl font-black text-white flex items-center gap-2">
-                    <div className="p-2 bg-green-500/20 rounded-lg">
-                      <Target className="h-6 w-6 text-green-400" />
+                  <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                    <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-lg">
+                      <Target className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
                     </div>
                     Progress to Next Reward
                   </h3>
-                  <p className="text-sm text-slate-400 mt-1">Unlock real goods through skill</p>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1">Unlock real goods through skill</p>
                 </div>
-                <div className="text-right bg-slate-900/50 px-4 py-3 rounded-xl border border-yellow-500/20">
-                  <p className="text-4xl font-black text-yellow-400">{user?.coins_balance || 0}</p>
+                <div className="text-left sm:text-right bg-slate-900/50 px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-yellow-500/20">
+                  <p className="text-2xl sm:text-4xl font-black text-yellow-400">{user?.coins_balance || 0}</p>
                   <p className="text-xs text-slate-400">coins available</p>
                 </div>
               </div>
               
               {demandProgress?.next_reward ? (
-                <div className="bg-slate-900/60 rounded-xl p-5 border border-slate-700/50">
-                  <div className="flex items-center gap-5">
-                    <div className="relative">
+                <div className="bg-slate-900/60 rounded-xl p-3 sm:p-5 border border-slate-700/50">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
+                    <div className="relative flex-shrink-0">
                       <img 
                         src={demandProgress.next_reward.image_url} 
                         alt={demandProgress.next_reward.name}
-                        className="w-20 h-20 rounded-xl object-cover border-2 border-green-500/30"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border-2 border-green-500/30"
                         onError={(e) => e.target.src = 'https://via.placeholder.com/80'}
                       />
                       {demandProgress.next_reward.progress >= 100 && (
@@ -242,22 +242,22 @@ const Dashboard = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <p className="font-bold text-white text-lg">{demandProgress.next_reward.name}</p>
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <p className="font-bold text-white text-base sm:text-lg">{demandProgress.next_reward.name}</p>
                         {/* Milestone badges */}
                         {demandProgress.next_reward.progress >= 50 && demandProgress.next_reward.progress < 80 && (
-                          <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] sm:text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">
                             Halfway there!
                           </span>
                         )}
                         {demandProgress.next_reward.progress >= 80 && demandProgress.next_reward.progress < 100 && (
-                          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full animate-pulse">
+                          <span className="text-[10px] sm:text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full animate-pulse">
                             Almost unlocked!
                           </span>
                         )}
                         {demandProgress.next_reward.progress >= 100 && (
-                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] sm:text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
                             Ready to claim! 🎉
                           </span>
                         )}
@@ -265,7 +265,7 @@ const Dashboard = () => {
                       
                       {/* Enhanced Progress Bar */}
                       <div className="relative mb-2">
-                        <div className="h-4 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-3 sm:h-4 bg-slate-800 rounded-full overflow-hidden">
                           <div 
                             className={`h-full rounded-full transition-all duration-500 ease-out relative ${
                               demandProgress.next_reward.progress >= 100 
@@ -280,19 +280,19 @@ const Dashboard = () => {
                           </div>
                         </div>
                         {/* Milestone markers with labels */}
-                        <div className="absolute top-0 left-1/2 h-4 w-0.5 bg-slate-600" title="50%">
+                        <div className="absolute top-0 left-1/2 h-3 sm:h-4 w-0.5 bg-slate-600" title="50%">
                           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">50%</span>
                         </div>
-                        <div className="absolute top-0 left-[80%] h-4 w-0.5 bg-slate-600" title="80%">
+                        <div className="absolute top-0 left-[80%] h-3 sm:h-4 w-0.5 bg-slate-600" title="80%">
                           <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-500">80%</span>
                         </div>
                       </div>
                       
-                      <div className="flex items-center justify-between mt-5">
-                        <p className="text-sm font-bold text-green-400">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mt-5">
+                        <p className="text-xs sm:text-sm font-bold text-green-400">
                           {Math.round(demandProgress.next_reward.progress)}% Complete
                         </p>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-xs sm:text-sm text-slate-400">
                           {demandProgress.next_reward.coins_needed > 0 
                             ? <span className="text-yellow-400 font-medium">{demandProgress.next_reward.coins_needed} coins to go</span>
                             : <span className="text-green-400 font-bold">Ready to redeem! 🎉</span>}
