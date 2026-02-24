@@ -368,6 +368,241 @@ async def predict_match(
         "match_id": prediction_data.match_id
     }
 
+# ==================== NEW: OVER OUTCOME PREDICTION ====================
+
+@cricket_router.post("/predict/over")
+async def predict_over_outcome(
+    prediction_data: OverPredictionCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Predict the outcome of an over
+    Options: 0-5, 6-10, 11-15, 16+, wicket_fall
+    Rewards: 25 coins for correct prediction
+    """
+    if prediction_data.prediction not in OVER_OUTCOMES:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid prediction. Must be one of: {OVER_OUTCOMES}"
+        )
+    
+    # Check if match exists and is live
+    match = await db.cricket_matches.find_one({"match_id": prediction_data.match_id}, {"_id": 0})
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+    if match.get("status") != "live":
+        raise HTTPException(status_code=400, detail="Can only predict on live matches")
+    
+    # Check if already predicted for this over
+    existing = await db.match_predictions.find_one({
+        "user_id": current_user.id,
+        "match_id": prediction_data.match_id,
+        "prediction_type": "over_outcome",
+        "over_number": prediction_data.over_number
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail=f"Already predicted for over {prediction_data.over_number}")
+    
+    # Create prediction
+    prediction = MatchPrediction(
+        user_id=current_user.id,
+        match_id=prediction_data.match_id,
+        prediction_type="over_outcome",
+        prediction_value=prediction_data.prediction,
+        over_number=prediction_data.over_number
+    )
+    await db.match_predictions.insert_one(prediction.model_dump())
+    
+    # Simulate result for demo (in production, updated by live data feed)
+    actual_outcomes = ["0-5", "6-10", "6-10", "11-15", "11-15", "16+", "wicket_fall"]
+    actual_result = random.choice(actual_outcomes)
+    is_correct = prediction_data.prediction == actual_result
+    
+    coins_earned = 0
+    if is_correct:
+        coins_earned = REWARDS["over_correct"]
+        await add_coins(current_user.id, coins_earned, "earned", f"Correct over prediction: Over {prediction_data.over_number}")
+    
+    # Update prediction with result
+    await db.match_predictions.update_one(
+        {"id": prediction.id},
+        {"$set": {
+            "actual_value": actual_result,
+            "is_correct": is_correct,
+            "coins_earned": coins_earned
+        }}
+    )
+    
+    # Record activity
+    activity = Activity(
+        user_id=current_user.id,
+        activity_type="over_prediction",
+        coins_earned=coins_earned,
+        details={
+            "match_id": prediction_data.match_id,
+            "over": prediction_data.over_number,
+            "prediction": prediction_data.prediction,
+            "actual": actual_result,
+            "correct": is_correct
+        }
+    )
+    await db.activities.insert_one(activity.model_dump())
+    
+    return {
+        "prediction": prediction_data.prediction,
+        "over_number": prediction_data.over_number,
+        "actual_result": actual_result,
+        "is_correct": is_correct,
+        "coins_earned": coins_earned,
+        "new_balance": current_user.coins_balance + coins_earned,
+        "message": f"Correct! +{coins_earned} coins!" if is_correct else f"Wrong! Over yielded {actual_result} runs"
+    }
+
+# ==================== NEW: MATCH WINNER PREDICTION ====================
+
+@cricket_router.post("/predict/winner")
+async def predict_match_winner(
+    prediction_data: MatchWinnerPredictionCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Predict the match winner
+    Must be made before match starts or within first 6 overs
+    Rewards: 50 coins for correct prediction
+    """
+    # Check if match exists
+    match = await db.cricket_matches.find_one({"match_id": prediction_data.match_id}, {"_id": 0})
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+    
+    # Validate winner is one of the teams
+    valid_teams = [match.get("team1_short"), match.get("team2_short")]
+    if prediction_data.winner not in valid_teams:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid team. Must be one of: {valid_teams}"
+        )
+    
+    # Check if match is completed (can't predict after completion)
+    if match.get("status") == "completed":
+        raise HTTPException(status_code=400, detail="Match has already ended")
+    
+    # Check if already predicted winner for this match
+    existing = await db.match_predictions.find_one({
+        "user_id": current_user.id,
+        "match_id": prediction_data.match_id,
+        "prediction_type": "winner"
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="Already predicted the winner for this match")
+    
+    # Create prediction
+    prediction = MatchPrediction(
+        user_id=current_user.id,
+        match_id=prediction_data.match_id,
+        prediction_type="winner",
+        prediction_value=prediction_data.winner
+    )
+    await db.match_predictions.insert_one(prediction.model_dump())
+    
+    # For live matches, simulate result (in production, resolved when match ends)
+    if match.get("status") == "live":
+        # Simulate for demo
+        actual_winner = random.choice(valid_teams)
+        is_correct = prediction_data.winner == actual_winner
+        
+        coins_earned = 0
+        if is_correct:
+            coins_earned = REWARDS["match_winner_correct"]
+            await add_coins(current_user.id, coins_earned, "earned", f"Correct match winner prediction!")
+        
+        # Update prediction with result
+        await db.match_predictions.update_one(
+            {"id": prediction.id},
+            {"$set": {
+                "actual_value": actual_winner,
+                "is_correct": is_correct,
+                "coins_earned": coins_earned
+            }}
+        )
+        
+        # Record activity
+        activity = Activity(
+            user_id=current_user.id,
+            activity_type="winner_prediction",
+            coins_earned=coins_earned,
+            details={
+                "match_id": prediction_data.match_id,
+                "prediction": prediction_data.winner,
+                "actual": actual_winner,
+                "correct": is_correct
+            }
+        )
+        await db.activities.insert_one(activity.model_dump())
+        
+        return {
+            "prediction": prediction_data.winner,
+            "actual_winner": actual_winner,
+            "is_correct": is_correct,
+            "coins_earned": coins_earned,
+            "new_balance": current_user.coins_balance + coins_earned,
+            "message": f"Correct! +{coins_earned} coins!" if is_correct else f"Wrong! {actual_winner} won the match"
+        }
+    
+    # For upcoming matches
+    return {
+        "message": f"Winner prediction recorded: {prediction_data.winner}",
+        "prediction": prediction_data.winner,
+        "match_id": prediction_data.match_id,
+        "note": "Result will be updated when match ends"
+    }
+
+# ==================== PREDICTION LIMITS INFO ====================
+
+@cricket_router.get("/matches/{match_id}/prediction-status")
+async def get_prediction_status(
+    match_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get user's prediction status for a match (limits, counts)"""
+    
+    # Ball predictions count
+    ball_count = await db.ball_predictions.count_documents({
+        "user_id": current_user.id,
+        "match_id": match_id
+    })
+    
+    # Over predictions count
+    over_count = await db.match_predictions.count_documents({
+        "user_id": current_user.id,
+        "match_id": match_id,
+        "prediction_type": "over_outcome"
+    })
+    
+    # Has winner prediction
+    has_winner = await db.match_predictions.find_one({
+        "user_id": current_user.id,
+        "match_id": match_id,
+        "prediction_type": "winner"
+    })
+    
+    return {
+        "match_id": match_id,
+        "ball_predictions": {
+            "count": ball_count,
+            "limit": BALL_PREDICTION_LIMIT_PER_MATCH,
+            "remaining": max(0, BALL_PREDICTION_LIMIT_PER_MATCH - ball_count)
+        },
+        "over_predictions": {
+            "count": over_count,
+            "limit": 20  # Max 20 overs in T20
+        },
+        "winner_prediction": {
+            "made": has_winner is not None,
+            "value": has_winner.get("prediction_value") if has_winner else None
+        }
+    }
+
 @cricket_router.get("/predictions/my")
 async def get_my_predictions(
     match_id: Optional[str] = None,
