@@ -243,7 +243,38 @@ const Register = () => {
               )}
             </div>
             
-            {/* Geo-blocking - State Selection */}
+            {/* Country Selection - India Only */}
+            <div className="space-y-2">
+              <Label htmlFor="country" className="text-slate-200 text-sm flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Country
+                <span className="text-green-400 text-xs">(India only)</span>
+              </Label>
+              <select
+                id="country"
+                value={country}
+                onChange={(e) => {
+                  setCountry(e.target.value);
+                  checkCountryAllowed(e.target.value);
+                }}
+                required
+                className={`w-full h-11 rounded-md bg-slate-800 border px-3 text-white ${
+                  !countryAllowed ? 'border-red-500' : 'border-slate-700'
+                }`}
+                data-testid="country-select"
+              >
+                <option value="India">India</option>
+                <option value="Other" disabled>Other countries (Not available)</option>
+              </select>
+              {!countryAllowed && (
+                <p className="text-xs text-red-400 flex items-center gap-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  FREE11 is currently available only in India
+                </p>
+              )}
+            </div>
+            
+            {/* State Selection - All Indian states allowed */}
             <div className="space-y-2">
               <Label htmlFor="state" className="text-slate-200 text-sm flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
