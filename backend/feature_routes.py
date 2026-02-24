@@ -73,16 +73,14 @@ def calculate_age(dob_str: str) -> int:
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
 
+def is_country_allowed(country: str) -> bool:
+    """Check if country is India (the only allowed country)"""
+    country_normalized = country.strip().title()
+    return country_normalized in ["India"] or country.strip().upper() == "IN"
+
 def is_state_blocked(state: str) -> bool:
-    """Check if a state is blocked for fantasy sports"""
-    state_upper = state.upper().strip()
-    # Check against state codes
-    if state_upper in BLOCKED_STATES:
-        return True
-    # Check against full state names
-    if state.strip().title() in BLOCKED_STATE_NAMES:
-        return True
-    return False
+    """Check if a state is blocked - currently no states are blocked"""
+    return False  # All Indian states allowed
 
 def get_feature_flag(flag_name: str) -> any:
     """Get a feature flag value"""
