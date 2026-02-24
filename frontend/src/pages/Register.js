@@ -283,29 +283,16 @@ const Register = () => {
               <select
                 id="state"
                 value={state}
-                onChange={(e) => {
-                  setState(e.target.value);
-                  checkStateBlocked(e.target.value);
-                }}
+                onChange={(e) => setState(e.target.value)}
                 required
-                className={`w-full h-11 rounded-md bg-slate-800 border px-3 text-white ${
-                  stateBlocked ? 'border-red-500' : 'border-slate-700'
-                }`}
+                className="w-full h-11 rounded-md bg-slate-800 border border-slate-700 px-3 text-white"
                 data-testid="state-select"
               >
                 <option value="">Select your state</option>
                 {INDIAN_STATES.map((s) => (
-                  <option key={s} value={s} disabled={BLOCKED_STATES.includes(s)}>
-                    {s} {BLOCKED_STATES.includes(s) ? '(Not Available)' : ''}
-                  </option>
+                  <option key={s} value={s}>{s}</option>
                 ))}
               </select>
-              {stateBlocked && (
-                <p className="text-xs text-red-400 flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3" />
-                  Fantasy sports are not available in {state}
-                </p>
-              )}
             </div>
             
             {/* Beta Invite Code Field */}
