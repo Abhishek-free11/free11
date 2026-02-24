@@ -11,12 +11,14 @@ import os
 
 feature_router = APIRouter(prefix="/features", tags=["Features"])
 
-# ==================== BLOCKED STATES ====================
-# Geo-blocking REMOVED - FREE11 is not RMG/betting/cash
-# All states are allowed for sports fan community platform
-BLOCKED_STATES = {}  # Empty - no states blocked
+# ==================== COUNTRY RESTRICTION ====================
+# FREE11 is restricted to India only
+ALLOWED_COUNTRIES = ["India", "IN"]
 
-BLOCKED_STATE_NAMES = []  # Empty - no states blocked
+# ==================== BLOCKED STATES ====================
+# No state-level blocking - all Indian states allowed
+BLOCKED_STATES = {}
+BLOCKED_STATE_NAMES = []
 
 # ==================== FEATURE FLAGS ====================
 # Default feature flag configuration
