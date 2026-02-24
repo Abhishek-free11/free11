@@ -1,6 +1,6 @@
 """
 Cricket Routes for FREE11
-Ball-by-ball predictions, match predictions, and rewards
+Ball-by-ball predictions, Over predictions, Match predictions, and rewards
 """
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -14,6 +14,23 @@ import random
 from server import db, get_current_user, add_coins, User, Activity
 
 cricket_router = APIRouter(prefix="/cricket", tags=["Cricket"])
+
+# ==================== CONSTANTS ====================
+
+# Ball-by-ball limit per match per user
+BALL_PREDICTION_LIMIT_PER_MATCH = 20
+
+# Over outcome options
+OVER_OUTCOMES = ["0-5", "6-10", "11-15", "16+", "wicket_fall"]
+
+# Coin rewards
+REWARDS = {
+    "ball_correct": 5,
+    "ball_boundary": 10,  # 4 or 6
+    "ball_wicket": 15,
+    "over_correct": 25,
+    "match_winner_correct": 50
+}
 
 # ==================== MODELS ====================
 
