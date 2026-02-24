@@ -24,6 +24,13 @@ const PrivateRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
+const AdminRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" />;
+  if (!user.is_admin) return <Navigate to="/dashboard" />;
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
