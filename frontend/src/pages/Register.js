@@ -9,10 +9,9 @@ import { Coins, Ticket, CheckCircle, XCircle, Eye, EyeOff, Calendar, MapPin, Ale
 import { toast } from 'sonner';
 import api from '../utils/api';
 
-// Blocked states for fantasy sports
-const BLOCKED_STATES = [
-  "Andhra Pradesh", "Telangana", "Assam", "Odisha", "Sikkim", "Nagaland"
-];
+// Blocked states - REMOVED (FREE11 is not RMG/betting/cash)
+// Geo-blocking not required for sports fan community platform
+const BLOCKED_STATES = []; // Empty - all states allowed
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
