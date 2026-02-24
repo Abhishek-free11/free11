@@ -76,8 +76,9 @@ class MatchPrediction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     match_id: str
-    prediction_type: str  # winner, score_6_overs, score_10_overs, final_score, top_scorer, mom
+    prediction_type: str  # winner, over_outcome, score_6_overs, score_10_overs, final_score, top_scorer, mom
     prediction_value: str
+    over_number: Optional[int] = None  # For over outcome predictions
     actual_value: Optional[str] = None
     is_correct: Optional[bool] = None
     coins_earned: int = 0
@@ -93,6 +94,15 @@ class MatchPredictionCreate(BaseModel):
     match_id: str
     prediction_type: str
     prediction_value: str
+
+class OverPredictionCreate(BaseModel):
+    match_id: str
+    over_number: int
+    prediction: str  # 0-5, 6-10, 11-15, 16+, wicket_fall
+
+class MatchWinnerPredictionCreate(BaseModel):
+    match_id: str
+    winner: str  # Team short code (CSK, MI, etc.)
 
 # ==================== MOCK DATA ====================
 # IPL 2026 Mock Matches for development
