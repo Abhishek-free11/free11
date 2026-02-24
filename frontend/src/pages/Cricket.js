@@ -262,10 +262,15 @@ const Cricket = () => {
 
                   {/* Ball Prediction */}
                   <div>
-                    <p className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-yellow-400" />
-                      Predict Next Ball (Ball {liveMatch.current_ball})
-                    </p>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-lg font-bold text-white flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-yellow-400" />
+                        Predict Next Ball (Ball {liveMatch.current_ball})
+                      </p>
+                      <Badge variant="outline" className="text-xs">
+                        {20 - (myPredictions.stats?.ball_predictions_count || 0)}/20 calls left
+                      </Badge>
+                    </div>
                     <div className="grid grid-cols-4 gap-2">
                       {BALL_OUTCOMES.map((outcome) => (
                         <Button
@@ -280,6 +285,70 @@ const Cricket = () => {
                         </Button>
                       ))}
                     </div>
+                    <p className="text-xs text-slate-500 mt-2 text-center">
+                      5-15 coins per correct call • Limited to 20 per match
+                    </p>
+                  </div>
+
+                  {/* Over Outcome Prediction */}
+                  <div className="bg-slate-800/30 rounded-lg p-4">
+                    <p className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                      <Target className="h-5 w-5 text-purple-400" />
+                      Over Outcome (Over {Math.ceil(parseFloat(liveMatch.current_ball || '1'))})
+                    </p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {['0-5', '6-10', '11-15', '16+', 'Wicket'].map((outcome) => (
+                        <Button
+                          key={outcome}
+                          variant="outline"
+                          onClick={() => handleOverPrediction(outcome.toLowerCase().replace('+', '_plus'))}
+                          disabled={predicting}
+                          className="border-slate-600 hover:bg-purple-500/20 hover:border-purple-500 text-white h-12"
+                          data-testid={`over-predict-${outcome}`}
+                        >
+                          {outcome}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-2 text-center">
+                      25 coins per correct over prediction
+                    </p>
+                  </div>
+
+                  {/* Match Winner Prediction */}
+                  <div className="bg-slate-800/30 rounded-lg p-4">
+                    <p className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-yellow-400" />
+                      Match Winner
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleWinnerPrediction(liveMatch.team1_short)}
+                        disabled={predicting || myPredictions.match_predictions?.some(p => p.prediction_type === 'winner')}
+                        className="border-slate-600 hover:bg-yellow-500/20 hover:border-yellow-500 h-14"
+                        data-testid="winner-team1"
+                      >
+                        <span className="text-lg font-bold">{liveMatch.team1_short}</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleWinnerPrediction(liveMatch.team2_short)}
+                        disabled={predicting || myPredictions.match_predictions?.some(p => p.prediction_type === 'winner')}
+                        className="border-slate-600 hover:bg-yellow-500/20 hover:border-yellow-500 h-14"
+                        data-testid="winner-team2"
+                      >
+                        <span className="text-lg font-bold">{liveMatch.team2_short}</span>
+                      </Button>
+                    </div>
+                    {myPredictions.match_predictions?.find(p => p.prediction_type === 'winner') && (
+                      <p className="text-xs text-green-400 mt-2 text-center">
+                        ✓ You picked {myPredictions.match_predictions.find(p => p.prediction_type === 'winner')?.prediction_value}
+                      </p>
+                    )}
+                    <p className="text-xs text-slate-500 mt-2 text-center">
+                      50 coins if your team wins
+                    </p>
                   </div>
 
                   {/* Venue */}
