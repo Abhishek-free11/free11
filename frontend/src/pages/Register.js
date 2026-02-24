@@ -108,15 +108,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Age validation
+    // Age validation (18+ still required for community platform)
     if (!ageValid) {
       toast.error('You must be 18 years or older to use FREE11');
-      return;
-    }
-    
-    // State validation
-    if (stateBlocked) {
-      toast.error('Fantasy sports are not available in your state');
       return;
     }
     
