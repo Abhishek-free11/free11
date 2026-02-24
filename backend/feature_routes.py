@@ -49,10 +49,12 @@ class AgeVerification(BaseModel):
 class GeoCheckRequest(BaseModel):
     state: str
     state_code: Optional[str] = None
+    country: Optional[str] = "India"
 
 class GeoCheckResponse(BaseModel):
     allowed: bool
     state: str
+    country: str
     message: str
 
 class FeatureFlagResponse(BaseModel):
