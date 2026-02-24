@@ -45,7 +45,8 @@ const Register = () => {
   
   // Geo-blocking fields
   const [state, setState] = useState('');
-  const [stateBlocked, setStateBlocked] = useState(false);
+  const [country, setCountry] = useState('India');
+  const [countryAllowed, setCountryAllowed] = useState(true);
 
   // Check if invite code is in URL
   useEffect(() => {
