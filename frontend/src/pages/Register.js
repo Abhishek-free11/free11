@@ -84,11 +84,11 @@ const Register = () => {
     setAgeValid(age >= 18);
   };
 
-  // Check if state is blocked
-  const checkStateBlocked = (selectedState) => {
-    const blocked = BLOCKED_STATES.includes(selectedState);
-    setStateBlocked(blocked);
-    return blocked;
+  // Check if country is allowed (India only)
+  const checkCountryAllowed = (selectedCountry) => {
+    const allowed = selectedCountry === 'India';
+    setCountryAllowed(allowed);
+    return allowed;
   };
 
   const validateInviteCode = async (code) => {
