@@ -130,21 +130,21 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Nav - Bottom fixed tabs */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 z-50 safe-area-bottom">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 z-50 safe-area-bottom">
           <div className="flex items-center justify-around py-2 px-1">
-            {navItems.slice(0, 5).map((item) => (
+            {navItems.map((item) => (
               <Button
                 key={item.path}
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(item.path)}
-                className={`flex-col h-auto py-1.5 px-2 gap-0.5 ${
+                className={`flex-col h-auto py-1.5 px-3 gap-0.5 ${
                   isActive(item.path) 
-                    ? 'text-yellow-400 bg-yellow-500/10' 
-                    : 'text-slate-400'
+                    ? 'text-yellow-400 bg-yellow-500/15' 
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className={`h-5 w-5 ${item.highlight && !isActive(item.path) ? 'text-yellow-500' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Button>
             ))}
