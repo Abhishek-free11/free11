@@ -983,6 +983,142 @@ async def get_analytics():
         "total_coins_in_circulation": total_coins
     }
 
+@api_router.get("/admin/beta-metrics")
+async def get_beta_metrics():
+    """Comprehensive Beta Metrics Dashboard"""
+    
+    # === USER METRICS ===
+    total_users = await db.users.count_documents({})
+    admin_users = await db.users.count_documents({"is_admin": True})
+    beta_users = total_users - admin_users
+    
+    # Users with tutorial completed
+    tutorial_completed = await db.users.count_documents({"tutorial_completed": True})
+    tutorial_rate = round((tutorial_completed / beta_users * 100), 1) if beta_users > 0 else 0
+    
+    # === INVITE METRICS ===
+    total_invites = await db.beta_invites.count_documents({"source": "wave1_simple"})
+    used_invites = await db.beta_invites.count_documents({"source": "wave1_simple", "current_uses": {"$gt": 0}})
+    unused_invites = total_invites - used_invites
+    invite_conversion = round((used_invites / total_invites * 100), 1) if total_invites > 0 else 0
+    
+    # === PREDICTION METRICS ===
+    total_predictions = await db.predictions.count_documents({})
+    correct_predictions = await db.predictions.count_documents({"is_correct": True})
+    prediction_accuracy = round((correct_predictions / total_predictions * 100), 1) if total_predictions > 0 else 0
+    
+    # Users who made at least 1 prediction
+    users_with_predictions = await db.predictions.distinct("user_id")
+    prediction_adoption = round((len(users_with_predictions) / beta_users * 100), 1) if beta_users > 0 else 0
+    
+    # Predictions per user
+    predictions_per_user = round(total_predictions / len(users_with_predictions), 1) if users_with_predictions else 0
+    
+    # === REDEMPTION METRICS ===
+    total_redemptions = await db.redemptions.count_documents({})
+    successful_redemptions = await db.redemptions.count_documents({"status": {"$in": ["completed", "delivered", "processing"]}})
+    failed_redemptions = await db.redemptions.count_documents({"status": "failed"})
+    
+    # Users who redeemed at least once
+    users_with_redemptions = await db.redemptions.distinct("user_id")
+    redemption_adoption = round((len(users_with_redemptions) / beta_users * 100), 1) if beta_users > 0 else 0
+    
+    # === COIN ECONOMY ===
+    coin_pipeline = [
+        {"$group": {
+            "_id": None, 
+            "total_balance": {"$sum": "$coins_balance"},
+            "total_earned": {"$sum": "$total_earned"},
+            "total_redeemed": {"$sum": "$total_redeemed"}
+        }}
+    ]
+    coin_result = await db.users.aggregate(coin_pipeline).to_list(1)
+    coin_data = coin_result[0] if coin_result else {"total_balance": 0, "total_earned": 0, "total_redeemed": 0}
+    
+    # === ENGAGEMENT METRICS ===
+    # Active users (made prediction or redemption in last 24h)
+    yesterday = datetime.now(timezone.utc) - timedelta(hours=24)
+    
+    # === TOP USERS ===
+    top_predictors = await db.users.find(
+        {"is_admin": {"$ne": True}},
+        {"_id": 0, "name": 1, "email": 1, "correct_predictions": 1, "total_predictions": 1, "coins_balance": 1}
+    ).sort("correct_predictions", -1).limit(5).to_list(5)
+    
+    # === PRODUCT PERFORMANCE ===
+    product_pipeline = [
+        {"$group": {
+            "_id": "$product_id",
+            "redemption_count": {"$sum": 1}
+        }},
+        {"$sort": {"redemption_count": -1}},
+        {"$limit": 5}
+    ]
+    top_products = await db.redemptions.aggregate(product_pipeline).to_list(5)
+    
+    # Enrich with product names
+    for p in top_products:
+        product = await db.products.find_one({"id": p["_id"]}, {"_id": 0, "name": 1})
+        p["name"] = product["name"] if product else "Unknown"
+    
+    # === FULL LOOP COMPLETION ===
+    # Users who: registered -> predicted -> redeemed (core loop)
+    users_completed_loop = len(set(users_with_predictions) & set(users_with_redemptions))
+    loop_completion_rate = round((users_completed_loop / beta_users * 100), 1) if beta_users > 0 else 0
+    
+    # === SUPPORT METRICS ===
+    total_tickets = await db.support_tickets.count_documents({})
+    open_tickets = await db.support_tickets.count_documents({"status": "open"})
+    
+    return {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "beta_users": beta_users,
+            "loop_completion_rate": f"{loop_completion_rate}%",
+            "health": "🟢 Good" if loop_completion_rate >= 20 else "🟡 Monitor" if loop_completion_rate >= 10 else "🔴 Needs Work"
+        },
+        "users": {
+            "total_beta_users": beta_users,
+            "tutorial_completed": tutorial_completed,
+            "tutorial_completion_rate": f"{tutorial_rate}%",
+            "users_completed_full_loop": users_completed_loop
+        },
+        "invites": {
+            "total_generated": total_invites,
+            "used": used_invites,
+            "unused": unused_invites,
+            "conversion_rate": f"{invite_conversion}%"
+        },
+        "predictions": {
+            "total": total_predictions,
+            "correct": correct_predictions,
+            "accuracy_rate": f"{prediction_accuracy}%",
+            "users_who_predicted": len(users_with_predictions),
+            "adoption_rate": f"{prediction_adoption}%",
+            "avg_per_user": predictions_per_user
+        },
+        "redemptions": {
+            "total": total_redemptions,
+            "successful": successful_redemptions,
+            "failed": failed_redemptions,
+            "users_who_redeemed": len(users_with_redemptions),
+            "adoption_rate": f"{redemption_adoption}%"
+        },
+        "coins": {
+            "total_in_circulation": coin_data.get("total_balance", 0),
+            "total_earned_all_time": coin_data.get("total_earned", 0),
+            "total_redeemed_all_time": coin_data.get("total_redeemed", 0)
+        },
+        "support": {
+            "total_tickets": total_tickets,
+            "open_tickets": open_tickets
+        },
+        "leaderboard": {
+            "top_predictors": top_predictors
+        },
+        "top_products": top_products
+    }
+
 @api_router.get("/admin/brand-roas")
 async def get_brand_roas():
     """
