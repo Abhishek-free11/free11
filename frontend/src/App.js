@@ -46,7 +46,7 @@ function App() {
             <Route path="/shop" element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-            <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
+            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/clans" element={<PrivateRoute><Clans /></PrivateRoute>} />
             <Route path="/leaderboards" element={<PrivateRoute><Leaderboards /></PrivateRoute>} />
