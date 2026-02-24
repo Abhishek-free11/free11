@@ -46,6 +46,7 @@ const GAME_INFO = {
 
 const CardGames = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, updateUser } = useAuth();
   const [selectedGame, setSelectedGame] = useState(null);
   const [rooms, setRooms] = useState([]);
@@ -54,6 +55,17 @@ const CardGames = () => {
   const [loading, setLoading] = useState(false);
   const [showJoinCode, setShowJoinCode] = useState(false);
   const [joinCode, setJoinCode] = useState('');
+
+  // Handle invite link with ?join= parameter
+  useEffect(() => {
+    const joinCodeFromUrl = searchParams.get('join');
+    if (joinCodeFromUrl) {
+      // Auto-populate and open join dialog
+      setJoinCode(joinCodeFromUrl);
+      setShowJoinCode(true);
+      toast.info('Enter the room to join your friend\'s game!');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetchMyRooms();
