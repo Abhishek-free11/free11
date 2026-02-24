@@ -239,7 +239,7 @@ const CardGames = () => {
         )}
 
         {/* Game Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {Object.entries(GAME_INFO).map(([gameType, info]) => {
             const Icon = info.icon;
             const isSelected = selectedGame === gameType;
@@ -252,12 +252,12 @@ const CardGames = () => {
                 }`}
                 onClick={() => setSelectedGame(gameType)}
               >
-                <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${info.color} flex items-center justify-center mb-4`}>
-                    <Icon className="h-8 w-8 text-white" />
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-full bg-gradient-to-br ${info.color} flex items-center justify-center mb-3 sm:mb-4`}>
+                    <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{info.name}</h3>
-                  <p className="text-slate-400 text-sm mb-4">{info.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">{info.name}</h3>
+                  <p className="text-slate-400 text-xs sm:text-sm mb-3 sm:mb-4">{info.description}</p>
                   <div className="flex justify-center gap-2">
                     <Badge className="bg-green-500/20 text-green-400">FREE Entry</Badge>
                     <Badge className="bg-yellow-500/20 text-yellow-400">
