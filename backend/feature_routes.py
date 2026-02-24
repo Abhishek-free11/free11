@@ -117,31 +117,28 @@ async def verify_age(data: AgeVerification):
 @feature_router.post("/check-geo", response_model=GeoCheckResponse)
 async def check_geo(data: GeoCheckRequest):
     """
-    Check if user's state allows fantasy sports
+    Check if user's location allows access to FREE11
+    - Country must be India
+    - All Indian states are allowed
     """
+    country = data.country.strip() if data.country else "India"
     state = data.state.strip()
-    state_code = data.state_code.strip().upper() if data.state_code else None
     
-    # Check state code first if provided
-    if state_code and state_code in BLOCKED_STATES:
-        return GeoCheckResponse(
-            allowed=False,
-            state=BLOCKED_STATES[state_code],
-            message=f"Fantasy sports are not available in {BLOCKED_STATES[state_code]} due to local regulations"
-        )
-    
-    # Check full state name
-    if is_state_blocked(state):
+    # Check country first - must be India
+    if not is_country_allowed(country):
         return GeoCheckResponse(
             allowed=False,
             state=state,
-            message=f"Fantasy sports are not available in {state} due to local regulations"
+            country=country,
+            message="FREE11 is currently available only in India"
         )
     
+    # All Indian states are allowed
     return GeoCheckResponse(
         allowed=True,
         state=state,
-        message="Your location is eligible for FREE11"
+        country="India",
+        message="Welcome to FREE11!"
     )
 
 @feature_router.get("/blocked-states")
