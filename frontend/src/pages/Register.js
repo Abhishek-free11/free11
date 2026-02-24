@@ -66,6 +66,29 @@ const Register = () => {
     checkBetaStatus();
   }, [searchParams]);
 
+  // Calculate age from date of birth
+  const validateAge = (dob) => {
+    if (!dob) {
+      setAgeValid(null);
+      return;
+    }
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    setAgeValid(age >= 18);
+  };
+
+  // Check if state is blocked
+  const checkStateBlocked = (selectedState) => {
+    const blocked = BLOCKED_STATES.includes(selectedState);
+    setStateBlocked(blocked);
+    return blocked;
+  };
+
   const validateInviteCode = async (code) => {
     if (!code || code.length < 5) {
       setInviteValid(null);
