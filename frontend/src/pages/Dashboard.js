@@ -137,7 +137,7 @@ const Dashboard = () => {
   const rankStyle = RANK_COLORS[user?.level || 1];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
       {/* First-Time Tutorial */}
       {showTutorial && (
         <FirstTimeTutorial 
@@ -147,7 +147,7 @@ const Dashboard = () => {
       )}
       
       <Navbar />
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6" data-testid="dashboard-page">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl" data-testid="dashboard-page">
         
         {/* Beta Program Banner */}
         <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
