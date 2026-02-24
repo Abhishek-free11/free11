@@ -224,15 +224,21 @@ class TestBetaRegistration:
         print(f"✅ Beta status: require_invite_code={data['require_invite_code']}")
     
     def test_validate_invite_code_valid(self):
-        """GET /api/beta/invite/validate/{code} - Valid code"""
-        response = requests.get(f"{BASE_URL}/api/beta/invite/validate/BETA01")
+        """POST /api/beta/validate-invite - Valid code"""
+        response = requests.post(
+            f"{BASE_URL}/api/beta/validate-invite",
+            json={"code": "BETA02"}  # BETA01 may be used up
+        )
         # May be 200 (valid) or 400 (used up)
         assert response.status_code in [200, 400]
-        print(f"✅ BETA01 validation: {response.json()}")
+        print(f"✅ BETA02 validation: {response.json()}")
     
     def test_validate_invite_code_invalid(self):
-        """GET /api/beta/invite/validate/{code} - Invalid code"""
-        response = requests.get(f"{BASE_URL}/api/beta/invite/validate/INVALID123")
+        """POST /api/beta/validate-invite - Invalid code"""
+        response = requests.post(
+            f"{BASE_URL}/api/beta/validate-invite",
+            json={"code": "INVALID123"}
+        )
         assert response.status_code in [400, 404]
         print("✅ Invalid invite code rejected")
 
