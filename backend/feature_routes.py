@@ -144,12 +144,14 @@ async def check_geo(data: GeoCheckRequest):
 @feature_router.get("/blocked-states")
 async def get_blocked_states():
     """
-    Get list of blocked states for client-side validation
+    Get geo-restriction info for client-side validation
     """
     return {
-        "blocked_states": BLOCKED_STATES,
-        "blocked_state_names": BLOCKED_STATE_NAMES,
-        "reason": "Fantasy sports are restricted in these states due to local regulations"
+        "blocked_states": [],  # No states blocked
+        "blocked_state_names": [],  # No states blocked
+        "allowed_countries": ALLOWED_COUNTRIES,
+        "country_restriction": "India only",
+        "reason": "FREE11 is currently available only in India"
     }
 
 @feature_router.get("/flags", response_model=FeatureFlagResponse)
