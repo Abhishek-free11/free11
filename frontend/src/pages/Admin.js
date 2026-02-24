@@ -116,18 +116,31 @@ const Admin = () => {
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8" data-testid="admin-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl sm:text-4xl font-black text-white mb-1">Beta Dashboard 🧪</h1>
-            <p className="text-slate-400 text-sm">Monitor beta metrics and validate the product</p>
+            <h1 className="text-2xl sm:text-4xl font-black text-white mb-1">Admin Dashboard 🧪</h1>
+            <p className="text-slate-400 text-sm">
+              Real-time beta metrics 
+              {lastUpdated && <span className="text-slate-500"> • Updated {lastUpdated.toLocaleTimeString()}</span>}
+            </p>
           </div>
-          <Button 
-            onClick={handleRefresh} 
-            disabled={refreshing}
-            variant="outline" 
-            className="border-slate-700 text-slate-300 hover:bg-slate-800"
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              variant="outline" 
+              size="sm"
+              className={`border-slate-700 ${autoRefresh ? 'text-green-400 border-green-500/50' : 'text-slate-400'}`}
+            >
+              {autoRefresh ? '🟢 Live' : '⏸️ Paused'}
+            </Button>
+            <Button 
+              onClick={handleRefresh} 
+              disabled={refreshing}
+              variant="outline" 
+              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Beta Health Summary */}
