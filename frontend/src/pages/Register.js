@@ -111,7 +111,13 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Age validation (18+ still required for community platform)
+    // Country validation - India only
+    if (country !== 'India') {
+      toast.error('FREE11 is currently available only in India');
+      return;
+    }
+    
+    // Age validation (18+ required)
     if (!ageValid) {
       toast.error('You must be 18 years or older to use FREE11');
       return;
