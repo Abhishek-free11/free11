@@ -8,6 +8,10 @@ const getAuthHeader = () => {
 };
 
 export const api = {
+  // Generic methods
+  get: (endpoint) => axios.get(`${API}${endpoint}`, { headers: getAuthHeader() }),
+  post: (endpoint, data) => axios.post(`${API}${endpoint}`, data, { headers: getAuthHeader() }),
+  
   // Auth
   login: (data) => axios.post(`${API}/auth/login`, data),
   register: (data) => axios.post(`${API}/auth/register`, data),
