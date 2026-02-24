@@ -1412,7 +1412,6 @@ sys.path.insert(0, str(ROOT_DIR))
 
 from cricket_routes import cricket_router
 from gift_card_routes import gift_card_router
-from ads_routes import ads_router
 from clans_routes import clans_router
 from leaderboards_routes import leaderboards_router
 from fulfillment_routes import fulfillment_router
@@ -1420,6 +1419,9 @@ from support_routes import support_router
 from brand_routes import brand_router
 from beta_routes import beta_router
 from reports_routes import reports_router
+from feature_routes import feature_router
+from fantasy_routes import fantasy_router
+from leagues_routes import leagues_router
 from email_service import EmailService
 
 # Initialize email service
@@ -1432,12 +1434,14 @@ async def startup_event():
 # Include additional routers under /api prefix
 app.include_router(cricket_router, prefix="/api")
 app.include_router(gift_card_router, prefix="/api")
-app.include_router(ads_router, prefix="/api")
 app.include_router(clans_router, prefix="/api")
-app.include_router(leaderboards_router, prefix="/api")
+app.include_router(leaderboards_routes, prefix="/api")
 app.include_router(fulfillment_router, prefix="/api")
 app.include_router(support_router, prefix="/api")
 app.include_router(brand_router, prefix="/api")
+app.include_router(feature_router, prefix="/api")
+app.include_router(fantasy_router, prefix="/api")
+app.include_router(leagues_router, prefix="/api")
 app.include_router(beta_router)  # Beta routes already have /api prefix
 app.include_router(reports_router)  # Reports routes already have /api prefix
 
