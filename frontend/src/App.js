@@ -17,6 +17,8 @@ import Clans from './pages/Clans';
 import Leaderboards from './pages/Leaderboards';
 import Support from './pages/Support';
 import BrandPortal from './pages/BrandPortal';
+import Fantasy from './pages/Fantasy';
+import PrivateLeagues from './pages/PrivateLeagues';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -43,6 +45,8 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/earn" element={<PrivateRoute><EarnCoins /></PrivateRoute>} />
             <Route path="/cricket" element={<PrivateRoute><Cricket /></PrivateRoute>} />
+            <Route path="/fantasy/:matchId" element={<PrivateRoute><Fantasy /></PrivateRoute>} />
+            <Route path="/leagues" element={<PrivateRoute><PrivateLeagues /></PrivateRoute>} />
             <Route path="/shop" element={<PrivateRoute><Shop /></PrivateRoute>} />
             <Route path="/orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
