@@ -150,7 +150,6 @@ const Cricket = () => {
         prediction_value: value
       });
       
-      playCoinSound();
       toast.success('Prediction recorded!', {
         description: `Your ${type} prediction has been saved`
       });
@@ -161,6 +160,72 @@ const Cricket = () => {
       
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Prediction failed');
+    }
+  };
+
+  // Over Outcome Prediction
+  const handleOverPrediction = async (prediction) => {
+    if (!liveMatch) return;
+
+    setPredicting(true);
+    try {
+      const currentOver = Math.ceil(parseFloat(liveMatch.current_ball || '1'));
+      const response = await api.post('/cricket/predict/over', {
+        match_id: liveMatch.match_id,
+        over_number: currentOver,
+        prediction: prediction
+      });
+
+      if (response.data.is_correct) {
+        playCorrectPredictionSound();
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#a855f7', '#fbbf24', '#10b981']
+        });
+        toast.success('Great call! 🎯', {
+          description: `+${response.data.coins_earned} coins for over prediction!`
+        });
+        updateUser({ coins_balance: response.data.new_balance });
+      } else {
+        toast.info(response.data.message || 'Not quite — over yielded different runs');
+      }
+
+      // Refresh predictions
+      const predsRes = await api.getMyPredictions(liveMatch.match_id);
+      setMyPredictions(predsRes.data);
+      
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Prediction failed');
+    } finally {
+      setPredicting(false);
+    }
+  };
+
+  // Match Winner Prediction
+  const handleWinnerPrediction = async (winner) => {
+    if (!liveMatch) return;
+
+    setPredicting(true);
+    try {
+      const response = await api.post('/cricket/predict/winner', {
+        match_id: liveMatch.match_id,
+        winner: winner
+      });
+
+      toast.success('Prediction locked in!', {
+        description: `You picked ${winner} to win. 50 coins if correct!`
+      });
+
+      // Refresh predictions
+      const predsRes = await api.getMyPredictions(liveMatch.match_id);
+      setMyPredictions(predsRes.data);
+      
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Prediction failed');
+    } finally {
+      setPredicting(false);
     }
   };
 
