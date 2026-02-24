@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target, Users, Trophy, MessageCircle } from 'lucide-react';
+import { Coins, Home, ShoppingBag, Package, User, LogOut, Shield, Zap, Target, Users, Trophy, MessageCircle, Spade } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import {
   DropdownMenu,
@@ -19,10 +19,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Demand Rail hierarchy: Cricket (Skill) > Boosters > Shop
+  // Demand Rail hierarchy: Cricket (Skill) > Card Games > Boosters > Shop
   const navItems = [
     { path: '/dashboard', label: 'Home', icon: Home },
     { path: '/cricket', label: 'Predict', icon: Target, highlight: true }, // SKILL - Primary
+    { path: '/games', label: 'Cards', icon: Spade }, // NEW - Card Games
     { path: '/clans', label: 'Clans', icon: Users }, // NEW - Social
     { path: '/leaderboards', label: 'Ranks', icon: Trophy }, // NEW - Leaderboards
     { path: '/earn', label: 'Boost', icon: Zap }, // BOOSTERS - Secondary
