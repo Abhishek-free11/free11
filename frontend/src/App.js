@@ -6,6 +6,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Contests from './pages/Contests';
 import EarnCoins from './pages/EarnCoins';
 import Cricket from './pages/Cricket';
 import Shop from './pages/Shop';
@@ -29,7 +30,7 @@ const PrivateRoute = ({ children }) => {
   // Show nothing while loading auth state
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
       </div>
     );
@@ -43,14 +44,14 @@ const AdminRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
       </div>
     );
   }
   
   if (!user) return <Navigate to="/login" />;
-  if (!user.is_admin) return <Navigate to="/dashboard" />;
+  if (!user.is_admin) return <Navigate to="/contests" />;
   return children;
 };
 
@@ -63,6 +64,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/contests" element={<PrivateRoute><Contests /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/earn" element={<PrivateRoute><EarnCoins /></PrivateRoute>} />
             <Route path="/cricket" element={<PrivateRoute><Cricket /></PrivateRoute>} />
