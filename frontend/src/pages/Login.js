@@ -33,7 +33,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800 mx-4" data-testid="login-card">
+      <Card className="w-full max-w-md bg-slate-800/90 border-slate-600 mx-4" data-testid="login-card">
         <CardHeader className="space-y-3 text-center px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">
             <img 
@@ -43,7 +43,7 @@ const Login = () => {
             />
           </div>
           <CardTitle className="text-xl sm:text-2xl text-white">Welcome Back</CardTitle>
-          <CardDescription className="text-slate-400 text-sm">Sign in to continue earning coins</CardDescription>
+          <CardDescription className="text-slate-300 text-sm">Sign in to continue earning coins</CardDescription>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -56,7 +56,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-slate-800 border-slate-700 text-white h-11"
+                className="bg-slate-700 border-slate-600 text-white h-11 placeholder:text-slate-400"
                 data-testid="email-input"
               />
             </div>
