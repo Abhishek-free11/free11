@@ -146,7 +146,7 @@ const Fantasy = () => {
       });
       
       toast.success('Team created successfully! 🎉');
-      navigate('/dashboard');
+      navigate('/contests');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create team');
     }
@@ -154,14 +154,14 @@ const Fantasy = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white pb-20 md:pb-0">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
