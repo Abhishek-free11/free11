@@ -121,14 +121,14 @@ const BrandPortal = () => {
   // Login Page
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-slate-900/80 border-slate-800 backdrop-blur-sm">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-blue-950 to-slate-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-slate-900/80 border-slate-700 backdrop-blur-sm">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-4">
               <Building2 className="h-8 w-8 text-white" />
             </div>
             <CardTitle className="text-2xl text-white">Brand Portal</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-300">
               FREE11 Partner Dashboard
             </CardDescription>
           </CardHeader>
@@ -165,7 +165,7 @@ const BrandPortal = () => {
               {loginLoading ? 'Signing in...' : 'Sign In to Dashboard'}
             </Button>
             
-            <div className="text-center text-sm text-slate-500 pt-4 border-t border-slate-800">
+            <div className="text-center text-sm text-slate-500 pt-4 border-t border-slate-700">
               <p>New brand partner?</p>
               <p className="text-blue-400">Contact partnerships@free11.com</p>
             </div>
@@ -178,10 +178,10 @@ const BrandPortal = () => {
   // Loading
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-blue-950 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto"></div>
-          <p className="text-slate-400 mt-4">Loading dashboard...</p>
+          <p className="text-slate-300 mt-4">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -189,9 +189,9 @@ const BrandPortal = () => {
 
   // Dashboard
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-blue-950 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-blue-950 to-slate-900">
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-slate-700 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
@@ -199,14 +199,14 @@ const BrandPortal = () => {
             </div>
             <div>
               <h1 className="text-white font-bold">{brand?.brand_name || 'Brand'} Portal</h1>
-              <p className="text-xs text-slate-400">FREE11 Partner Dashboard</p>
+              <p className="text-xs text-slate-300">FREE11 Partner Dashboard</p>
             </div>
           </div>
           <Button 
             variant="outline" 
             size="sm"
             onClick={handleLogout}
-            className="border-slate-700 text-slate-400"
+            className="border-slate-700 text-slate-300"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
@@ -302,7 +302,7 @@ const BrandPortal = () => {
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className={`text-sm ${dashboard?.environment?.is_sandbox ? 'text-slate-400' : 'text-yellow-400'}`}>ROAS</p>
+                      <p className={`text-sm ${dashboard?.environment?.is_sandbox ? 'text-slate-300' : 'text-yellow-400'}`}>ROAS</p>
                       <p className="text-3xl font-bold text-white">
                         {dashboard?.roas?.sandbox_hidden ? 'N/A' : `${dashboard?.roas?.value || 0}x`}
                       </p>
@@ -310,14 +310,14 @@ const BrandPortal = () => {
                         <p className="text-xs text-slate-500">Hidden in sandbox</p>
                       )}
                     </div>
-                    <BarChart3 className={`h-8 w-8 ${dashboard?.environment?.is_sandbox ? 'text-slate-400' : 'text-yellow-400'}`} />
+                    <BarChart3 className={`h-8 w-8 ${dashboard?.environment?.is_sandbox ? 'text-slate-300' : 'text-yellow-400'}`} />
                   </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* ROAS Explanation */}
-            <Card className="bg-slate-900/50 border-slate-800 mb-8">
+            <Card className="bg-slate-800/70 border-slate-700 mb-8">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-400" />
@@ -329,7 +329,7 @@ const BrandPortal = () => {
                   <p className={`text-lg ${dashboard?.environment?.is_sandbox ? 'text-slate-300' : 'text-green-300'}`}>
                     {dashboard?.roas?.description || "Track your verified consumption metrics"}
                   </p>
-                  <p className="text-slate-400 text-sm mt-2">
+                  <p className="text-slate-300 text-sm mt-2">
                     {dashboard?.roas?.note || "ROAS = Total Value of Goods Consumed / Budget Invested"}
                   </p>
                 </div>
@@ -338,13 +338,13 @@ const BrandPortal = () => {
                 {dashboard?.attribution_integrity && (
                   <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                     <p className="text-blue-300 text-sm font-medium">Attribution Integrity</p>
-                    <p className="text-slate-400 text-xs mt-1">
+                    <p className="text-slate-300 text-xs mt-1">
                       {dashboard.attribution_integrity.explanation}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-2">
                       <span className="text-xs text-slate-500">Not based on:</span>
                       {dashboard.attribution_integrity.not_based_on?.map(item => (
-                        <Badge key={item} variant="outline" className="text-xs border-slate-600 text-slate-400">
+                        <Badge key={item} variant="outline" className="text-xs border-slate-600 text-slate-300">
                           {item}
                         </Badge>
                       ))}
@@ -354,13 +354,13 @@ const BrandPortal = () => {
                 
                 <div className="grid md:grid-cols-2 gap-4 mt-6">
                   <div className="p-4 bg-slate-800/50 rounded-lg">
-                    <p className="text-slate-400 text-sm">Last 7 Days</p>
+                    <p className="text-slate-300 text-sm">Last 7 Days</p>
                     <p className="text-2xl font-bold text-white">
                       {dashboard?.recent_activity?.last_7_days_redemptions || 0} redemptions
                     </p>
                   </div>
                   <div className="p-4 bg-slate-800/50 rounded-lg">
-                    <p className="text-slate-400 text-sm">Last 30 Days</p>
+                    <p className="text-slate-300 text-sm">Last 30 Days</p>
                     <p className="text-2xl font-bold text-white">
                       {dashboard?.recent_activity?.last_30_days_redemptions || 0} redemptions
                     </p>
@@ -371,7 +371,7 @@ const BrandPortal = () => {
 
             {/* Active Campaigns & Products Summary */}
             <div className="grid md:grid-cols-2 gap-6">
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white">Active Campaigns</CardTitle>
                 </CardHeader>
@@ -379,11 +379,11 @@ const BrandPortal = () => {
                   <p className="text-4xl font-bold text-blue-400">
                     {dashboard?.demand_metrics?.active_campaigns || 0}
                   </p>
-                  <p className="text-slate-400 text-sm mt-2">campaigns running</p>
+                  <p className="text-slate-300 text-sm mt-2">campaigns running</p>
                 </CardContent>
               </Card>
               
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white">Active Products</CardTitle>
                 </CardHeader>
@@ -391,7 +391,7 @@ const BrandPortal = () => {
                   <p className="text-4xl font-bold text-purple-400">
                     {dashboard?.demand_metrics?.active_products || 0}
                   </p>
-                  <p className="text-slate-400 text-sm mt-2">products available for redemption</p>
+                  <p className="text-slate-300 text-sm mt-2">products available for redemption</p>
                 </CardContent>
               </Card>
             </div>
@@ -399,11 +399,11 @@ const BrandPortal = () => {
 
           {/* Campaigns Tab */}
           <TabsContent value="campaigns">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-white">Your Campaigns</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Manage demand creation campaigns
                   </CardDescription>
                 </div>
@@ -416,7 +416,7 @@ const BrandPortal = () => {
                 {campaigns.length === 0 ? (
                   <div className="text-center py-12">
                     <Target className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                    <p className="text-slate-400">No campaigns yet. Create your first campaign!</p>
+                    <p className="text-slate-300">No campaigns yet. Create your first campaign!</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -428,9 +428,9 @@ const BrandPortal = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-white font-medium">{campaign.name}</p>
-                            <p className="text-sm text-slate-400">{campaign.objective}</p>
+                            <p className="text-sm text-slate-300">{campaign.objective}</p>
                           </div>
-                          <Badge className={campaign.is_active ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}>
+                          <Badge className={campaign.is_active ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-300'}>
                             {campaign.is_active ? 'Active' : 'Inactive'}
                           </Badge>
                         </div>
@@ -458,11 +458,11 @@ const BrandPortal = () => {
 
           {/* Products Tab */}
           <TabsContent value="products">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-white">Your Products</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Manage products available for redemption
                   </CardDescription>
                 </div>
@@ -475,7 +475,7 @@ const BrandPortal = () => {
                 {products.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                    <p className="text-slate-400">No products yet. Add your first product!</p>
+                    <p className="text-slate-300">No products yet. Add your first product!</p>
                   </div>
                 ) : (
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -486,11 +486,11 @@ const BrandPortal = () => {
                       >
                         <div className="flex items-start justify-between mb-2">
                           <p className="text-white font-medium">{product.name}</p>
-                          <Badge className={product.is_active ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}>
+                          <Badge className={product.is_active ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-300'}>
                             {product.is_active ? 'Active' : 'Inactive'}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-400 mb-3">{product.category}</p>
+                        <p className="text-sm text-slate-300 mb-3">{product.category}</p>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-500">Cost:</span>
                           <span className="text-yellow-400">{product.cost_in_coins} coins</span>
@@ -527,10 +527,10 @@ const BrandPortal = () => {
               </div>
             )}
 
-            <Card className="bg-slate-900/50 border-slate-800 mb-6">
+            <Card className="bg-slate-800/70 border-slate-700 mb-6">
               <CardHeader>
                 <CardTitle className="text-white">Demand Analytics</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   Verified consumption metrics - {analytics?.period || 'Last 30 days'}
                 </CardDescription>
               </CardHeader>
@@ -551,7 +551,7 @@ const BrandPortal = () => {
                         <div key={idx} className="p-4 bg-slate-800/50 rounded-lg">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-white font-medium">{campaign.campaign_name}</span>
-                            <span className={`font-bold ${analytics?.environment?.is_sandbox ? 'text-slate-400' : 'text-green-400'}`}>
+                            <span className={`font-bold ${analytics?.environment?.is_sandbox ? 'text-slate-300' : 'text-green-400'}`}>
                               {campaign.roas_display || 'N/A'}
                             </span>
                           </div>
@@ -573,7 +573,7 @@ const BrandPortal = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-slate-400">No campaign data yet</p>
+                    <p className="text-slate-300">No campaign data yet</p>
                   )}
                 </div>
 
@@ -599,7 +599,7 @@ const BrandPortal = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-slate-400">No product data yet</p>
+                    <p className="text-slate-300">No product data yet</p>
                   )}
                 </div>
 
@@ -632,7 +632,7 @@ const BrandPortal = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-slate-400">No segment data yet</p>
+                    <p className="text-slate-300">No segment data yet</p>
                   )}
                 </div>
               </CardContent>

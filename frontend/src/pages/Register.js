@@ -158,7 +158,7 @@ const Register = () => {
             />
           </div>
           <CardTitle className="text-xl sm:text-2xl text-white">Join FREE11</CardTitle>
-          <CardDescription className="text-slate-400 text-sm">Create your account and get 50 welcome coins</CardDescription>
+          <CardDescription className="text-slate-300 text-sm">Create your account and get 50 welcome coins</CardDescription>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -205,7 +205,7 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-white"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -354,7 +354,7 @@ const Register = () => {
               {loading ? 'Creating account...' : 'Sign Up & Get 50 Coins'}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-slate-400">
+          <div className="mt-6 text-center text-sm text-slate-300">
             Already have an account?{' '}
             <Link to="/login" className="text-yellow-400 hover:underline font-semibold">
               Sign in

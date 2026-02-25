@@ -20,7 +20,7 @@ import confetti from 'canvas-confetti';
 
 // Rank colors
 const RANK_COLORS = {
-  1: { bg: 'from-slate-500/20 to-slate-600/20', border: 'border-slate-500/30', text: 'text-slate-400' },
+  1: { bg: 'from-slate-500/20 to-slate-600/20', border: 'border-slate-500/30', text: 'text-slate-300' },
   2: { bg: 'from-green-500/20 to-emerald-600/20', border: 'border-green-500/30', text: 'text-green-400' },
   3: { bg: 'from-blue-500/20 to-cyan-600/20', border: 'border-blue-500/30', text: 'text-blue-400' },
   4: { bg: 'from-purple-500/20 to-violet-600/20', border: 'border-purple-500/30', text: 'text-purple-400' },
@@ -137,7 +137,7 @@ const Dashboard = () => {
   const rankStyle = RANK_COLORS[user?.level || 1];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900 pb-20 md:pb-0">
       {/* First-Time Tutorial */}
       {showTutorial && (
         <FirstTimeTutorial 
@@ -155,7 +155,7 @@ const Dashboard = () => {
             <span className="text-base sm:text-lg">🧪</span>
             <div>
               <p className="text-yellow-400 font-medium text-xs sm:text-sm">You're in the FREE11 Beta</p>
-              <p className="text-slate-400 text-xs">
+              <p className="text-slate-300 text-xs">
                 Things may break. 
                 <a href="/support" className="text-blue-400 hover:underline ml-1">Report issues →</a>
               </p>
@@ -165,7 +165,7 @@ const Dashboard = () => {
         
         {/* PRORGA Disclaimer Banner */}
         <div className="mb-4 sm:mb-6 p-2.5 sm:p-3 bg-slate-800/50 border border-slate-700 rounded-lg text-center">
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-300">
             <span className="text-yellow-400 font-medium">FREE11 Coins</span> = reward tokens for goods/services. 
             No cash. No betting.
           </p>
@@ -184,12 +184,12 @@ const Dashboard = () => {
           <Card className={`bg-gradient-to-br ${rankStyle.bg} ${rankStyle.border} lg:col-span-1`}>
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-2xl font-black ${rankStyle.text} bg-slate-900/50`}>
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-2xl font-black ${rankStyle.text} bg-slate-800/70`}>
                   {demandProgress?.rank?.name?.[0] || 'R'}
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-2xl font-black text-white">{user?.name}</h2>
-                  <Badge className={`${rankStyle.text} bg-slate-900/50 text-xs`}>
+                  <Badge className={`${rankStyle.text} bg-slate-800/70 text-xs`}>
                     {demandProgress?.rank?.name || 'Rookie'} • Level {user?.level || 1}
                   </Badge>
                 </div>
@@ -197,7 +197,7 @@ const Dashboard = () => {
               {demandProgress?.rank?.next_rank && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Progress to {demandProgress.rank.next_rank}</span>
+                    <span className="text-slate-300">Progress to {demandProgress.rank.next_rank}</span>
                     <span className={rankStyle.text}>{user?.xp || 0} XP</span>
                   </div>
                   <Progress value={((user?.xp || 0) / (demandProgress.rank.xp_to_next + (user?.xp || 0))) * 100} className="h-2" />
@@ -218,11 +218,11 @@ const Dashboard = () => {
                     </div>
                     Progress to Next Reward
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 mt-1">Unlock real goods through skill</p>
+                  <p className="text-xs sm:text-sm text-slate-300 mt-1">Unlock real goods through skill</p>
                 </div>
-                <div className="text-left sm:text-right bg-slate-900/50 px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-yellow-500/20">
+                <div className="text-left sm:text-right bg-slate-800/70 px-3 sm:px-4 py-2 sm:py-3 rounded-xl border border-yellow-500/20">
                   <p className="text-2xl sm:text-4xl font-black text-yellow-400">{user?.coins_balance || 0}</p>
-                  <p className="text-xs text-slate-400">coins available</p>
+                  <p className="text-xs text-slate-300">coins available</p>
                 </div>
               </div>
               
@@ -292,7 +292,7 @@ const Dashboard = () => {
                         <p className="text-xs sm:text-sm font-bold text-green-400">
                           {Math.round(demandProgress.next_reward.progress)}% Complete
                         </p>
-                        <p className="text-xs sm:text-sm text-slate-400">
+                        <p className="text-xs sm:text-sm text-slate-300">
                           {demandProgress.next_reward.coins_needed > 0 
                             ? <span className="text-yellow-400 font-medium">{demandProgress.next_reward.coins_needed} coins to go</span>
                             : <span className="text-green-400 font-bold">Ready to redeem! 🎉</span>}
@@ -310,7 +310,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               ) : (
-                <div className="bg-slate-900/50 rounded-lg p-4 text-center">
+                <div className="bg-slate-800/70 rounded-lg p-4 text-center">
                   <Gift className="h-10 w-10 text-green-400 mx-auto mb-2" />
                   <p className="text-white font-medium">Start earning to unlock rewards!</p>
                 </div>
@@ -318,7 +318,7 @@ const Dashboard = () => {
 
               {/* Consumption Unlocked */}
               <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-slate-400">Consumption Unlocked:</span>
+                <span className="text-slate-300">Consumption Unlocked:</span>
                 <span className="text-green-400 font-bold">₹{demandProgress?.consumption_unlocked || 0} of real goods</span>
               </div>
             </CardContent>
@@ -340,7 +340,7 @@ const Dashboard = () => {
                 </Badge>
               )}
             </div>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-slate-300">
               Predict ball outcomes to earn coins. Your accuracy determines your rewards.
             </CardDescription>
           </CardHeader>
@@ -348,7 +348,7 @@ const Dashboard = () => {
             {liveMatch ? (
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Match Info */}
-                <div className="bg-slate-900/50 rounded-lg p-4">
+                <div className="bg-slate-800/70 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-center">
                       <p className="text-2xl">🏏</p>
@@ -359,7 +359,7 @@ const Dashboard = () => {
                     <div className="text-center">
                       <p className="text-2xl">🏏</p>
                       <p className="font-bold text-white">{liveMatch.team2_short}</p>
-                      <p className="text-lg font-black text-slate-400">{liveMatch.team2_score || 'Yet to bat'}</p>
+                      <p className="text-lg font-black text-slate-300">{liveMatch.team2_score || 'Yet to bat'}</p>
                     </div>
                   </div>
                   <p className="text-xs text-slate-500 text-center">{liveMatch.venue}</p>
@@ -367,7 +367,7 @@ const Dashboard = () => {
                 
                 {/* Quick Predict CTA - Enhanced */}
                 <div className="flex flex-col justify-center items-center">
-                  <p className="text-slate-400 mb-3">Predict the next ball outcome</p>
+                  <p className="text-slate-300 mb-3">Predict the next ball outcome</p>
                   <Button 
                     onClick={() => navigate('/cricket')}
                     className="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold text-lg px-8 py-6"
@@ -384,7 +384,7 @@ const Dashboard = () => {
               <div className="text-center py-8">
                 <div className="text-6xl mb-4">🏟️</div>
                 <h3 className="text-xl font-bold text-white mb-2">IPL 2026 Starts March 26</h3>
-                <p className="text-slate-400 mb-4">Get ready for live ball-by-ball predictions!</p>
+                <p className="text-slate-300 mb-4">Get ready for live ball-by-ball predictions!</p>
                 <Button onClick={() => navigate('/cricket')} variant="outline" className="border-slate-600">
                   View Upcoming Matches
                 </Button>
@@ -396,7 +396,7 @@ const Dashboard = () => {
         {/* Skill Stats + Daily Check-in Row */}
         <div className="grid md:grid-cols-3 gap-6 mb-6">
           {/* Prediction Stats */}
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader className="pb-2">
               <CardTitle className="text-white flex items-center gap-2">
                 <Target className="h-5 w-5 text-blue-400" />
@@ -409,32 +409,32 @@ const Dashboard = () => {
                   <p className="text-2xl font-black text-blue-400">
                     {demandProgress?.prediction_stats?.accuracy || 0}%
                   </p>
-                  <p className="text-xs text-slate-400">Accuracy</p>
+                  <p className="text-xs text-slate-300">Accuracy</p>
                 </div>
                 <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                   <p className="text-2xl font-black text-green-400">
                     {demandProgress?.prediction_stats?.correct || 0}
                   </p>
-                  <p className="text-xs text-slate-400">Correct</p>
+                  <p className="text-xs text-slate-300">Correct</p>
                 </div>
                 <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                   <p className="text-2xl font-black text-yellow-400">
                     {demandProgress?.prediction_stats?.streak || 0}
                   </p>
-                  <p className="text-xs text-slate-400">Streak</p>
+                  <p className="text-xs text-slate-300">Streak</p>
                 </div>
                 <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                   <p className="text-2xl font-black text-slate-300">
                     {demandProgress?.prediction_stats?.total || 0}
                   </p>
-                  <p className="text-xs text-slate-400">Total</p>
+                  <p className="text-xs text-slate-300">Total</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Daily Check-in */}
-          <Card className="bg-slate-900/50 border-slate-800" data-testid="checkin-card">
+          <Card className="bg-slate-800/70 border-slate-700" data-testid="checkin-card">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-white">
                 <Calendar className="h-5 w-5 text-yellow-400" />
@@ -462,14 +462,14 @@ const Dashboard = () => {
               ) : (
                 <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-center">
                   <p className="text-green-400 font-bold text-sm">Checked in today! ✓</p>
-                  <p className="text-xs text-slate-400 mt-1">Come back tomorrow</p>
+                  <p className="text-xs text-slate-300 mt-1">Come back tomorrow</p>
                 </div>
               )}
             </CardContent>
           </Card>
 
           {/* Ways to Engage */}
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-white">
                 <Zap className="h-5 w-5 text-purple-400" />
@@ -520,13 +520,13 @@ const Dashboard = () => {
         {/* Leaderboard + Recent Activity */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Skill Leaderboard */}
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-yellow-400" />
                 Skill Leaderboard
               </CardTitle>
-              <CardDescription className="text-slate-400">Top predictors by accuracy</CardDescription>
+              <CardDescription className="text-slate-300">Top predictors by accuracy</CardDescription>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-64">
@@ -544,7 +544,7 @@ const Dashboard = () => {
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-white">{player.name}</p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-300">
                             {player.accuracy !== undefined 
                               ? `${player.accuracy}% accuracy` 
                               : `Level ${player.level}`}
@@ -559,20 +559,20 @@ const Dashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-slate-400 py-8">Start predicting to join!</p>
+                  <p className="text-center text-slate-300 py-8">Start predicting to join!</p>
                 )}
               </ScrollArea>
             </CardContent>
           </Card>
 
           {/* Recent Transactions */}
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-400" />
                 Recent Activity
               </CardTitle>
-              <CardDescription className="text-slate-400">Your coin movements</CardDescription>
+              <CardDescription className="text-slate-300">Your coin movements</CardDescription>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-64">
@@ -582,7 +582,7 @@ const Dashboard = () => {
                       <div key={tx.id} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
                         <div className="flex-1">
                           <p className="text-sm font-medium text-white">{tx.description}</p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-300">
                             {new Date(tx.timestamp).toLocaleDateString()}
                           </p>
                         </div>
@@ -595,7 +595,7 @@ const Dashboard = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-slate-400 py-8">No transactions yet</p>
+                  <p className="text-center text-slate-300 py-8">No transactions yet</p>
                 )}
               </ScrollArea>
             </CardContent>
@@ -603,14 +603,14 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Shop Access */}
-        <Card className="bg-slate-900/50 border-slate-800 mt-6">
+        <Card className="bg-slate-800/70 border-slate-700 mt-6">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ShoppingBag className="h-6 w-6 text-blue-400" />
                 <div>
                   <p className="font-bold text-white">Redeem Your Coins</p>
-                  <p className="text-xs text-slate-400">Starting from just 10 coins</p>
+                  <p className="text-xs text-slate-300">Starting from just 10 coins</p>
                 </div>
               </div>
               <Button 

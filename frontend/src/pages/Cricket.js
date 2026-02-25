@@ -231,12 +231,12 @@ const Cricket = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
         <Navbar />
         <div className="container mx-auto px-4 py-8 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin text-6xl mb-4">🏏</div>
-            <p className="text-slate-400">Loading cricket matches...</p>
+            <p className="text-slate-300">Loading cricket matches...</p>
           </div>
         </div>
       </div>
@@ -244,7 +244,7 @@ const Cricket = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900 pb-20 md:pb-0">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="cricket-page">
         {/* Header */}
@@ -253,18 +253,18 @@ const Cricket = () => {
             <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3">
               <span className="text-3xl sm:text-5xl">🏏</span> Cricket Predictions
             </h1>
-            <p className="text-slate-400 text-sm sm:text-base">Predict ball-by-ball outcomes and win coins!</p>
+            <p className="text-slate-300 text-sm sm:text-base">Predict ball-by-ball outcomes and win coins!</p>
           </div>
           {myPredictions.stats && (
             <Card className="bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-yellow-500/30">
               <CardContent className="p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
                 <Target className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
                 <div>
-                  <p className="text-xs sm:text-sm text-slate-400">Accuracy</p>
+                  <p className="text-xs sm:text-sm text-slate-300">Accuracy</p>
                   <p className="text-xl sm:text-2xl font-bold text-yellow-400">{myPredictions.stats.accuracy || 0}%</p>
                 </div>
                 <div className="border-l border-slate-700 pl-3 sm:pl-4">
-                  <p className="text-xs sm:text-sm text-slate-400">Coins Won</p>
+                  <p className="text-xs sm:text-sm text-slate-300">Coins Won</p>
                   <p className="text-xl sm:text-2xl font-bold text-yellow-400">{myPredictions.stats.total_coins_earned || 0}</p>
                 </div>
               </CardContent>
@@ -283,7 +283,7 @@ const Cricket = () => {
                     <Badge className="bg-red-500 text-white animate-pulse">
                       <span className="mr-1">●</span> LIVE
                     </Badge>
-                    <Badge variant="outline" className="border-slate-600 text-slate-400">
+                    <Badge variant="outline" className="border-slate-600 text-slate-300">
                       {liveMatch.series}
                     </Badge>
                   </div>
@@ -300,14 +300,14 @@ const Cricket = () => {
                     <div className="text-center flex-1">
                       <div className="text-4xl mb-2">🏏</div>
                       <p className="text-xl font-bold text-white">{liveMatch.team2_short}</p>
-                      <p className="text-2xl font-black text-slate-400">{liveMatch.team2_score || 'Yet to bat'}</p>
+                      <p className="text-2xl font-black text-slate-300">{liveMatch.team2_score || 'Yet to bat'}</p>
                     </div>
                   </div>
 
                   {/* Current Over */}
                   {liveMatch.current_over_balls && (
                     <div className="bg-slate-800/50 rounded-lg p-4">
-                      <p className="text-sm text-slate-400 mb-2">Current Over</p>
+                      <p className="text-sm text-slate-300 mb-2">Current Over</p>
                       <div className="flex items-center gap-2">
                         {liveMatch.current_over_balls.map((ball, i) => (
                           <div
@@ -421,18 +421,18 @@ const Cricket = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardContent className="p-8 text-center">
                   <div className="text-6xl mb-4">🏟️</div>
                   <h3 className="text-xl font-bold text-white mb-2">No Live Match Right Now</h3>
-                  <p className="text-slate-400">Check back during IPL 2026 for live predictions!</p>
+                  <p className="text-slate-300">Check back during IPL 2026 for live predictions!</p>
                   <Badge className="mt-4 bg-yellow-500/20 text-yellow-400">IPL 2026 starts March 26</Badge>
                 </CardContent>
               </Card>
             )}
 
             {/* Recent Predictions */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Clock className="h-5 w-5 text-blue-400" />
@@ -456,7 +456,7 @@ const Cricket = () => {
                             </span>
                             <div>
                               <p className="text-white font-medium">Ball {pred.ball_number}</p>
-                              <p className="text-sm text-slate-400">
+                              <p className="text-sm text-slate-300">
                                 Predicted: {pred.prediction} | Actual: {pred.actual_result || 'Pending'}
                               </p>
                             </div>
@@ -473,7 +473,7 @@ const Cricket = () => {
                 ) : (
                   <div className="text-center py-8">
                     <Target className="h-12 w-12 text-slate-600 mx-auto mb-3" />
-                    <p className="text-slate-400">No predictions yet. Start predicting!</p>
+                    <p className="text-slate-300">No predictions yet. Start predicting!</p>
                   </div>
                 )}
               </CardContent>
@@ -483,7 +483,7 @@ const Cricket = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Prediction Stats */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-400" />
@@ -492,15 +492,15 @@ const Cricket = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Total Predictions</span>
+                  <span className="text-slate-300">Total Predictions</span>
                   <span className="text-white font-bold">{myPredictions.stats.total_predictions || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Correct</span>
+                  <span className="text-slate-300">Correct</span>
                   <span className="text-green-400 font-bold">{myPredictions.stats.correct_predictions || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Accuracy</span>
+                  <span className="text-slate-300">Accuracy</span>
                   <span className="text-yellow-400 font-bold">{myPredictions.stats.accuracy || 0}%</span>
                 </div>
                 <Progress value={myPredictions.stats.accuracy || 0} className="h-2" />
@@ -508,7 +508,7 @@ const Cricket = () => {
             </Card>
 
             {/* Leaderboard */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Trophy className="h-5 w-5 text-yellow-400" />
@@ -531,7 +531,7 @@ const Cricket = () => {
                           </span>
                           <div>
                             <p className="text-white font-medium">{entry.name}</p>
-                            <p className="text-xs text-slate-400">{entry.correct_predictions} correct</p>
+                            <p className="text-xs text-slate-300">{entry.correct_predictions} correct</p>
                           </div>
                         </div>
                         <Badge className="bg-yellow-500/20 text-yellow-400">
@@ -541,7 +541,7 @@ const Cricket = () => {
                     )) : (
                       <div className="text-center py-8">
                         <Users className="h-12 w-12 text-slate-600 mx-auto mb-3" />
-                        <p className="text-slate-400">No predictions yet</p>
+                        <p className="text-slate-300">No predictions yet</p>
                       </div>
                     )}
                   </div>
@@ -550,7 +550,7 @@ const Cricket = () => {
             </Card>
 
             {/* Upcoming Matches */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Clock className="h-5 w-5 text-blue-400" />
@@ -573,7 +573,7 @@ const Cricket = () => {
                           <p className="text-white font-medium text-sm">
                             {match.team1_short} vs {match.team2_short}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-300">
                             {new Date(match.match_date).toLocaleDateString('en-IN', {
                               weekday: 'short',
                               month: 'short',
@@ -581,7 +581,7 @@ const Cricket = () => {
                             })}
                           </p>
                         </div>
-                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                        <ChevronRight className="h-4 w-4 text-slate-300" />
                       </div>
                     </div>
                   ))}
@@ -594,13 +594,13 @@ const Cricket = () => {
 
       {/* Match Prediction Dialog */}
       <Dialog open={predictDialogOpen} onOpenChange={setPredictDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 max-w-lg" data-testid="match-predict-dialog">
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-lg" data-testid="match-predict-dialog">
           <DialogHeader>
             <DialogTitle className="text-white flex items-center gap-2">
               <Award className="h-5 w-5 text-yellow-400" />
               Match Predictions
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               {selectedMatch?.team1_short} vs {selectedMatch?.team2_short}
             </DialogDescription>
           </DialogHeader>
@@ -609,7 +609,7 @@ const Cricket = () => {
             <div className="space-y-6">
               {/* Winner Prediction */}
               <div>
-                <p className="text-sm text-slate-400 mb-3">Who will win?</p>
+                <p className="text-sm text-slate-300 mb-3">Who will win?</p>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="outline"

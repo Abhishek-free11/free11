@@ -9,9 +9,9 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       {/* Navigation */}
-      <nav className="border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm">
+      <nav className="border-b border-slate-700 bg-slate-800/70 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3" data-testid="logo">
             <img 
@@ -64,28 +64,28 @@ const Landing = () => {
       {/* Features */}
       <section className="container mx-auto px-4 py-12 sm:py-20" data-testid="features-section">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-yellow-500/50 transition-all">
+          <Card className="bg-slate-800/70 border-slate-700 p-6 sm:p-8 hover:border-yellow-500/50 transition-all">
             <div className="bg-gradient-to-br from-yellow-500/20 to-amber-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
               <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />
             </div>
             <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Call the Action</h3>
-            <p className="text-slate-400 text-sm sm:text-base">Make ball-by-ball calls during live cricket matches. Get coins for correct calls.</p>
+            <p className="text-slate-300 text-sm sm:text-base">Make ball-by-ball calls during live cricket matches. Get coins for correct calls.</p>
           </Card>
 
-          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-red-500/50 transition-all">
+          <Card className="bg-slate-800/70 border-slate-700 p-6 sm:p-8 hover:border-red-500/50 transition-all">
             <div className="bg-gradient-to-br from-red-500/20 to-pink-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
               <Gift className="h-6 w-6 sm:h-7 sm:w-7 text-red-400" />
             </div>
             <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Get Real Products</h3>
-            <p className="text-slate-400 text-sm sm:text-base">Use coins for Swiggy, Amazon, Netflix vouchers and more. No cash. No betting.</p>
+            <p className="text-slate-300 text-sm sm:text-base">Use coins for Swiggy, Amazon, Netflix vouchers and more. No cash. No betting.</p>
           </Card>
 
-          <Card className="bg-slate-900/50 border-slate-800 p-6 sm:p-8 hover:border-blue-500/50 transition-all">
+          <Card className="bg-slate-800/70 border-slate-700 p-6 sm:p-8 hover:border-blue-500/50 transition-all">
             <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-4">
               <Trophy className="h-6 w-6 sm:h-7 sm:w-7 text-blue-400" />
             </div>
             <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Skill Drives Rewards</h3>
-            <p className="text-slate-400 text-sm sm:text-base">Your accuracy determines your rank. Better calls = more rewards.</p>
+            <p className="text-slate-300 text-sm sm:text-base">Your accuracy determines your rank. Better calls = more rewards.</p>
           </Card>
         </div>
       </section>
@@ -106,7 +106,7 @@ const Landing = () => {
               </div>
               <div className="text-5xl font-black text-slate-800">{item.step}</div>
               <h3 className="text-xl font-bold text-white">{item.title}</h3>
-              <p className="text-slate-400">{item.desc}</p>
+              <p className="text-slate-300">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -125,8 +125,8 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 bg-slate-950/50 backdrop-blur-sm py-8 mt-20">
-        <div className="container mx-auto px-4 text-center text-slate-400">
+      <footer className="border-t border-slate-700 bg-slate-800/70 backdrop-blur-sm py-8 mt-20">
+        <div className="container mx-auto px-4 text-center text-slate-300">
           <p className="text-lg font-bold text-white mb-2">Skill → Coins → Real Products</p>
           <p>© 2025 FREE11.com - Your Time = Free Shopping List</p>
           <p className="text-sm mt-2">Available in English, हिंदी, and 6+ Indian Languages</p>
@@ -134,7 +134,7 @@ const Landing = () => {
             <Button 
               variant="link" 
               onClick={() => navigate('/faq')} 
-              className="text-slate-400 hover:text-yellow-400"
+              className="text-slate-300 hover:text-yellow-400"
               data-testid="footer-faq-link"
             >
               FAQ & Help

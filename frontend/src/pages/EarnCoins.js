@@ -255,17 +255,17 @@ const EarnCoins = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-900 pb-20 md:pb-0">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="earn-coins-page">
         <div className="mb-4 sm:mb-8">
           <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2">Coin Boosters ⚡</h1>
-          <p className="text-slate-400 text-sm sm:text-base">Accelerate your earnings with bonus activities</p>
+          <p className="text-slate-300 text-sm sm:text-base">Accelerate your earnings with bonus activities</p>
           <p className="text-xs text-purple-400 mt-1">These are supplementary to skill-based cricket predictions</p>
         </div>
 
         <Tabs defaultValue="ads" className="space-y-4 sm:space-y-6">
-          <TabsList className="bg-slate-900/50 border border-slate-800 w-full sm:w-auto overflow-x-auto">
+          <TabsList className="bg-slate-800/70 border border-slate-700 w-full sm:w-auto overflow-x-auto">
             <TabsTrigger value="howto" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 text-xs sm:text-sm">
               <Tv className="h-4 w-4 mr-1 sm:mr-2" />
               <span className="hidden sm:inline">How to</span> Earn
@@ -285,7 +285,7 @@ const EarnCoins = () => {
             <Card className="bg-gradient-to-br from-green-500/10 via-slate-900/50 to-slate-900/50 border-green-500/30" data-testid="how-to-earn-section">
               <CardHeader>
                 <CardTitle className="text-2xl text-white">Ways to Earn Coins</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   FREE11 coins are earned through skill and engagement - never purchased!
                 </CardDescription>
               </CardHeader>
@@ -297,7 +297,7 @@ const EarnCoins = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white">Fantasy Contests</h4>
-                      <p className="text-sm text-slate-400">Build your dream team and compete in contests. Top performers win big coins!</p>
+                      <p className="text-sm text-slate-300">Build your dream team and compete in contests. Top performers win big coins!</p>
                       <p className="text-xs text-yellow-400 mt-1">Up to 500 coins per contest</p>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ const EarnCoins = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white">Match Winner Predictions</h4>
-                      <p className="text-sm text-slate-400">Predict the winning team before or during the match.</p>
+                      <p className="text-sm text-slate-300">Predict the winning team before or during the match.</p>
                       <p className="text-xs text-blue-400 mt-1">50 coins per correct prediction</p>
                     </div>
                   </div>
@@ -319,7 +319,7 @@ const EarnCoins = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white">Over Outcome Predictions</h4>
-                      <p className="text-sm text-slate-400">Predict runs scored in each over during live matches.</p>
+                      <p className="text-sm text-slate-300">Predict runs scored in each over during live matches.</p>
                       <p className="text-xs text-purple-400 mt-1">25 coins per correct prediction</p>
                     </div>
                   </div>
@@ -330,7 +330,7 @@ const EarnCoins = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white">Ball-by-Ball (Limited)</h4>
-                      <p className="text-sm text-slate-400">Predict delivery outcomes - 20 predictions per match.</p>
+                      <p className="text-sm text-slate-300">Predict delivery outcomes - 20 predictions per match.</p>
                       <p className="text-xs text-green-400 mt-1">5-15 coins per correct call</p>
                     </div>
                   </div>
@@ -341,7 +341,7 @@ const EarnCoins = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-white">Mini Games & Tasks</h4>
-                      <p className="text-sm text-slate-400">Play daily games and complete tasks for bonus coins.</p>
+                      <p className="text-sm text-slate-300">Play daily games and complete tasks for bonus coins.</p>
                       <p className="text-xs text-red-400 mt-1">10-100 coins per activity</p>
                     </div>
                   </div>
@@ -354,7 +354,7 @@ const EarnCoins = () => {
           <TabsContent value="games" className="space-y-6">
             <div className="grid md:grid-cols-3 gap-6">
               {/* Quiz - Cricket themed */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all cursor-pointer group" onClick={() => setQuizOpen(true)} data-testid="quiz-card">
+              <Card className="bg-slate-800/70 border-slate-700 hover:border-yellow-500/50 transition-all cursor-pointer group" onClick={() => setQuizOpen(true)} data-testid="quiz-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="relative">
@@ -364,7 +364,7 @@ const EarnCoins = () => {
                     <Badge className="bg-yellow-500/20 text-yellow-400">Up to 50 coins</Badge>
                   </div>
                   <CardTitle className="text-white">Cricket Quiz Challenge</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Test your cricket knowledge and earn coins
                   </CardDescription>
                 </CardHeader>
@@ -376,7 +376,7 @@ const EarnCoins = () => {
               </Card>
 
               {/* Spin Wheel - RMG themed */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-red-500/50 transition-all cursor-pointer group" onClick={() => setSpinOpen(true)} data-testid="spin-card">
+              <Card className="bg-slate-800/70 border-slate-700 hover:border-red-500/50 transition-all cursor-pointer group" onClick={() => setSpinOpen(true)} data-testid="spin-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="relative">
@@ -386,7 +386,7 @@ const EarnCoins = () => {
                     <Badge className="bg-red-500/20 text-red-400">Daily Spin</Badge>
                   </div>
                   <CardTitle className="text-white">Lucky Spin Wheel</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Spin once per day for instant rewards
                   </CardDescription>
                 </CardHeader>
@@ -398,7 +398,7 @@ const EarnCoins = () => {
               </Card>
 
               {/* Scratch Card - Cards themed */}
-              <Card className="bg-slate-900/50 border-slate-800 hover:border-blue-500/50 transition-all cursor-pointer group" onClick={() => setScratchOpen(true)} data-testid="scratch-card">
+              <Card className="bg-slate-800/70 border-slate-700 hover:border-blue-500/50 transition-all cursor-pointer group" onClick={() => setScratchOpen(true)} data-testid="scratch-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="relative">
@@ -408,7 +408,7 @@ const EarnCoins = () => {
                     <Badge className="bg-blue-500/20 text-blue-400">3x Daily</Badge>
                   </div>
                   <CardTitle className="text-white">Golden Scratch Card</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Instant win prizes, 3 attempts daily
                   </CardDescription>
                 </CardHeader>
@@ -425,7 +425,7 @@ const EarnCoins = () => {
           <TabsContent value="tasks" className="space-y-6">
             <div className="grid gap-4">
               {tasks.map((task) => (
-                <Card key={task.id} className="bg-slate-900/50 border-slate-800" data-testid={`task-${task.id}`}>
+                <Card key={task.id} className="bg-slate-800/70 border-slate-700" data-testid={`task-${task.id}`}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -438,7 +438,7 @@ const EarnCoins = () => {
                             </Badge>
                           )}
                         </div>
-                        <p className="text-slate-400 text-sm">{task.description}</p>
+                        <p className="text-slate-300 text-sm">{task.description}</p>
                       </div>
                       <div className="flex items-center gap-4">
                         <Badge className="bg-yellow-500/20 text-yellow-400 px-4 py-2">
@@ -465,13 +465,13 @@ const EarnCoins = () => {
 
       {/* Quiz Dialog */}
       <Dialog open={quizOpen} onOpenChange={setQuizOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 max-w-2xl" data-testid="quiz-dialog">
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-2xl" data-testid="quiz-dialog">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white flex items-center gap-2">
               <Trophy className="h-6 w-6 text-yellow-400" />
               Quiz Challenge
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               Answer all questions correctly to maximize your coin earnings
             </DialogDescription>
           </DialogHeader>
@@ -524,7 +524,7 @@ const EarnCoins = () => {
                 <h3 className="text-2xl font-bold text-white mb-2">
                   Score: {quizResult.score_percentage}%
                 </h3>
-                <p className="text-slate-400">
+                <p className="text-slate-300">
                   {quizResult.correct_count} out of {quizResult.total_questions} correct
                 </p>
               </div>
@@ -548,13 +548,13 @@ const EarnCoins = () => {
 
       {/* Spin Wheel Dialog */}
       <Dialog open={spinOpen} onOpenChange={setSpinOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800" data-testid="spin-dialog">
+        <DialogContent className="bg-slate-900 border-slate-700" data-testid="spin-dialog">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white flex items-center gap-2">
               <Gift className="h-6 w-6 text-red-400" />
               Spin the Wheel
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               One spin per day - Good luck!
             </DialogDescription>
           </DialogHeader>
@@ -598,13 +598,13 @@ const EarnCoins = () => {
 
       {/* Scratch Card Dialog */}
       <Dialog open={scratchOpen} onOpenChange={setScratchOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800" data-testid="scratch-dialog">
+        <DialogContent className="bg-slate-900 border-slate-700" data-testid="scratch-dialog">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white flex items-center gap-2">
               <Sparkles className="h-6 w-6 text-blue-400" />
               Scratch Card
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               Scratch to reveal your prize! (3 attempts daily)
             </DialogDescription>
           </DialogHeader>
@@ -636,9 +636,9 @@ const EarnCoins = () => {
                   {scratchResult.coins_earned > 0 ? (
                     <p className="text-yellow-400 font-bold text-3xl">+{scratchResult.coins_earned} Coins</p>
                   ) : (
-                    <p className="text-slate-400 font-bold text-xl">Better luck next time!</p>
+                    <p className="text-slate-300 font-bold text-xl">Better luck next time!</p>
                   )}
-                  <p className="text-sm text-slate-400 mt-2">{scratchResult.attempts_left} attempts left today</p>
+                  <p className="text-sm text-slate-300 mt-2">{scratchResult.attempts_left} attempts left today</p>
                 </div>
                 <Button
                   onClick={() => {

@@ -135,18 +135,18 @@ const Shop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900 pb-20 md:pb-0">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="shop-page">
         <div className="mb-4 sm:mb-8">
           <h1 className="text-2xl sm:text-4xl font-black text-white mb-1 sm:mb-2">Shop 🛍️</h1>
-          <p className="text-slate-400 text-sm sm:text-base">Redeem your FREE11 Coins for real products</p>
+          <p className="text-slate-300 text-sm sm:text-base">Redeem your FREE11 Coins for real products</p>
         </div>
 
         {/* Category Tabs */}
         <div className="mb-4 sm:mb-8 overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
           <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="bg-slate-900/50 border border-slate-800 inline-flex w-auto">
+            <TabsList className="bg-slate-800/70 border border-slate-700 inline-flex w-auto">
               {categories.map((cat) => (
                 <TabsTrigger
                   key={cat.value}
@@ -166,7 +166,7 @@ const Shop = () => {
           {filteredProducts.map((product) => (
             <Card 
               key={product.id} 
-              className={`bg-slate-900/50 border-slate-800 hover:border-yellow-500/50 transition-all ${
+              className={`bg-slate-800/70 border-slate-700 hover:border-yellow-500/50 transition-all ${
                 !meetsLevelRequirement(product) ? 'opacity-60' : ''
               }`} 
               data-testid={`product-${product.id}`}
@@ -195,7 +195,7 @@ const Shop = () => {
                   {!meetsLevelRequirement(product) && (
                     <div className="absolute inset-0 bg-slate-900/80 flex items-center justify-center">
                       <div className="text-center">
-                        <Lock className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <Lock className="h-8 w-8 text-slate-300 mx-auto mb-2" />
                         <p className="text-sm text-slate-300">Level {product.min_level_required}+ required</p>
                       </div>
                     </div>
@@ -206,13 +206,13 @@ const Shop = () => {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="font-bold text-white line-clamp-1">{product.name}</h3>
-                    <p className="text-xs text-slate-400">{product.brand}</p>
+                    <p className="text-xs text-slate-300">{product.brand}</p>
                   </div>
                   <Badge className="bg-blue-500/20 text-blue-400 text-xs">
                     {product.category}
                   </Badge>
                 </div>
-                <p className="text-sm text-slate-400 line-clamp-2 mb-4">{product.description}</p>
+                <p className="text-sm text-slate-300 line-clamp-2 mb-4">{product.description}</p>
                 <div className="flex items-center justify-between">
                   <Badge className="bg-yellow-500/20 text-yellow-400 px-3 py-1">
                     <Coins className="h-3 w-3 mr-1" />
@@ -252,7 +252,7 @@ const Shop = () => {
         {filteredProducts.length === 0 && (
           <div className="text-center py-20">
             <Package className="h-20 w-20 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-slate-400 mb-2">No products found</h3>
+            <h3 className="text-2xl font-bold text-slate-300 mb-2">No products found</h3>
             <p className="text-slate-500">Try selecting a different category</p>
           </div>
         )}
@@ -260,13 +260,13 @@ const Shop = () => {
 
       {/* Redemption Dialog */}
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-        <DialogContent className="bg-slate-900 border-slate-800" data-testid="redemption-dialog">
+        <DialogContent className="bg-slate-900 border-slate-700" data-testid="redemption-dialog">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white flex items-center gap-2">
               <ShoppingCart className="h-6 w-6 text-yellow-400" />
               Confirm Redemption
             </DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               Review your order details and provide delivery address
             </DialogDescription>
           </DialogHeader>
@@ -288,7 +288,7 @@ const Shop = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-white text-lg">{selectedProduct.name}</h3>
-                  <p className="text-sm text-slate-400">{selectedProduct.brand}</p>
+                  <p className="text-sm text-slate-300">{selectedProduct.brand}</p>
                   <Badge className="bg-yellow-500/20 text-yellow-400 mt-2">
                     <Coins className="h-3 w-3 mr-1" />
                     {selectedProduct.coin_price} coins
@@ -310,11 +310,11 @@ const Shop = () => {
 
               <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Your Balance</span>
+                  <span className="text-slate-300">Your Balance</span>
                   <span className="text-white font-bold">{user?.coins_balance} coins</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Product Cost</span>
+                  <span className="text-slate-300">Product Cost</span>
                   <span className="text-yellow-400 font-bold">-{selectedProduct.coin_price} coins</span>
                 </div>
                 <div className="border-t border-slate-700 pt-2 flex justify-between">
@@ -392,7 +392,7 @@ const Shop = () => {
                   />
                   <div className="text-left">
                     <p className="text-white font-bold">{lastRedeemedProduct.name}</p>
-                    <p className="text-sm text-slate-400">{lastRedeemedProduct.brand}</p>
+                    <p className="text-sm text-slate-300">{lastRedeemedProduct.brand}</p>
                     <Badge className="mt-1 bg-green-500/20 text-green-400 text-xs">
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Delivery in progress

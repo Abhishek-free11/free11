@@ -89,14 +89,14 @@ const ContestCard = ({ contest, onJoin }) => {
           />
         </div>
         <div className="flex justify-between mt-1 text-xs">
-          <span className="text-slate-400">{contest.filled} joined</span>
+          <span className="text-slate-300">{contest.filled} joined</span>
           <span className="text-slate-500">{contest.spots - contest.filled} spots left</span>
         </div>
       </div>
       
       {/* Footer */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 text-xs text-slate-400">
+        <div className="flex items-center gap-4 text-xs text-slate-300">
           <span className="flex items-center gap-1">
             <Trophy className="h-3 w-3 text-yellow-400" />
             Win {contest.winner_coins} coins
@@ -149,7 +149,7 @@ const MatchCard = ({ match, onSelect }) => {
             </div>
             <div>
               <p className="font-bold text-white">{match.team1_short}</p>
-              <p className="text-xs text-slate-400 truncate max-w-[80px]">{match.team1}</p>
+              <p className="text-xs text-slate-300 truncate max-w-[80px]">{match.team1}</p>
             </div>
           </div>
           
@@ -160,7 +160,7 @@ const MatchCard = ({ match, onSelect }) => {
           <div className="flex items-center gap-3 flex-1 justify-end">
             <div className="text-right">
               <p className="font-bold text-white">{match.team2_short}</p>
-              <p className="text-xs text-slate-400 truncate max-w-[80px]">{match.team2}</p>
+              <p className="text-xs text-slate-300 truncate max-w-[80px]">{match.team2}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-lg font-black text-white">
               {match.team2_short[0]}
@@ -169,7 +169,7 @@ const MatchCard = ({ match, onSelect }) => {
         </div>
         
         {/* Contest count */}
-        <div className="flex items-center justify-between bg-slate-900/50 rounded-lg p-3">
+        <div className="flex items-center justify-between bg-slate-800/70 rounded-lg p-3">
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-yellow-400" />
             <span className="text-white text-sm font-medium">{match.contests.length} Contests</span>
@@ -218,7 +218,7 @@ const Contests = () => {
               <Trophy className="h-7 w-7 text-yellow-400" />
               Contests
             </h1>
-            <p className="text-slate-400 text-sm mt-1">Join fantasy contests and win coins!</p>
+            <p className="text-slate-300 text-sm mt-1">Join fantasy contests and win coins!</p>
           </div>
         )}
         
@@ -227,7 +227,7 @@ const Contests = () => {
           <Button 
             variant="ghost" 
             onClick={handleBackToMatches}
-            className="mb-4 text-slate-400 hover:text-white"
+            className="mb-4 text-slate-300 hover:text-white"
           >
             ← Back to Matches
           </Button>
@@ -268,7 +268,7 @@ const Contests = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-white">Mega Contest</h3>
-                    <p className="text-slate-400 text-sm">5000 coins prize pool • FREE entry</p>
+                    <p className="text-slate-300 text-sm">5000 coins prize pool • FREE entry</p>
                   </div>
                   <Badge className="bg-yellow-500 text-black font-bold">HOT</Badge>
                 </div>
@@ -289,7 +289,7 @@ const Contests = () => {
             {matches.length === 0 && (
               <div className="text-center py-12">
                 <Trophy className="h-12 w-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">No matches available</p>
+                <p className="text-slate-300">No matches available</p>
               </div>
             )}
           </>
@@ -325,7 +325,7 @@ const Contests = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-center gap-1 text-xs text-slate-400">
+                <div className="flex items-center justify-center gap-1 text-xs text-slate-300">
                   <MapPin className="h-3 w-3" />
                   {selectedMatch.venue}
                 </div>
@@ -338,7 +338,7 @@ const Contests = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-bold text-white">Create Your Team</h3>
-                    <p className="text-slate-400 text-sm">Pick 11 players and compete</p>
+                    <p className="text-slate-300 text-sm">Pick 11 players and compete</p>
                   </div>
                   <Button 
                     className="bg-green-500 hover:bg-green-600 text-white font-bold"

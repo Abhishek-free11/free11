@@ -163,7 +163,7 @@ const Fantasy = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white pb-20 md:pb-0">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800">
+      <div className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Button 
             variant="ghost" 
@@ -175,7 +175,7 @@ const Fantasy = () => {
           </Button>
           
           <div className="text-center">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-300">
               {match?.team1_short} vs {match?.team2_short}
             </p>
             <p className="text-xs text-slate-500">{match?.venue}</p>
@@ -183,7 +183,7 @@ const Fantasy = () => {
           
           <div className="text-right">
             <p className="text-sm font-bold text-yellow-400">{selectedPlayers.length}/11</p>
-            <p className="text-xs text-slate-400">{totalCredits.toFixed(1)}/100 cr</p>
+            <p className="text-xs text-slate-300">{totalCredits.toFixed(1)}/100 cr</p>
           </div>
         </div>
         
@@ -224,7 +224,7 @@ const Fantasy = () => {
           {/* Players Grid */}
           {Object.entries(playersByRole).map(([role, rolePlayers]) => (
             <div key={role} className="space-y-2">
-              <h3 className="text-sm font-semibold text-slate-400 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${ROLE_CONFIG[role].color}`} />
                 {ROLE_CONFIG[role].label}s
               </h3>
@@ -237,7 +237,7 @@ const Fantasy = () => {
                       className={`cursor-pointer transition-all ${
                         isSelected 
                           ? 'bg-yellow-500/20 border-yellow-500' 
-                          : 'bg-slate-900/50 border-slate-800 hover:border-slate-600'
+                          : 'bg-slate-800/70 border-slate-700 hover:border-slate-600'
                       }`}
                       onClick={() => togglePlayer(player)}
                       data-testid={`player-card-${player.id}`}
@@ -249,7 +249,7 @@ const Fantasy = () => {
                           </div>
                           <div>
                             <p className="font-medium text-sm">{player.name}</p>
-                            <p className="text-xs text-slate-400">{player.team_short}</p>
+                            <p className="text-xs text-slate-300">{player.team_short}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -269,7 +269,7 @@ const Fantasy = () => {
           ))}
 
           {/* Continue Button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 p-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-700 p-4">
             <div className="max-w-4xl mx-auto">
               <Button 
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
@@ -288,9 +288,9 @@ const Fantasy = () => {
       {/* Step: Captain Selection */}
       {step === 'captain' && (
         <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardContent className="p-4 text-center">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300">
                 Captain gets <span className="text-yellow-400 font-bold">2x</span> points, 
                 Vice-Captain gets <span className="text-yellow-400 font-bold">1.5x</span> points
               </p>
@@ -305,7 +305,7 @@ const Fantasy = () => {
               return (
                 <Card 
                   key={player.id}
-                  className={`bg-slate-900/50 border-slate-800 ${
+                  className={`bg-slate-800/70 border-slate-700 ${
                     isCaptain ? 'border-yellow-500' : isViceCaptain ? 'border-blue-500' : ''
                   }`}
                 >
@@ -316,7 +316,7 @@ const Fantasy = () => {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{player.name}</p>
-                        <p className="text-xs text-slate-400">{player.team_short} • {player.role}</p>
+                        <p className="text-xs text-slate-300">{player.team_short} • {player.role}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -353,7 +353,7 @@ const Fantasy = () => {
           </div>
 
           {/* Continue Button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 p-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-700 p-4">
             <div className="max-w-4xl mx-auto">
               <Button 
                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
@@ -380,7 +380,7 @@ const Fantasy = () => {
               className={`cursor-pointer transition-all ${
                 selectedContest?.id === contest.id 
                   ? 'bg-yellow-500/20 border-yellow-500' 
-                  : 'bg-slate-900/50 border-slate-800 hover:border-slate-600'
+                  : 'bg-slate-800/70 border-slate-700 hover:border-slate-600'
               }`}
               onClick={() => setSelectedContest(contest)}
               data-testid={`contest-card-${contest.id}`}
@@ -398,13 +398,13 @@ const Fantasy = () => {
                       <Coins className="h-4 w-4 inline mr-1" />
                       {contest.prize_pool_coins}
                     </p>
-                    <p className="text-xs text-slate-400">Prize Pool</p>
+                    <p className="text-xs text-slate-300">Prize Pool</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-4">
-                    <span className="text-slate-400">
+                    <span className="text-slate-300">
                       <Users className="h-4 w-4 inline mr-1" />
                       {contest.current_entries}/{contest.max_entries}
                     </span>
@@ -419,7 +419,7 @@ const Fantasy = () => {
           ))}
 
           {/* Submit Button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 p-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-700 p-4">
             <div className="max-w-4xl mx-auto">
               <Button 
                 className="w-full bg-green-500 hover:bg-green-600 text-white"

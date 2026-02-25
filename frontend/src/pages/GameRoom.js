@@ -398,17 +398,17 @@ const GameRoom = () => {
   
   if (loading && !connected) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="text-slate-400">Connecting to game...</p>
+          <p className="text-slate-300">Connecting to game...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
       <div className={`bg-gradient-to-r ${gameInfo.color} py-4`}>
         <div className="container mx-auto px-4 max-w-5xl">
@@ -452,7 +452,7 @@ const GameRoom = () => {
               <Card className="bg-yellow-500/10 border-yellow-500/30">
                 <CardContent className="p-3 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-400">Room Code</p>
+                    <p className="text-xs text-slate-300">Room Code</p>
                     <p className="text-xl font-bold text-yellow-400">{room.room_code}</p>
                   </div>
                   <Button onClick={copyRoomCode} variant="outline" size="sm" className="border-yellow-500/50">
@@ -470,7 +470,7 @@ const GameRoom = () => {
                   {/* Game Info */}
                   <div className="flex justify-between items-center mb-4">
                     <div>
-                      <p className="text-sm text-slate-400">
+                      <p className="text-sm text-slate-300">
                         {gameType === 'poker' && `Phase: ${gameState.phase?.toUpperCase()}`}
                         {gameType === 'teen_patti' && `Bet: ${gameState.current_bet}`}
                         {gameType === 'rummy' && `Deck: ${gameState.deck_size} cards`}
@@ -485,7 +485,7 @@ const GameRoom = () => {
                   {/* Community Cards (Poker) */}
                   {gameType === 'poker' && gameState.community_cards?.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-xs text-slate-400 mb-2">Community Cards</p>
+                      <p className="text-xs text-slate-300 mb-2">Community Cards</p>
                       <div className="flex gap-2 justify-center">
                         {gameState.community_cards.map((card, idx) => (
                           <PlayingCard key={idx} card={card} />
@@ -498,11 +498,11 @@ const GameRoom = () => {
                   {gameType === 'rummy' && (
                     <div className="flex justify-center gap-8 mb-4">
                       <div className="text-center">
-                        <p className="text-xs text-slate-400 mb-2">Draw Pile</p>
+                        <p className="text-xs text-slate-300 mb-2">Draw Pile</p>
                         <PlayingCard hidden />
                       </div>
                       <div className="text-center">
-                        <p className="text-xs text-slate-400 mb-2">Discard</p>
+                        <p className="text-xs text-slate-300 mb-2">Discard</p>
                         {gameState.discard_top ? (
                           <PlayingCard card={gameState.discard_top} />
                         ) : (
@@ -515,7 +515,7 @@ const GameRoom = () => {
                   {/* Current Turn Indicator */}
                   {gameState.current_player && (
                     <div className={`text-center py-2 px-4 rounded-lg mb-4 ${
-                      isMyTurn ? 'bg-yellow-500/20 text-yellow-400' : 'bg-slate-700/50 text-slate-400'
+                      isMyTurn ? 'bg-yellow-500/20 text-yellow-400' : 'bg-slate-700/50 text-slate-300'
                     }`}>
                       {isMyTurn ? "🎯 Your Turn!" : `Waiting for ${gameState.player_names?.[gameState.current_player] || 'opponent'}...`}
                     </div>
@@ -523,7 +523,7 @@ const GameRoom = () => {
                   
                   {/* My Hand */}
                   <div className="mb-4">
-                    <p className="text-sm text-slate-400 mb-2">Your Hand</p>
+                    <p className="text-sm text-slate-300 mb-2">Your Hand</p>
                     <div className="flex gap-2 justify-center flex-wrap">
                       {myHand.map((card, idx) => (
                         <PlayingCard 
@@ -701,7 +701,7 @@ const GameRoom = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-6">
-                    <p className="text-lg text-slate-400">Winner</p>
+                    <p className="text-lg text-slate-300">Winner</p>
                     <p className="text-3xl font-bold text-yellow-400">{gameResult.winner_name}</p>
                     {gameResult.hand_name && (
                       <Badge className="mt-2 bg-purple-500/20 text-purple-300">
@@ -720,7 +720,7 @@ const GameRoom = () => {
                       >
                         <div className="flex items-center gap-3">
                           <span className={`text-2xl font-bold ${
-                            index === 0 ? 'text-yellow-400' : 'text-slate-400'
+                            index === 0 ? 'text-yellow-400' : 'text-slate-300'
                           }`}>#{result.rank}</span>
                           <span className="font-medium">
                             {result.user_id === user?.id ? 'You' : result.name}
@@ -753,7 +753,7 @@ const GameRoom = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-slate-400 mb-4">
+                  <p className="text-slate-300 mb-4">
                     {players.length} / {room?.max_players || 4} players joined
                   </p>
                   
@@ -780,7 +780,7 @@ const GameRoom = () => {
                       <UserPlus className="h-4 w-4 text-green-400" />
                       Invite Friends
                     </h4>
-                    <p className="text-xs text-slate-400 mb-3">
+                    <p className="text-xs text-slate-300 mb-3">
                       Share the invite link to bring friends directly into this game!
                     </p>
                     <div className="flex gap-2">
@@ -802,8 +802,8 @@ const GameRoom = () => {
                       </Button>
                     </div>
                     {room?.room_code && (
-                      <div className="mt-3 flex items-center justify-between bg-slate-900/50 rounded px-3 py-2">
-                        <span className="text-xs text-slate-400">Code:</span>
+                      <div className="mt-3 flex items-center justify-between bg-slate-800/70 rounded px-3 py-2">
+                        <span className="text-xs text-slate-300">Code:</span>
                         <span className="font-mono font-bold text-yellow-400">{room.room_code}</span>
                         <Button
                           onClick={copyRoomCode}
@@ -820,7 +820,7 @@ const GameRoom = () => {
                   {room?.host_id !== user?.id && (
                     <div className="text-center py-4">
                       <RefreshCw className="h-8 w-8 text-blue-400 mx-auto mb-2 animate-spin" />
-                      <p className="text-slate-400">Waiting for host to start...</p>
+                      <p className="text-slate-300">Waiting for host to start...</p>
                     </div>
                   )}
                 </CardContent>

@@ -112,22 +112,22 @@ const PrivateLeagues = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white pb-20">
+    <div className="min-h-screen bg-slate-900 text-white pb-20">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border-b border-slate-800">
+      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border-b border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Trophy className="h-6 w-6 text-yellow-400" />
             Private Leagues
           </h1>
-          <p className="text-slate-400 mt-1">
+          <p className="text-slate-300 mt-1">
             Compete with friends in your own leagues
           </p>
         </div>
@@ -253,11 +253,11 @@ const PrivateLeagues = () => {
 
         {/* League List */}
         {leagues.length === 0 ? (
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardContent className="p-8 text-center">
               <Trophy className="h-12 w-12 mx-auto text-slate-600 mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Leagues Yet</h3>
-              <p className="text-slate-400 mb-4">
+              <p className="text-slate-300 mb-4">
                 Create a league and invite your friends to compete!
               </p>
             </CardContent>
@@ -267,7 +267,7 @@ const PrivateLeagues = () => {
             {leagues.map((league) => (
               <Card 
                 key={league.id}
-                className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-all cursor-pointer"
+                className="bg-slate-800/70 border-slate-700 hover:border-slate-700 transition-all cursor-pointer"
                 onClick={() => navigate(`/leagues/${league.id}`)}
                 data-testid={`league-card-${league.id}`}
               >
@@ -284,7 +284,7 @@ const PrivateLeagues = () => {
                             <Crown className="h-4 w-4 text-yellow-400" />
                           )}
                         </h3>
-                        <div className="flex items-center gap-3 text-sm text-slate-400">
+                        <div className="flex items-center gap-3 text-sm text-slate-300">
                           <span className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
                             {league.member_count}/{league.max_members}
@@ -312,15 +312,15 @@ const PrivateLeagues = () => {
                   </div>
                   
                   {league.my_stats && (
-                    <div className="mt-3 pt-3 border-t border-slate-800 flex items-center gap-4 text-sm">
+                    <div className="mt-3 pt-3 border-t border-slate-700 flex items-center gap-4 text-sm">
                       <div className="flex items-center gap-1">
                         <Medal className="h-4 w-4 text-yellow-400" />
                         <span>Rank #{league.my_stats.rank || '-'}</span>
                       </div>
-                      <div className="text-slate-400">
+                      <div className="text-slate-300">
                         {league.my_stats.accuracy?.toFixed(1) || 0}% accuracy
                       </div>
-                      <div className="text-slate-400">
+                      <div className="text-slate-300">
                         {league.my_stats.total_predictions || 0} predictions
                       </div>
                     </div>

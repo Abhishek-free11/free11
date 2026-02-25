@@ -86,29 +86,29 @@ const Profile = () => {
           <div className="h-20 bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20" />
           <CardContent className="pt-0 -mt-10">
             <div className="flex items-end gap-4 mb-4">
-              <div className={`w-20 h-20 rounded-2xl ${getRankColor(user?.level)} flex items-center justify-center text-3xl font-black text-white shadow-lg border-4 border-slate-800`}>
+              <div className={`w-20 h-20 rounded-2xl ${getRankColor(user?.level)} flex items-center justify-center text-3xl font-black text-white shadow-lg border-4 border-slate-700`}>
                 {user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
               <div className="flex-1 pb-1">
                 <h2 className="text-xl font-bold text-white">{user?.name || 'User'}</h2>
-                <p className="text-slate-400 text-sm">{user?.email}</p>
+                <p className="text-slate-300 text-sm">{user?.email}</p>
               </div>
             </div>
             
             {/* Level & Rank */}
-            <div className="flex items-center justify-between bg-slate-900/50 rounded-xl p-3 mb-3">
+            <div className="flex items-center justify-between bg-slate-800/70 rounded-xl p-3 mb-3">
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-yellow-400" />
                 <span className="text-white font-medium">{getRankName(user?.level)}</span>
                 <Badge className="bg-yellow-500/20 text-yellow-400 text-xs">Level {user?.level || 1}</Badge>
               </div>
-              <span className="text-slate-400 text-sm">{user?.xp || 0} XP</span>
+              <span className="text-slate-300 text-sm">{user?.xp || 0} XP</span>
             </div>
             
             {/* XP Progress */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Progress to next level</span>
+                <span className="text-slate-300">Progress to next level</span>
                 <span className="text-yellow-400">
                   {demandProgress?.rank?.xp_to_next ? `${demandProgress.rank.xp_to_next} XP needed` : 'Max Level'}
                 </span>
@@ -127,7 +127,7 @@ const Profile = () => {
                   <Coins className="h-6 w-6 text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-slate-400 text-sm">Your Balance</p>
+                  <p className="text-slate-300 text-sm">Your Balance</p>
                   <p className="text-2xl font-black text-yellow-400">{user?.coins_balance || 0} <span className="text-sm font-normal">coins</span></p>
                 </div>
               </div>
@@ -151,17 +151,17 @@ const Profile = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-3">
-              <div className="text-center p-3 bg-slate-900/50 rounded-xl">
+              <div className="text-center p-3 bg-slate-800/70 rounded-xl">
                 <p className="text-2xl font-bold text-white">{stats?.total_predictions || 0}</p>
-                <p className="text-xs text-slate-400">Predictions</p>
+                <p className="text-xs text-slate-300">Predictions</p>
               </div>
-              <div className="text-center p-3 bg-slate-900/50 rounded-xl">
+              <div className="text-center p-3 bg-slate-800/70 rounded-xl">
                 <p className="text-2xl font-bold text-green-400">{stats?.accuracy || 0}%</p>
-                <p className="text-xs text-slate-400">Accuracy</p>
+                <p className="text-xs text-slate-300">Accuracy</p>
               </div>
-              <div className="text-center p-3 bg-slate-900/50 rounded-xl">
+              <div className="text-center p-3 bg-slate-800/70 rounded-xl">
                 <p className="text-2xl font-bold text-yellow-400">{user?.total_earned || 0}</p>
-                <p className="text-xs text-slate-400">Total Earned</p>
+                <p className="text-xs text-slate-300">Total Earned</p>
               </div>
             </div>
           </CardContent>
@@ -192,13 +192,13 @@ const Profile = () => {
         <Card className="bg-slate-800/50 border-slate-700 mb-4">
           <CardHeader className="pb-2">
             <CardTitle className="text-white text-base flex items-center gap-2">
-              <Settings className="h-5 w-5 text-slate-400" />
+              <Settings className="h-5 w-5 text-slate-300" />
               Settings
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {/* Sound Toggle */}
-            <div className="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl">
+            <div className="flex items-center justify-between p-3 bg-slate-800/70 rounded-xl">
               <div className="flex items-center gap-3">
                 {soundsEnabled ? (
                   <Volume2 className="h-5 w-5 text-green-400" />

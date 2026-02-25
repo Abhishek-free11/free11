@@ -111,13 +111,13 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8" data-testid="admin-page">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
           <div>
             <h1 className="text-2xl sm:text-4xl font-black text-white mb-1">Admin Dashboard 🧪</h1>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-300 text-sm">
               Real-time beta metrics 
               {lastUpdated && <span className="text-slate-500"> • Updated {lastUpdated.toLocaleTimeString()}</span>}
             </p>
@@ -127,7 +127,7 @@ const Admin = () => {
               onClick={() => setAutoRefresh(!autoRefresh)}
               variant="outline" 
               size="sm"
-              className={`border-slate-700 ${autoRefresh ? 'text-green-400 border-green-500/50' : 'text-slate-400'}`}
+              className={`border-slate-700 ${autoRefresh ? 'text-green-400 border-green-500/50' : 'text-slate-300'}`}
             >
               {autoRefresh ? '🟢 Live' : '⏸️ Paused'}
             </Button>
@@ -150,7 +150,7 @@ const Admin = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-white mb-1">Beta Health</h2>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-300 text-sm">
                     {betaMetrics.users?.users_completed_full_loop || 0} users completed full loop (Predict → Redeem)
                   </p>
                 </div>
@@ -160,7 +160,7 @@ const Admin = () => {
               </div>
               <div className="mt-4">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-400">Loop Completion</span>
+                  <span className="text-slate-300">Loop Completion</span>
                   <span className="text-white font-bold">{betaMetrics.summary?.loop_completion_rate}</span>
                 </div>
                 <Progress 
@@ -228,7 +228,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="beta" className="space-y-4 sm:space-y-6">
-          <TabsList className="bg-slate-900/50 border border-slate-800 w-full sm:w-auto overflow-x-auto">
+          <TabsList className="bg-slate-800/70 border border-slate-700 w-full sm:w-auto overflow-x-auto">
             <TabsTrigger value="beta" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 text-xs sm:text-sm">
               <TrendingUp className="h-4 w-4 mr-1 sm:mr-2" />
               Beta Metrics
@@ -251,10 +251,10 @@ const Admin = () => {
           <TabsContent value="beta">
             <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Funnel Metrics */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg">Conversion Funnel</CardTitle>
-                  <CardDescription className="text-slate-400">User journey through core loop</CardDescription>
+                  <CardDescription className="text-slate-300">User journey through core loop</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
@@ -292,7 +292,7 @@ const Admin = () => {
               </Card>
 
               {/* Invite Status */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <Ticket className="h-5 w-5 text-yellow-400" />
@@ -303,22 +303,22 @@ const Admin = () => {
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div className="bg-slate-800/50 rounded-lg p-4">
                       <div className="text-2xl font-bold text-white">{betaMetrics?.invites?.total_generated || 0}</div>
-                      <div className="text-xs text-slate-400">Generated</div>
+                      <div className="text-xs text-slate-300">Generated</div>
                     </div>
                     <div className="bg-green-500/10 rounded-lg p-4">
                       <div className="text-2xl font-bold text-green-400">{betaMetrics?.invites?.used || 0}</div>
-                      <div className="text-xs text-slate-400">Used</div>
+                      <div className="text-xs text-slate-300">Used</div>
                     </div>
                     <div className="bg-slate-800/50 rounded-lg p-4">
                       <div className="text-2xl font-bold text-slate-300">{betaMetrics?.invites?.unused || 0}</div>
-                      <div className="text-xs text-slate-400">Available</div>
+                      <div className="text-xs text-slate-300">Available</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Top Predictors */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <Trophy className="h-5 w-5 text-yellow-400" />
@@ -340,24 +340,24 @@ const Admin = () => {
                             </div>
                             <div>
                               <div className="text-white font-medium text-sm">{user.name}</div>
-                              <div className="text-xs text-slate-400">{user.email}</div>
+                              <div className="text-xs text-slate-300">{user.email}</div>
                             </div>
                           </div>
                           <div className="text-right">
                             <div className="text-green-400 font-bold">{user.correct_predictions || 0}</div>
-                            <div className="text-xs text-slate-400">correct</div>
+                            <div className="text-xs text-slate-300">correct</div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-center text-slate-400 py-4">No predictions yet</p>
+                    <p className="text-center text-slate-300 py-4">No predictions yet</p>
                   )}
                 </CardContent>
               </Card>
 
               {/* Support Tickets */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <AlertCircle className="h-5 w-5 text-red-400" />
@@ -368,13 +368,13 @@ const Admin = () => {
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div className="bg-slate-800/50 rounded-lg p-4">
                       <div className="text-2xl font-bold text-white">{betaMetrics?.support?.total_tickets || 0}</div>
-                      <div className="text-xs text-slate-400">Total Tickets</div>
+                      <div className="text-xs text-slate-300">Total Tickets</div>
                     </div>
                     <div className={`rounded-lg p-4 ${betaMetrics?.support?.open_tickets > 0 ? 'bg-red-500/10' : 'bg-green-500/10'}`}>
                       <div className={`text-2xl font-bold ${betaMetrics?.support?.open_tickets > 0 ? 'text-red-400' : 'text-green-400'}`}>
                         {betaMetrics?.support?.open_tickets || 0}
                       </div>
-                      <div className="text-xs text-slate-400">Open</div>
+                      <div className="text-xs text-slate-300">Open</div>
                     </div>
                   </div>
                 </CardContent>
@@ -386,7 +386,7 @@ const Admin = () => {
           <TabsContent value="games">
             <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Game Overview */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <Gamepad2 className="h-5 w-5 text-purple-400" />
@@ -397,19 +397,19 @@ const Admin = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-purple-500/10 rounded-lg p-4 text-center">
                       <div className="text-3xl font-bold text-purple-400">{betaMetrics?.card_games?.completed_games || 0}</div>
-                      <div className="text-xs text-slate-400">Games Completed</div>
+                      <div className="text-xs text-slate-300">Games Completed</div>
                     </div>
                     <div className="bg-green-500/10 rounded-lg p-4 text-center">
                       <div className="text-3xl font-bold text-green-400">{betaMetrics?.card_games?.active_rooms || 0}</div>
-                      <div className="text-xs text-slate-400">Active Rooms</div>
+                      <div className="text-xs text-slate-300">Active Rooms</div>
                     </div>
                     <div className="bg-blue-500/10 rounded-lg p-4 text-center">
                       <div className="text-3xl font-bold text-blue-400">{betaMetrics?.card_games?.unique_players || 0}</div>
-                      <div className="text-xs text-slate-400">Unique Players</div>
+                      <div className="text-xs text-slate-300">Unique Players</div>
                     </div>
                     <div className="bg-yellow-500/10 rounded-lg p-4 text-center">
                       <div className="text-3xl font-bold text-yellow-400">{betaMetrics?.card_games?.total_coins_distributed || 0}</div>
-                      <div className="text-xs text-slate-400">Coins Distributed</div>
+                      <div className="text-xs text-slate-300">Coins Distributed</div>
                     </div>
                   </div>
                   <div className="bg-slate-800/50 rounded-lg p-3">
@@ -422,7 +422,7 @@ const Admin = () => {
               </Card>
 
               {/* Games by Type */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg">Games by Type</CardTitle>
                 </CardHeader>
@@ -432,7 +432,7 @@ const Admin = () => {
                       <Spade className="h-6 w-6 text-red-400" />
                       <div>
                         <div className="text-white font-medium">Rummy</div>
-                        <div className="text-xs text-slate-400">Classic 13-card</div>
+                        <div className="text-xs text-slate-300">Classic 13-card</div>
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-red-400">{betaMetrics?.card_games?.by_type?.rummy || 0}</div>
@@ -443,7 +443,7 @@ const Admin = () => {
                       <Heart className="h-6 w-6 text-purple-400" />
                       <div>
                         <div className="text-white font-medium">Teen Patti</div>
-                        <div className="text-xs text-slate-400">3-card poker</div>
+                        <div className="text-xs text-slate-300">3-card poker</div>
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-purple-400">{betaMetrics?.card_games?.by_type?.teen_patti || 0}</div>
@@ -454,7 +454,7 @@ const Admin = () => {
                       <Diamond className="h-6 w-6 text-green-400" />
                       <div>
                         <div className="text-white font-medium">Poker</div>
-                        <div className="text-xs text-slate-400">Texas Hold'em</div>
+                        <div className="text-xs text-slate-300">Texas Hold'em</div>
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-green-400">{betaMetrics?.card_games?.by_type?.poker || 0}</div>
@@ -463,7 +463,7 @@ const Admin = () => {
               </Card>
 
               {/* Clans Overview */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <Users className="h-5 w-5 text-blue-400" />
@@ -474,18 +474,18 @@ const Admin = () => {
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div className="bg-slate-800/50 rounded-lg p-4">
                       <div className="text-2xl font-bold text-white">{betaMetrics?.clans?.total || 0}</div>
-                      <div className="text-xs text-slate-400">Total Clans</div>
+                      <div className="text-xs text-slate-300">Total Clans</div>
                     </div>
                     <div className="bg-blue-500/10 rounded-lg p-4">
                       <div className="text-2xl font-bold text-blue-400">{betaMetrics?.clans?.active || 0}</div>
-                      <div className="text-xs text-slate-400">Active (2+ members)</div>
+                      <div className="text-xs text-slate-300">Active (2+ members)</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Room Stats */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg">Room Statistics</CardTitle>
                 </CardHeader>
@@ -511,10 +511,10 @@ const Admin = () => {
 
           {/* Add Product Tab */}
           <TabsContent value="products">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white">Create New Product</CardTitle>
-                <CardDescription className="text-slate-400">Add a new product to the shop</CardDescription>
+                <CardDescription className="text-slate-300">Add a new product to the shop</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleCreateProduct} className="space-y-4">
@@ -620,10 +620,10 @@ const Admin = () => {
 
           {/* All Orders Tab */}
           <TabsContent value="orders">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white">All Redemptions</CardTitle>
-                <CardDescription className="text-slate-400">View all user redemptions</CardDescription>
+                <CardDescription className="text-slate-300">View all user redemptions</CardDescription>
               </CardHeader>
               <CardContent>
                 {allOrders.length > 0 ? (
@@ -633,7 +633,7 @@ const Admin = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <h4 className="font-bold text-white">{order.product_name}</h4>
-                            <p className="text-sm text-slate-400">Order ID: {order.id.slice(0, 8)}...</p>
+                            <p className="text-sm text-slate-300">Order ID: {order.id.slice(0, 8)}...</p>
                             <p className="text-xs text-slate-500 mt-1">
                               {new Date(order.order_date).toLocaleDateString()}
                             </p>
@@ -651,7 +651,7 @@ const Admin = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-center text-slate-400 py-8">No orders yet</p>
+                  <p className="text-center text-slate-300 py-8">No orders yet</p>
                 )}
               </CardContent>
             </Card>

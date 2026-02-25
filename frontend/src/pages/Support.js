@@ -173,7 +173,7 @@ const Support = () => {
       in_progress: { color: 'bg-yellow-500/20 text-yellow-400', icon: Clock },
       waiting_user: { color: 'bg-purple-500/20 text-purple-400', icon: HelpCircle },
       resolved: { color: 'bg-green-500/20 text-green-400', icon: CheckCircle },
-      closed: { color: 'bg-slate-500/20 text-slate-400', icon: CheckCircle }
+      closed: { color: 'bg-slate-500/20 text-slate-300', icon: CheckCircle }
     };
     const config = configs[status] || configs.open;
     const Icon = config.icon;
@@ -197,7 +197,7 @@ const Support = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="support-page">
         {/* Header */}
@@ -206,7 +206,7 @@ const Support = () => {
             <MessageCircle className="h-10 w-10 text-green-400" />
             Help & Support
           </h1>
-          <p className="text-slate-400">Chat with us or create a support ticket</p>
+          <p className="text-slate-300">Chat with us or create a support ticket</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -229,13 +229,13 @@ const Support = () => {
           <TabsContent value="chat">
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Chat Window */}
-              <Card className="lg:col-span-2 bg-slate-900/50 border-slate-800 h-[600px] flex flex-col">
-                <CardHeader className="border-b border-slate-800">
+              <Card className="lg:col-span-2 bg-slate-800/70 border-slate-700 h-[600px] flex flex-col">
+                <CardHeader className="border-b border-slate-700">
                   <CardTitle className="text-white flex items-center gap-2">
                     <Bot className="h-5 w-5 text-green-400" />
                     FREE11 Support Bot
                   </CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Ask about orders, coins, or get help
                   </CardDescription>
                 </CardHeader>
@@ -280,7 +280,7 @@ const Support = () => {
                   </div>
                   
                   {/* Input */}
-                  <div className="p-4 border-t border-slate-800">
+                  <div className="p-4 border-t border-slate-700">
                     <div className="flex gap-2">
                       <Input
                         placeholder="Type your message..."
@@ -304,7 +304,7 @@ const Support = () => {
               </Card>
 
               {/* Quick Suggestions */}
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white text-lg">Quick Help</CardTitle>
                 </CardHeader>
@@ -327,11 +327,11 @@ const Support = () => {
 
           {/* Tickets Tab */}
           <TabsContent value="tickets">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-white">My Support Tickets</CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-slate-300">
                     Track your support requests
                   </CardDescription>
                 </div>
@@ -352,7 +352,7 @@ const Support = () => {
                 ) : tickets.length === 0 ? (
                   <div className="text-center py-12">
                     <Ticket className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                    <p className="text-slate-400">No support tickets yet</p>
+                    <p className="text-slate-300">No support tickets yet</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -365,13 +365,13 @@ const Support = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-white font-medium">{ticket.subject}</p>
-                            <p className="text-sm text-slate-400 mt-1">
+                            <p className="text-sm text-slate-300 mt-1">
                               #{ticket.id.slice(0, 8)} • {ticket.category}
                             </p>
                           </div>
                           {getStatusBadge(ticket.status)}
                         </div>
-                        <p className="text-slate-400 text-sm mt-2 line-clamp-2">
+                        <p className="text-slate-300 text-sm mt-2 line-clamp-2">
                           {ticket.description}
                         </p>
                         <p className="text-xs text-slate-500 mt-2">
@@ -387,10 +387,10 @@ const Support = () => {
 
           {/* Vouchers Tab */}
           <TabsContent value="vouchers">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white">My Vouchers</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   Track your redeemed vouchers and their status
                 </CardDescription>
               </CardHeader>
@@ -398,7 +398,7 @@ const Support = () => {
                 {vouchers.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                    <p className="text-slate-400">No vouchers yet. Redeem your coins for rewards!</p>
+                    <p className="text-slate-300">No vouchers yet. Redeem your coins for rewards!</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -411,7 +411,7 @@ const Support = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="text-white font-medium">{voucher.product_name}</p>
-                            <p className="text-sm text-slate-400">
+                            <p className="text-sm text-slate-300">
                               Order: #{voucher.order_id?.slice(0, 8)}
                             </p>
                           </div>
@@ -419,10 +419,10 @@ const Support = () => {
                         </div>
                         {voucher.status === 'delivered' && voucher.voucher_code && (
                           <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-                            <p className="text-sm text-slate-400">Voucher Code:</p>
+                            <p className="text-sm text-slate-300">Voucher Code:</p>
                             <p className="text-green-400 font-mono text-lg">{voucher.voucher_code}</p>
                             {voucher.voucher_pin && (
-                              <p className="text-slate-400 text-sm mt-1">PIN: {voucher.voucher_pin}</p>
+                              <p className="text-slate-300 text-sm mt-1">PIN: {voucher.voucher_pin}</p>
                             )}
                           </div>
                         )}
@@ -444,10 +444,10 @@ const Support = () => {
 
       {/* Create Ticket Dialog */}
       <Dialog open={createTicketOpen} onOpenChange={setCreateTicketOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800">
+        <DialogContent className="bg-slate-900 border-slate-700">
           <DialogHeader>
             <DialogTitle className="text-white">Create Support Ticket</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-slate-300">
               Describe your issue and we'll get back to you within 24-48 hours.
             </DialogDescription>
           </DialogHeader>

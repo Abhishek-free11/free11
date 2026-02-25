@@ -56,7 +56,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-slate-700 border-slate-600 text-white h-11 placeholder:text-slate-400"
+                className="bg-slate-700 border-slate-600 text-white h-11 placeholder:text-slate-300"
                 data-testid="email-input"
               />
             </div>
@@ -76,7 +76,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-white"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -91,7 +91,7 @@ const Login = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-          <div className="mt-6 text-center text-sm text-slate-400">
+          <div className="mt-6 text-center text-sm text-slate-300">
             Don't have an account?{' '}
             <Link to="/register" className="text-yellow-400 hover:underline font-semibold">
               Sign up

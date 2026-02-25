@@ -162,7 +162,7 @@ const CardGames = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-20 md:pb-0">
+    <div className="min-h-screen bg-slate-900 pb-20 md:pb-0">
       <Navbar />
       
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl">
@@ -172,14 +172,14 @@ const CardGames = () => {
             <Club className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
             Card Games
           </h1>
-          <p className="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">
+          <p className="text-slate-300 mt-1 sm:mt-2 text-sm sm:text-base">
             Play classic card games and earn coins. FREE to play!
           </p>
         </div>
 
         {/* Join by Code */}
         {showJoinCode ? (
-          <Card className="bg-slate-900/50 border-slate-800 mb-6">
+          <Card className="bg-slate-800/70 border-slate-700 mb-6">
             <CardContent className="p-4 flex gap-3">
               <Input
                 placeholder="Enter room code"
@@ -228,7 +228,7 @@ const CardGames = () => {
                       {room.status === 'waiting' ? 'Waiting' : 'In Progress'}
                     </Badge>
                   </span>
-                  <span className="flex items-center gap-2 text-slate-400">
+                  <span className="flex items-center gap-2 text-slate-300">
                     <Users className="h-4 w-4" />
                     {room.player_ids?.length || 1}/{room.max_players}
                   </span>
@@ -257,7 +257,7 @@ const CardGames = () => {
                     <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">{info.name}</h3>
-                  <p className="text-slate-400 text-xs sm:text-sm mb-3 sm:mb-4">{info.description}</p>
+                  <p className="text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">{info.description}</p>
                   <div className="flex justify-center gap-2">
                     <Badge className="bg-green-500/20 text-green-400">FREE Entry</Badge>
                     <Badge className="bg-yellow-500/20 text-yellow-400">
@@ -303,7 +303,7 @@ const CardGames = () => {
             </div>
 
             {/* My Stats */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Trophy className="h-5 w-5 text-yellow-400" />
@@ -314,26 +314,26 @@ const CardGames = () => {
                 <div className="grid grid-cols-4 gap-4">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-white">{stats.games_played || 0}</p>
-                    <p className="text-sm text-slate-400">Games Played</p>
+                    <p className="text-sm text-slate-300">Games Played</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-green-400">{stats.games_won || 0}</p>
-                    <p className="text-sm text-slate-400">Games Won</p>
+                    <p className="text-sm text-slate-300">Games Won</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-yellow-400">{stats.win_rate || 0}%</p>
-                    <p className="text-sm text-slate-400">Win Rate</p>
+                    <p className="text-sm text-slate-300">Win Rate</p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-purple-400">{stats.total_coins_earned || 0}</p>
-                    <p className="text-sm text-slate-400">Coins Earned</p>
+                    <p className="text-sm text-slate-300">Coins Earned</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Available Rooms */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Users className="h-5 w-5 text-blue-400" />
@@ -346,7 +346,7 @@ const CardGames = () => {
                     <div className="animate-spin h-8 w-8 border-2 border-yellow-400 border-t-transparent rounded-full mx-auto" />
                   </div>
                 ) : rooms.length === 0 ? (
-                  <div className="text-center py-8 text-slate-400">
+                  <div className="text-center py-8 text-slate-300">
                     <p>No rooms available. Create one or use Quick Play!</p>
                   </div>
                 ) : (
@@ -359,7 +359,7 @@ const CardGames = () => {
                         onClick={() => navigate(`/games/${selectedGame}/room/${room.id}`)}
                       >
                         <span>{room.name}</span>
-                        <span className="flex items-center gap-2 text-slate-400">
+                        <span className="flex items-center gap-2 text-slate-300">
                           <Users className="h-4 w-4" />
                           {room.current_players}/{room.max_players}
                           <ChevronRight className="h-4 w-4" />
@@ -372,13 +372,13 @@ const CardGames = () => {
             </Card>
 
             {/* Rewards Info */}
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Coins className="h-5 w-5 text-yellow-400" />
                   Coin Rewards
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   All games are FREE to play. Earn coins by participating!
                 </CardDescription>
               </CardHeader>
@@ -389,21 +389,21 @@ const CardGames = () => {
                     <p className="text-2xl font-bold text-yellow-400">
                       {GAME_INFO[selectedGame].rewards.win}
                     </p>
-                    <p className="text-sm text-slate-400">1st Place</p>
+                    <p className="text-sm text-slate-300">1st Place</p>
                   </div>
                   <div className="bg-slate-500/10 rounded-lg p-4 text-center">
-                    <Star className="h-6 w-6 text-slate-400 mx-auto mb-2" />
+                    <Star className="h-6 w-6 text-slate-300 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-slate-300">
                       {GAME_INFO[selectedGame].rewards.second}
                     </p>
-                    <p className="text-sm text-slate-400">2nd Place</p>
+                    <p className="text-sm text-slate-300">2nd Place</p>
                   </div>
                   <div className="bg-green-500/10 rounded-lg p-4 text-center">
                     <Play className="h-6 w-6 text-green-400 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-green-400">
                       {GAME_INFO[selectedGame].rewards.participate}
                     </p>
-                    <p className="text-sm text-slate-400">Participate</p>
+                    <p className="text-sm text-slate-300">Participate</p>
                   </div>
                 </div>
               </CardContent>
@@ -413,7 +413,7 @@ const CardGames = () => {
 
         {/* How It Works */}
         {!selectedGame && (
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white">How It Works</CardTitle>
             </CardHeader>
@@ -424,7 +424,7 @@ const CardGames = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-white">Select a Game</h4>
-                  <p className="text-slate-400 text-sm">Choose from Rummy, Teen Patti, or Poker</p>
+                  <p className="text-slate-300 text-sm">Choose from Rummy, Teen Patti, or Poker</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -433,7 +433,7 @@ const CardGames = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-white">Join or Create a Room</h4>
-                  <p className="text-slate-400 text-sm">Play with random players or invite friends</p>
+                  <p className="text-slate-300 text-sm">Play with random players or invite friends</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -442,7 +442,7 @@ const CardGames = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-white">Play & Earn</h4>
-                  <p className="text-slate-400 text-sm">Win coins based on your performance - no buy-ins!</p>
+                  <p className="text-slate-300 text-sm">Win coins based on your performance - no buy-ins!</p>
                 </div>
               </div>
             </CardContent>

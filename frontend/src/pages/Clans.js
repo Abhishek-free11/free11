@@ -124,24 +124,24 @@ const Clans = () => {
       case 'leader': return 'text-yellow-400 bg-yellow-500/20';
       case 'co-leader': return 'text-purple-400 bg-purple-500/20';
       case 'elder': return 'text-blue-400 bg-blue-500/20';
-      default: return 'text-slate-400 bg-slate-500/20';
+      default: return 'text-slate-300 bg-slate-500/20';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
         <Navbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <div className="animate-spin h-12 w-12 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto"></div>
-          <p className="text-slate-400 mt-4">Loading clans...</p>
+          <p className="text-slate-300 mt-4">Loading clans...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="clans-page">
         {/* Header */}
@@ -151,7 +151,7 @@ const Clans = () => {
               <Users className="h-10 w-10 text-blue-400" />
               Clans
             </h1>
-            <p className="text-slate-400">Join or create a clan to compete together!</p>
+            <p className="text-slate-300">Join or create a clan to compete together!</p>
           </div>
           
           {!myClan?.in_clan && (
@@ -166,10 +166,10 @@ const Clans = () => {
                   Create Clan
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-slate-900 border-slate-800">
+              <DialogContent className="bg-slate-900 border-slate-700">
                 <DialogHeader>
                   <DialogTitle className="text-white">Create New Clan</DialogTitle>
-                  <DialogDescription className="text-slate-400">
+                  <DialogDescription className="text-slate-300">
                     Build your cricket prediction squad!
                   </DialogDescription>
                 </DialogHeader>
@@ -260,7 +260,7 @@ const Clans = () => {
                       </Badge>
                       <CardTitle className="text-white text-2xl">{myClan.clan.name}</CardTitle>
                     </div>
-                    <CardDescription className="text-slate-400 mt-1">
+                    <CardDescription className="text-slate-300 mt-1">
                       {myClan.clan.description}
                     </CardDescription>
                   </div>
@@ -283,25 +283,25 @@ const Clans = () => {
             <CardContent>
               {/* Clan Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="text-center p-4 bg-slate-900/50 rounded-lg">
+                <div className="text-center p-4 bg-slate-800/70 rounded-lg">
                   <Target className="h-6 w-6 text-green-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-green-400">{myClan.clan.clan_accuracy}%</p>
-                  <p className="text-xs text-slate-400">Clan Accuracy</p>
+                  <p className="text-xs text-slate-300">Clan Accuracy</p>
                 </div>
-                <div className="text-center p-4 bg-slate-900/50 rounded-lg">
+                <div className="text-center p-4 bg-slate-800/70 rounded-lg">
                   <Users className="h-6 w-6 text-blue-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-blue-400">{myClan.clan.member_count}/{myClan.clan.max_members}</p>
-                  <p className="text-xs text-slate-400">Members</p>
+                  <p className="text-xs text-slate-300">Members</p>
                 </div>
-                <div className="text-center p-4 bg-slate-900/50 rounded-lg">
+                <div className="text-center p-4 bg-slate-800/70 rounded-lg">
                   <Flame className="h-6 w-6 text-red-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-red-400">{myClan.clan.best_streak}</p>
-                  <p className="text-xs text-slate-400">Best Streak</p>
+                  <p className="text-xs text-slate-300">Best Streak</p>
                 </div>
-                <div className="text-center p-4 bg-slate-900/50 rounded-lg">
+                <div className="text-center p-4 bg-slate-800/70 rounded-lg">
                   <Trophy className="h-6 w-6 text-yellow-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-yellow-400">{myClan.clan.challenges_won}</p>
-                  <p className="text-xs text-slate-400">Challenges Won</p>
+                  <p className="text-xs text-slate-300">Challenges Won</p>
                 </div>
               </div>
 
@@ -326,13 +326,13 @@ const Clans = () => {
                               {member.role === 'leader' && <Crown className="h-3 w-3 mr-1" />}
                               {member.role}
                             </Badge>
-                            <span className="text-xs text-slate-400">Level {member.level}</span>
+                            <span className="text-xs text-slate-300">Level {member.level}</span>
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="text-green-400 font-bold">{member.accuracy}%</p>
-                        <p className="text-xs text-slate-400">{member.predictions_in_clan} predictions</p>
+                        <p className="text-xs text-slate-300">{member.predictions_in_clan} predictions</p>
                       </div>
                     </div>
                   ))}
@@ -361,10 +361,10 @@ const Clans = () => {
           {/* Browse Clans Tab */}
           {!myClan?.in_clan && (
             <TabsContent value="browse">
-              <Card className="bg-slate-900/50 border-slate-800">
+              <Card className="bg-slate-800/70 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center gap-2">
-                    <Search className="h-5 w-5 text-slate-400" />
+                    <Search className="h-5 w-5 text-slate-300" />
                     Find a Clan
                   </CardTitle>
                   <div className="relative">
@@ -383,7 +383,7 @@ const Clans = () => {
                     {filteredClans.length === 0 ? (
                       <div className="text-center py-8">
                         <Users className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-                        <p className="text-slate-400">No clans found. Be the first to create one!</p>
+                        <p className="text-slate-300">No clans found. Be the first to create one!</p>
                       </div>
                     ) : (
                       filteredClans.map((clan) => (
@@ -399,7 +399,7 @@ const Clans = () => {
                                 <Badge className="bg-slate-700 text-slate-300">[{clan.tag}]</Badge>
                                 <p className="text-white font-bold">{clan.name}</p>
                               </div>
-                              <p className="text-sm text-slate-400">{clan.description}</p>
+                              <p className="text-sm text-slate-300">{clan.description}</p>
                               <div className="flex items-center gap-4 mt-1 text-xs text-slate-500">
                                 <span><Users className="h-3 w-3 inline mr-1" />{clan.member_count}/{clan.max_members}</span>
                                 <span className="text-green-400">{clan.clan_accuracy}% accuracy</span>
@@ -425,13 +425,13 @@ const Clans = () => {
 
           {/* Leaderboard Tab */}
           <TabsContent value="leaderboard">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Trophy className="h-5 w-5 text-yellow-400" />
                   Clan Rankings (By Skill)
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   Ranked by prediction accuracy - not coins!
                 </CardDescription>
               </CardHeader>
@@ -440,7 +440,7 @@ const Clans = () => {
                   {clanLeaderboard.length === 0 ? (
                     <div className="text-center py-8">
                       <Trophy className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-                      <p className="text-slate-400">No clans on the leaderboard yet</p>
+                      <p className="text-slate-300">No clans on the leaderboard yet</p>
                     </div>
                   ) : (
                     clanLeaderboard.map((clan) => (
@@ -468,7 +468,7 @@ const Clans = () => {
                               <Badge className="bg-slate-700 text-slate-300">[{clan.tag}]</Badge>
                               <p className="text-white font-bold">{clan.name}</p>
                             </div>
-                            <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                            <div className="flex items-center gap-3 text-xs text-slate-300 mt-1">
                               <span><Users className="h-3 w-3 inline mr-1" />{clan.member_count}</span>
                               <span><TrendingUp className="h-3 w-3 inline mr-1" />{clan.total_predictions} predictions</span>
                             </div>
@@ -476,7 +476,7 @@ const Clans = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-green-400">{clan.accuracy}%</p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-300">
                             <Flame className="h-3 w-3 inline mr-1 text-red-400" />
                             Best streak: {clan.best_streak}
                           </p>
@@ -491,13 +491,13 @@ const Clans = () => {
 
           {/* Challenges Tab */}
           <TabsContent value="challenges">
-            <Card className="bg-slate-900/50 border-slate-800">
+            <Card className="bg-slate-800/70 border-slate-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Award className="h-5 w-5 text-purple-400" />
                   Clan Challenges
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   Compete with other clans for badges and glory!
                 </CardDescription>
               </CardHeader>
@@ -505,12 +505,12 @@ const Clans = () => {
                 {!myClan?.in_clan ? (
                   <div className="text-center py-8">
                     <Shield className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-                    <p className="text-slate-400">Join a clan to participate in challenges</p>
+                    <p className="text-slate-300">Join a clan to participate in challenges</p>
                   </div>
                 ) : challenges.length === 0 ? (
                   <div className="text-center py-8">
                     <Award className="h-12 w-12 text-slate-700 mx-auto mb-3" />
-                    <p className="text-slate-400">No active challenges right now</p>
+                    <p className="text-slate-300">No active challenges right now</p>
                   </div>
                 ) : (
                   <div className="grid md:grid-cols-3 gap-4">
@@ -523,7 +523,7 @@ const Clans = () => {
                           <CardTitle className="text-white text-lg">{challenge.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-slate-400 text-sm mb-3">{challenge.description}</p>
+                          <p className="text-slate-300 text-sm mb-3">{challenge.description}</p>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-slate-500">Target:</span>

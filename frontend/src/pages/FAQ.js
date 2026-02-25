@@ -46,7 +46,7 @@ const FAQ = () => {
       case 'legal':
         return <Scale className="h-5 w-5 text-purple-400" />;
       default:
-        return <HelpCircle className="h-5 w-5 text-slate-400" />;
+        return <HelpCircle className="h-5 w-5 text-slate-300" />;
     }
   };
 
@@ -67,7 +67,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       {user && <Navbar />}
       
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="faq-page">
@@ -75,7 +75,7 @@ const FAQ = () => {
         <Button
           variant="ghost"
           onClick={() => navigate(user ? '/profile' : '/')}
-          className="mb-6 text-slate-400 hover:text-white"
+          className="mb-6 text-slate-300 hover:text-white"
           data-testid="faq-back-btn"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -88,7 +88,7 @@ const FAQ = () => {
             <HelpCircle className="h-10 w-10 text-yellow-400" />
             Frequently Asked Questions
           </h1>
-          <p className="text-slate-400">Everything you need to know about FREE11</p>
+          <p className="text-slate-300">Everything you need to know about FREE11</p>
         </div>
 
         {/* Important Disclaimer Banner */}
@@ -112,10 +112,10 @@ const FAQ = () => {
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin h-8 w-8 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-slate-400">Loading FAQ...</p>
+            <p className="text-slate-300">Loading FAQ...</p>
           </div>
         ) : faqData?.items ? (
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-yellow-400" />
@@ -146,20 +146,20 @@ const FAQ = () => {
             </CardContent>
           </Card>
         ) : (
-          <Card className="bg-slate-900/50 border-slate-800">
+          <Card className="bg-slate-800/70 border-slate-700">
             <CardContent className="py-12 text-center">
               <HelpCircle className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-              <p className="text-slate-400">Unable to load FAQ. Please try again later.</p>
+              <p className="text-slate-300">Unable to load FAQ. Please try again later.</p>
             </CardContent>
           </Card>
         )}
 
         {/* Contact Section */}
-        <Card className="mt-8 bg-slate-900/50 border-slate-800">
+        <Card className="mt-8 bg-slate-800/70 border-slate-700">
           <CardContent className="py-6">
             <div className="text-center">
               <h3 className="text-lg font-bold text-white mb-2">Still have questions?</h3>
-              <p className="text-slate-400 mb-4">
+              <p className="text-slate-300 mb-4">
                 Our support team is here to help you with any queries.
               </p>
               <Button 

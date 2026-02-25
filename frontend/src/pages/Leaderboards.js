@@ -156,7 +156,7 @@ const Leaderboards = () => {
       <div className="flex items-center gap-4">
         <div className="text-right">
           <p className="text-2xl font-bold text-green-400">{entry.accuracy}%</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-300">
             {entry.correct_predictions || entry.correct_this_week || 0}/{entry.total_predictions || entry.predictions_this_week || 0} correct
           </p>
         </div>
@@ -180,18 +180,18 @@ const Leaderboards = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-950">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
         <Navbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <div className="animate-spin h-12 w-12 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto"></div>
-          <p className="text-slate-400 mt-4">Loading leaderboards...</p>
+          <p className="text-slate-300 mt-4">Loading leaderboards...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-900">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="leaderboards-page">
         {/* Header */}
@@ -200,7 +200,7 @@ const Leaderboards = () => {
             <Trophy className="h-10 w-10 text-yellow-400" />
             Leaderboards
           </h1>
-          <p className="text-slate-400">Compete on SKILL - accuracy and streaks matter, not coins!</p>
+          <p className="text-slate-300">Compete on SKILL - accuracy and streaks matter, not coins!</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -224,13 +224,13 @@ const Leaderboards = () => {
 
               {/* Global Leaderboard */}
               <TabsContent value="global">
-                <Card className="bg-slate-800/80 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-yellow-400" />
                       Global Rankings
                     </CardTitle>
-                    <CardDescription className="text-slate-400">
+                    <CardDescription className="text-slate-300">
                       All-time prediction accuracy (min. 5 predictions to qualify)
                     </CardDescription>
                   </CardHeader>
@@ -239,7 +239,7 @@ const Leaderboards = () => {
                       {globalLeaderboard.length === 0 ? (
                         <div className="text-center py-12">
                           <Trophy className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                          <p className="text-slate-400">No rankings yet. Make predictions to climb the board!</p>
+                          <p className="text-slate-300">No rankings yet. Make predictions to climb the board!</p>
                         </div>
                       ) : (
                         globalLeaderboard.map((entry) => (
@@ -253,13 +253,13 @@ const Leaderboards = () => {
 
               {/* Weekly Leaderboard */}
               <TabsContent value="weekly">
-                <Card className="bg-slate-800/80 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-blue-400" />
                       Weekly Rankings
                     </CardTitle>
-                    <CardDescription className="text-slate-400">
+                    <CardDescription className="text-slate-300">
                       This week's top predictors (resets every Monday)
                     </CardDescription>
                   </CardHeader>
@@ -268,7 +268,7 @@ const Leaderboards = () => {
                       {weeklyLeaderboard.length === 0 ? (
                         <div className="text-center py-12">
                           <Calendar className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                          <p className="text-slate-400">No predictions this week yet. Be the first!</p>
+                          <p className="text-slate-300">No predictions this week yet. Be the first!</p>
                         </div>
                       ) : (
                         weeklyLeaderboard.map((entry) => (
@@ -282,13 +282,13 @@ const Leaderboards = () => {
 
               {/* Streak Leaderboard */}
               <TabsContent value="streak">
-                <Card className="bg-slate-800/80 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-700">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Flame className="h-5 w-5 text-red-400" />
                       Streak Kings
                     </CardTitle>
-                    <CardDescription className="text-slate-400">
+                    <CardDescription className="text-slate-300">
                       Longest consecutive correct predictions
                     </CardDescription>
                   </CardHeader>
@@ -297,7 +297,7 @@ const Leaderboards = () => {
                       {streakLeaderboard.length === 0 ? (
                         <div className="text-center py-12">
                           <Flame className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-                          <p className="text-slate-400">No streaks yet. Start predicting!</p>
+                          <p className="text-slate-300">No streaks yet. Start predicting!</p>
                         </div>
                       ) : (
                         streakLeaderboard.map((entry) => (
@@ -341,13 +341,13 @@ const Leaderboards = () => {
           {/* Sidebar - Duels & Activity */}
           <div className="space-y-6">
             {/* My Duels */}
-            <Card className="bg-slate-800/80 border-slate-800" data-testid="duels-section">
+            <Card className="bg-slate-800/80 border-slate-700" data-testid="duels-section">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Swords className="h-5 w-5 text-red-400" />
                   Prediction Duels
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-300">
                   Challenge friends - winner gets badges!
                 </CardDescription>
               </CardHeader>
@@ -357,15 +357,15 @@ const Leaderboards = () => {
                   <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-slate-800/50 rounded-lg">
                     <div className="text-center">
                       <p className="text-xl font-bold text-green-400">{myDuels.stats.won}</p>
-                      <p className="text-xs text-slate-400">Won</p>
+                      <p className="text-xs text-slate-300">Won</p>
                     </div>
                     <div className="text-center">
                       <p className="text-xl font-bold text-blue-400">{myDuels.stats.played}</p>
-                      <p className="text-xs text-slate-400">Played</p>
+                      <p className="text-xs text-slate-300">Played</p>
                     </div>
                     <div className="text-center">
                       <p className="text-xl font-bold text-yellow-400">{myDuels.stats.win_rate}%</p>
-                      <p className="text-xs text-slate-400">Win Rate</p>
+                      <p className="text-xs text-slate-300">Win Rate</p>
                     </div>
                   </div>
                 )}
@@ -373,7 +373,7 @@ const Leaderboards = () => {
                 {/* Pending Duels */}
                 {myDuels?.pending?.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-sm text-slate-400 mb-2">Incoming Challenges</p>
+                    <p className="text-sm text-slate-300 mb-2">Incoming Challenges</p>
                     {myDuels.pending
                       .filter(d => d.challenged_id === user?.id)
                       .map((duel) => (
@@ -405,18 +405,18 @@ const Leaderboards = () => {
                 {/* Active Duels */}
                 {myDuels?.active?.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-sm text-slate-400 mb-2">Active Duels</p>
+                    <p className="text-sm text-slate-300 mb-2">Active Duels</p>
                     {myDuels.active.map((duel) => (
                       <div key={duel.id} className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg mb-2">
                         <p className="text-white font-medium">
                           vs {duel.challenger_id === user?.id ? duel.challenged_name : duel.challenger_name}
                         </p>
                         <div className="flex justify-between text-sm mt-2">
-                          <span className="text-slate-400">
+                          <span className="text-slate-300">
                             You: {duel.challenger_id === user?.id ? duel.challenger_correct : duel.challenged_correct}/
                             {duel.challenger_id === user?.id ? duel.challenger_predictions : duel.challenged_predictions}
                           </span>
-                          <span className="text-slate-400">
+                          <span className="text-slate-300">
                             Them: {duel.challenger_id === user?.id ? duel.challenged_correct : duel.challenger_correct}/
                             {duel.challenger_id === user?.id ? duel.challenged_predictions : duel.challenger_predictions}
                           </span>
@@ -429,14 +429,14 @@ const Leaderboards = () => {
                 {(!myDuels?.pending?.length && !myDuels?.active?.length) && (
                   <div className="text-center py-4">
                     <Swords className="h-10 w-10 text-slate-700 mx-auto mb-2" />
-                    <p className="text-slate-400 text-sm">No active duels. Challenge someone!</p>
+                    <p className="text-slate-300 text-sm">No active duels. Challenge someone!</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
             {/* Activity Feed */}
-            <Card className="bg-slate-800/80 border-slate-800" data-testid="activity-feed">
+            <Card className="bg-slate-800/80 border-slate-700" data-testid="activity-feed">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-400" />
@@ -448,13 +448,13 @@ const Leaderboards = () => {
                   {activityFeed.length === 0 ? (
                     <div className="text-center py-4">
                       <TrendingUp className="h-10 w-10 text-slate-700 mx-auto mb-2" />
-                      <p className="text-slate-400 text-sm">No recent activity</p>
+                      <p className="text-slate-300 text-sm">No recent activity</p>
                     </div>
                   ) : (
                     activityFeed.map((activity, idx) => (
                       <div key={idx} className="p-3 bg-slate-800/50 rounded-lg">
                         <p className="text-white text-sm font-medium">{activity.title}</p>
-                        <p className="text-slate-400 text-xs">{activity.description}</p>
+                        <p className="text-slate-300 text-xs">{activity.description}</p>
                       </div>
                     ))
                   )}
@@ -467,7 +467,7 @@ const Leaderboards = () => {
 
       {/* Profile Dialog */}
       <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-800 max-w-md">
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
           {selectedProfile && (
             <>
               <DialogHeader>
@@ -500,26 +500,26 @@ const Leaderboards = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                     <p className="text-2xl font-bold text-green-400">{selectedProfile.skill_stats?.accuracy}%</p>
-                    <p className="text-xs text-slate-400">Accuracy</p>
+                    <p className="text-xs text-slate-300">Accuracy</p>
                   </div>
                   <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                     <p className="text-2xl font-bold text-red-400">{selectedProfile.skill_stats?.current_streak}</p>
-                    <p className="text-xs text-slate-400">Current Streak</p>
+                    <p className="text-xs text-slate-300">Current Streak</p>
                   </div>
                   <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                     <p className="text-2xl font-bold text-blue-400">{selectedProfile.skill_stats?.total_predictions}</p>
-                    <p className="text-xs text-slate-400">Predictions</p>
+                    <p className="text-xs text-slate-300">Predictions</p>
                   </div>
                   <div className="text-center p-3 bg-slate-800/50 rounded-lg">
                     <p className="text-2xl font-bold text-yellow-400">{selectedProfile.duel_stats?.win_rate}%</p>
-                    <p className="text-xs text-slate-400">Duel Win Rate</p>
+                    <p className="text-xs text-slate-300">Duel Win Rate</p>
                   </div>
                 </div>
 
                 {/* Clan */}
                 {selectedProfile.clan && (
                   <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                    <p className="text-sm text-slate-400">Clan</p>
+                    <p className="text-sm text-slate-300">Clan</p>
                     <p className="text-white font-bold">
                       {selectedProfile.clan.logo} [{selectedProfile.clan.tag}] {selectedProfile.clan.name}
                     </p>
@@ -529,7 +529,7 @@ const Leaderboards = () => {
                 {/* Badges */}
                 {selectedProfile.badges?.length > 0 && (
                   <div>
-                    <p className="text-sm text-slate-400 mb-2">Badges</p>
+                    <p className="text-sm text-slate-300 mb-2">Badges</p>
                     <div className="flex flex-wrap gap-2">
                       {selectedProfile.badges.map((badge) => (
                         <Badge key={badge} className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">
