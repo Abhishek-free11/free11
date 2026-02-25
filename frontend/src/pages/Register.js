@@ -138,7 +138,7 @@ const Register = () => {
     try {
       await register(email, name, password, inviteCode || null);
       toast.success('🎉 Welcome! You got 50 FREE coins!');
-      navigate('/dashboard');
+      navigate('/contests');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Registration failed');
     } finally {
@@ -147,8 +147,8 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900/50 border-slate-800 mx-4" data-testid="register-card">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-slate-800/80 border-slate-700 mx-4" data-testid="register-card">
         <CardHeader className="space-y-3 text-center px-4 sm:px-6">
           <div className="flex items-center justify-center gap-3">
             <img 
