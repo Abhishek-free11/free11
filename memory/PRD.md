@@ -488,13 +488,37 @@ post: (endpoint, data) => axios.post(`${API}${endpoint}`, data, { headers: getAu
 
 ---
 
-*Last updated: Feb 24, 2026*
+*Last updated: Feb 25, 2026*
 *Phase 3 Exit: APPROVED*
 *Phase 4: IN PROGRESS*
 *Pre-Beta UX: COMPLETE*
 *CLOSED BETA: LAUNCHED*
 *Admin Dashboard: WORKING*
 *Card Games: IMPLEMENTED*
+*Mobile UX Overhaul: COMPLETE*
+
+---
+
+## UX Overhaul - COMPLETE (Feb 25, 2026)
+
+### Changes Made:
+1. **Brighter Theme**: Improved contrast, lighter backgrounds (slate-800/900 instead of slate-950)
+2. **New Navigation Structure**:
+   - Contests (Trophy) - PRIMARY, first after login
+   - Predict (Target) - Ball-by-ball predictions
+   - Cards (Spade) - Card games
+   - Ranks (Users) - Leaderboards
+   - Profile (User) - User info, settings, LOGOUT
+3. **Contests Page**: Dream11-style match listings with contest details
+4. **Profile Page**: Complete redesign with logout button, stats, settings
+5. **Fantasy Team Builder**: Full player selection → Captain → Contest flow
+
+### Navigation Flow:
+```
+Landing → Register/Login → Contests (HOME) → Join Contest → Create Team → Play
+                                ↓
+                    Profile (settings, logout)
+```
 
 ---
 
