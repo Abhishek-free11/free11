@@ -180,7 +180,7 @@ const Leaderboards = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-950">
         <Navbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <div className="animate-spin h-12 w-12 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto"></div>
@@ -191,7 +191,7 @@ const Leaderboards = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 pb-20 md:pb-0 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 pb-20 md:pb-0 via-slate-900 to-slate-950">
       <Navbar />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl" data-testid="leaderboards-page">
         {/* Header */}
@@ -224,7 +224,7 @@ const Leaderboards = () => {
 
               {/* Global Leaderboard */}
               <TabsContent value="global">
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-800">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-yellow-400" />
@@ -253,7 +253,7 @@ const Leaderboards = () => {
 
               {/* Weekly Leaderboard */}
               <TabsContent value="weekly">
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-800">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-blue-400" />
@@ -282,7 +282,7 @@ const Leaderboards = () => {
 
               {/* Streak Leaderboard */}
               <TabsContent value="streak">
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-slate-800/80 border-slate-800">
                   <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                       <Flame className="h-5 w-5 text-red-400" />
@@ -341,7 +341,7 @@ const Leaderboards = () => {
           {/* Sidebar - Duels & Activity */}
           <div className="space-y-6">
             {/* My Duels */}
-            <Card className="bg-slate-900/50 border-slate-800" data-testid="duels-section">
+            <Card className="bg-slate-800/80 border-slate-800" data-testid="duels-section">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Swords className="h-5 w-5 text-red-400" />
@@ -436,7 +436,7 @@ const Leaderboards = () => {
             </Card>
 
             {/* Activity Feed */}
-            <Card className="bg-slate-900/50 border-slate-800" data-testid="activity-feed">
+            <Card className="bg-slate-800/80 border-slate-800" data-testid="activity-feed">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-400" />
