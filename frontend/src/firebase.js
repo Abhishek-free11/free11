@@ -3,14 +3,13 @@
  *
  * Used for:
  * - Web Push Notifications (FCM)
+ * - Phone Number Authentication (OTP)
  * - Token registration with FREE11 backend
- *
- * Note: VAPID key is required for web push.
- * Generate it from Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
  */
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY || 'AIzaSyBMRjuuazsPK8YXaKuI93v6yTE96k3Z0Gg',
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || 'free11-cf539.firebaseapp.com',
   projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || 'free11-cf539',
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || '725923627857',
   appId: process.env.REACT_APP_FIREBASE_APP_ID || '',
@@ -90,4 +89,51 @@ export async function requestAndGetToken() {
     console.error('[FCM] getToken failed:', e);
     return null;
   }
+}
+
+
+// ─── Phone Auth ───────────────────────────────────────────────────────────────
+
+let _auth = null;
+
+async function getFirebaseAuth() {
+  if (_auth) return _auth;
+  const { getAuth } = await import('firebase/auth');
+  _auth = getAuth(firebaseApp);
+  return _auth;
+}
+
+/**
+ * Create an invisible reCAPTCHA verifier bound to a DOM container.
+ * @param {string} containerId - ID of the DOM element
+ */
+export async function createRecaptchaVerifier(containerId) {
+  const { RecaptchaVerifier } = await import('firebase/auth');
+  const auth = await getFirebaseAuth();
+  const verifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
+  await verifier.render();
+  return verifier;
+}
+
+/**
+ * Send OTP to phone number via Firebase.
+ * @param {string} phoneNumber - E.164 format e.g. +919876543210
+ * @param {object} recaptchaVerifier
+ * @returns {object} confirmationResult
+ */
+export async function sendPhoneOTP(phoneNumber, recaptchaVerifier) {
+  const { signInWithPhoneNumber } = await import('firebase/auth');
+  const auth = await getFirebaseAuth();
+  return signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+}
+
+/**
+ * Confirm the OTP code and return Firebase ID token.
+ * @param {object} confirmationResult - from sendPhoneOTP
+ * @param {string} code - 6-digit OTP
+ * @returns {string} Firebase ID token
+ */
+export async function confirmPhoneOTP(confirmationResult, code) {
+  const result = await confirmationResult.confirm(code);
+  return result.user.getIdToken();
 }

@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Loader2, Fingerprint, X, Mail, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Fingerprint, X, Mail, ArrowRight, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
+import { createRecaptchaVerifier, sendPhoneOTP, confirmPhoneOTP } from '../firebase';
 import {
   isBiometricEnabled,
   getBiometricToken,
@@ -33,7 +34,7 @@ const Login = () => {
   const [pendingLoginData, setPendingLoginData] = useState(null);
 
   // OTP magic-link mode state
-  const [loginMode, setLoginMode] = useState('password'); // 'password' | 'otp'
+  const [loginMode, setLoginMode] = useState('password'); // 'password' | 'otp' | 'phone'
   const [otpEmail, setOtpEmail] = useState('');
   const [otpStage, setOtpStage] = useState('email'); // 'email' | 'code'
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -42,6 +43,15 @@ const Login = () => {
   const [devOtp, setDevOtp] = useState('');
   const otpRefs = useRef([]);
   const timerRef = useRef(null);
+
+  // Phone OTP state
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneStage, setPhoneStage] = useState('number'); // 'number' | 'verifying'
+  const [phoneLoading, setPhoneLoading] = useState(false);
+  const [phoneResendTimer, setPhoneResendTimer] = useState(0);
+  const confirmationResultRef = useRef(null);
+  const recaptchaRef = useRef(null);
+  const phoneTimerRef = useRef(null);
 
   useEffect(() => {
     if (user) navigate('/match-centre', { replace: true });
@@ -186,6 +196,66 @@ const Login = () => {
     setOtpLoading(false);
   };
 
+  // ── Phone OTP handlers ──────────────────────────────────────────────
+  const startPhoneResendTimer = () => {
+    setPhoneResendTimer(30);
+    phoneTimerRef.current = setInterval(() => {
+      setPhoneResendTimer(t => { if (t <= 1) { clearInterval(phoneTimerRef.current); return 0; } return t - 1; });
+    }, 1000);
+  };
+
+  const sendPhoneOTPHandler = async () => {
+    const phone = phoneNumber.trim();
+    if (!phone || phone.length < 10) { toast.error('Enter a valid phone number'); return; }
+    const e164 = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
+    setPhoneLoading(true);
+    try {
+      if (!recaptchaRef.current) {
+        recaptchaRef.current = await createRecaptchaVerifier('recaptcha-container');
+      }
+      const confirmation = await sendPhoneOTP(e164, recaptchaRef.current);
+      confirmationResultRef.current = confirmation;
+      setPhoneStage('verifying');
+      startPhoneResendTimer();
+
+      // Try Web OTP API for silent auto-detection
+      if ('OTPCredential' in window) {
+        const ac = new AbortController();
+        setTimeout(() => ac.abort(), 60000); // 60s timeout
+        navigator.credentials.get({ otp: { transport: ['sms'] }, signal: ac.signal })
+          .then(async (otpCred) => {
+            if (otpCred?.code) await verifyPhoneCode(otpCred.code);
+          })
+          .catch(() => {}); // silent fail — user types manually
+      }
+    } catch (err) {
+      toast.error(err?.message || 'Failed to send OTP. Try again.');
+      recaptchaRef.current = null;
+    }
+    setPhoneLoading(false);
+  };
+
+  const verifyPhoneCode = async (code) => {
+    if (!confirmationResultRef.current) return;
+    setPhoneLoading(true);
+    try {
+      const idToken = await confirmPhoneOTP(confirmationResultRef.current, code);
+      const resp = await api.post('/auth/phone-verify', { firebase_id_token: idToken });
+      const { access_token, user: userData } = resp.data;
+      loginWithToken(access_token, userData);
+      toast.success('Welcome to FREE11! 🎉');
+      navigate('/match-centre');
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || 'Incorrect OTP. Please try again.');
+    }
+    setPhoneLoading(false);
+  };
+
+  const handlePhoneOtpInput = (val) => {
+    const digits = val.replace(/\D/g, '').slice(0, 6);
+    if (digits.length === 6) verifyPhoneCode(digits);
+  };
+
   return (
     <div className="min-h-screen bg-[#0F1115] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Broadcast grid */}
@@ -244,11 +314,18 @@ const Login = () => {
               className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
               style={loginMode === 'password' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
               data-testid="mode-password-tab">PASSWORD</button>
+            <button onClick={() => { setLoginMode('phone'); setPhoneStage('number'); setPhoneNumber(''); }}
+              className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
+              style={loginMode === 'phone' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
+              data-testid="mode-phone-tab">PHONE</button>
             <button onClick={() => { setLoginMode('otp'); setOtpStage('email'); setOtp(['','','','','','']); setDevOtp(''); }}
               className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
               style={loginMode === 'otp' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
               data-testid="mode-otp-tab">EMAIL OTP</button>
           </div>
+
+          {/* Invisible reCAPTCHA container */}
+          <div id="recaptcha-container" />
 
           {loginMode === 'password' ? (
             <>
@@ -283,6 +360,69 @@ const Login = () => {
                 </button>
               </form>
             </>
+          ) : loginMode === 'phone' ? (
+            /* ── Phone OTP mode ── */
+            <div data-testid="phone-login-section">
+              <p className="text-xs mb-5" style={{ color: '#8A9096' }}>
+                Enter your mobile number — OTP will be sent automatically.
+              </p>
+              {phoneStage === 'number' ? (
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#8A9096' }}>Mobile Number</label>
+                    <div className="flex gap-2">
+                      <div className="flex items-center px-3 rounded-lg border text-white text-sm font-medium"
+                        style={{ background: '#0F1115', borderColor: 'rgba(198,160,82,0.2)', minWidth: '54px' }}>
+                        +91
+                      </div>
+                      <Input
+                        type="tel" inputMode="numeric" placeholder="9876543210"
+                        value={phoneNumber} onChange={e => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                        onKeyDown={e => e.key === 'Enter' && sendPhoneOTPHandler()}
+                        className="h-11 text-white placeholder:text-slate-600 border flex-1"
+                        style={{ background: '#0F1115', borderColor: 'rgba(198,160,82,0.2)' }}
+                        autoComplete="tel" data-testid="phone-input" />
+                    </div>
+                  </div>
+                  <button onClick={sendPhoneOTPHandler} disabled={phoneLoading || phoneNumber.length < 10}
+                    className="w-full h-12 rounded-xl font-heading text-xl tracking-widest transition-all disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
+                    data-testid="send-phone-otp-btn">
+                    {phoneLoading ? <span className="flex items-center justify-center gap-2"><Loader2 className="h-5 w-5 animate-spin" /> Sending...</span> : 'Send OTP'}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-center mb-2">
+                    <Phone className="h-8 w-8 mx-auto mb-2" style={{ color: '#C6A052' }} />
+                    <p className="text-sm text-white font-medium">OTP sent to +91 {phoneNumber}</p>
+                    <p className="text-xs mt-1" style={{ color: '#8A9096' }}>Verifying automatically from your SMS…</p>
+                  </div>
+                  <Input
+                    type="text" inputMode="numeric" placeholder="------"
+                    maxLength={6} autoComplete="one-time-code"
+                    onChange={e => handlePhoneOtpInput(e.target.value)}
+                    className="h-14 text-center text-2xl font-mono text-white tracking-[0.5em] border"
+                    style={{ background: '#0F1115', borderColor: 'rgba(198,160,82,0.2)' }}
+                    autoFocus data-testid="phone-otp-input" />
+                  {phoneLoading && (
+                    <div className="flex items-center justify-center gap-2 text-sm" style={{ color: '#C6A052' }}>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Verifying…
+                    </div>
+                  )}
+                  <div className="text-center">
+                    {phoneResendTimer > 0 ? (
+                      <p className="text-xs" style={{ color: '#8A9096' }}>Resend in {phoneResendTimer}s</p>
+                    ) : (
+                      <button onClick={() => { setPhoneStage('number'); recaptchaRef.current = null; }}
+                        className="text-xs font-semibold" style={{ color: '#C6A052' }} data-testid="change-phone-btn">
+                        Change number / Resend
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             /* ── OTP magic-link mode ── */
             <div data-testid="otp-login-section">

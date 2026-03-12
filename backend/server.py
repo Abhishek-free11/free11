@@ -15,6 +15,7 @@ from jose import JWTError, jwt
 import random
 import sys
 import sentry_sdk
+import httpx
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -610,6 +611,81 @@ async def verify_otp_register(req: OTPRegisterRequest):
     token = create_access_token({"sub": user_id})
     safe_user = {k: v for k, v in new_user_doc.items() if k not in ("password_hash", "coin_expiry_date", "_id")}
     return {"access_token": token, "token_type": "bearer", "user": safe_user}
+
+
+# ─── Phone Firebase Auth ────────────────────────────────────────────────────
+
+class PhoneFirebaseRequest(BaseModel):
+    firebase_id_token: str
+    name: Optional[str] = None
+
+FIREBASE_WEB_API_KEY = os.environ.get("REACT_APP_FIREBASE_API_KEY", "AIzaSyBMRjuuazsPK8YXaKuI93v6yTE96k3Z0Gg")
+
+async def _verify_firebase_phone_token(id_token: str) -> dict:
+    """Verify Firebase ID token via REST and return user data with phone number."""
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={FIREBASE_WEB_API_KEY}",
+            json={"idToken": id_token}
+        )
+    data = resp.json()
+    if "error" in data:
+        raise HTTPException(status_code=400, detail=f"Firebase token invalid: {data['error']['message']}")
+    users = data.get("users", [])
+    if not users:
+        raise HTTPException(status_code=400, detail="No user found for this token")
+    return users[0]
+
+@api_router.post("/auth/phone-verify")
+async def phone_firebase_verify(req: PhoneFirebaseRequest):
+    """Sign in or register a user via Firebase Phone Auth OTP."""
+    firebase_user = await _verify_firebase_phone_token(req.firebase_id_token)
+    phone_number = firebase_user.get("phoneNumber")
+    if not phone_number:
+        raise HTTPException(status_code=400, detail="No phone number in Firebase token")
+
+    # Find existing user by phone
+    existing = await db.users.find_one({"phone": phone_number}, {"_id": 0})
+    if existing:
+        await db.users.update_one(
+            {"id": existing["id"]},
+            {"$set": {"last_activity": datetime.now(timezone.utc).isoformat(), "phone_verified": True}}
+        )
+        user_doc = await db.users.find_one({"id": existing["id"]}, {"_id": 0})
+        token = create_access_token({"sub": existing["id"]})
+        safe = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
+        return {"access_token": token, "token_type": "bearer", "user": safe}
+
+    # New user — auto-create
+    user_id = str(uuid.uuid4())
+    display_name = req.name or f"Player{phone_number[-4:]}"
+    now = datetime.now(timezone.utc).isoformat()
+    new_user = {
+        "id": user_id, "name": display_name, "email": None,
+        "phone": phone_number, "phone_verified": True,
+        "hashed_password": None, "coins_balance": 50,
+        "total_earned": 50, "total_redeemed": 0,
+        "level": 1, "xp": 0, "prediction_streak": 0,
+        "total_predictions": 0, "correct_predictions": 0,
+        "email_verified": True, "created_at": now, "last_activity": now,
+        "is_admin": False, "is_seed": False,
+        "referral_code": user_id[:8].upper(),
+        "referred_by": None, "referred_users": [],
+        "achievements": [], "notification_preferences": {
+            "match_start": True, "prediction_result": True,
+            "rewards": True, "leaderboard": True
+        }
+    }
+    await db.users.insert_one(new_user)
+    await db.coin_transactions.insert_one({
+        "user_id": user_id, "amount": 50, "type": "welcome_bonus",
+        "description": "Welcome to FREE11! Phone sign-up bonus.",
+        "timestamp": now,
+    })
+    token = create_access_token({"sub": user_id})
+    new_user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+    safe = {k: v for k, v in new_user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
+    return {"access_token": token, "token_type": "bearer", "user": safe}
 
 
 @api_router.get("/auth/email-status")
