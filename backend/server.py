@@ -1200,7 +1200,10 @@ async def get_leaderboard():
     # Enrich with user data
     result = []
     for entry in leaderboard_data:
-        user = await db.users.find_one({"id": entry["_id"]}, {"_id": 0, "name": 1, "level": 1})
+        user = await db.users.find_one(
+            {"id": entry["_id"], "is_admin": {"$ne": True}, "is_seed": {"$ne": True}},
+            {"_id": 0, "name": 1, "level": 1}
+        )
         if user:
             result.append({
                 "id": entry["_id"],
