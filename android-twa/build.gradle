@@ -4,6 +4,9 @@ plugins {
     id 'com.google.gms.google-services' version '4.4.2' apply false
 }
 
+// Required by Android Studio IDE integration (Kotlin DSL model task)
+tasks.register('prepareKotlinBuildScriptModel') {}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
