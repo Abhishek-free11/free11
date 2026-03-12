@@ -1,7 +1,7 @@
 // FREE11 Android TWA - App Module build.gradle
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android' version '1.9.22'
+    id 'org.jetbrains.kotlin.android' version '2.0.20'
 }
 
 apply plugin: 'com.google.gms.google-services'
