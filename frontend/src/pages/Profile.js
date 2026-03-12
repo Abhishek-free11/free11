@@ -8,7 +8,7 @@ import WishlistGoal from '../components/WishlistGoal';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Mail, Coins, Trophy, TrendingUp, Shield, HelpCircle, Volume2, VolumeX, Settings, LogOut, ChevronRight, ShoppingBag, Zap, Gift, Star, UserPlus, Fingerprint, Wallet, Target } from 'lucide-react';
+import { User, Mail, Coins, Trophy, TrendingUp, Shield, HelpCircle, Volume2, VolumeX, Settings, LogOut, ChevronRight, ShoppingBag, Zap, Gift, Star, UserPlus, Fingerprint, Wallet, Target, Download } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'sonner';
 import { isSoundEnabled, setSoundEnabled } from '../utils/sounds';
@@ -23,6 +23,27 @@ const Profile = () => {
   const [soundsEnabled, setSoundsEnabled] = useState(isSoundEnabled());
   const [biometricOn, setBiometricOn] = useState(isBiometricEnabled());
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isInstalled) return;
+    if (window.__pwaPrompt) { setInstallPrompt(window.__pwaPrompt); setCanInstall(true); return; }
+    const handler = (e) => { e.preventDefault(); window.__pwaPrompt = e; setInstallPrompt(e); setCanInstall(true); };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') { setCanInstall(false); toast.success('FREE11 installed! Check your home screen.'); }
+    } else {
+      toast.info('To install: tap the browser menu → "Add to Home Screen"');
+    }
+  };
 
   const handleSoundToggle = (enabled) => {
     setSoundsEnabled(enabled);
@@ -219,6 +240,20 @@ const Profile = () => {
               <ChevronRight className="h-4 w-4 text-green-400" />
             </button>
           )}
+          {/* Install App */}
+          <button onClick={handleInstallApp}
+            className="w-full flex items-center justify-between px-4 py-3 border-t transition-colors hover:bg-white/3"
+            style={{ borderColor: 'rgba(255,255,255,0.05)' }}
+            data-testid="profile-install-app-btn">
+            <div className="flex items-center gap-3">
+              <Download className="h-5 w-5" style={{ color: '#C6A052' }} />
+              <div>
+                <span className="text-white">Install FREE11 App</span>
+                <p className="text-[10px]" style={{ color: '#8A9096' }}>Add to your home screen for the best experience</p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4" style={{ color: '#8A9096' }} />
+          </button>
         </div>
 
         {/* ── Legal ── */}

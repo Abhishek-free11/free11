@@ -29,7 +29,7 @@ const STEPS = [
     iconColor: '#22c55e',
     title: 'Redeem real groceries.',
     subtitle: 'Coins → cold drinks, groceries, mobile recharges & more.',
-    detail: 'No deposits. No risk. Real rewards delivered via ONDC/Zepto.',
+    detail: 'No deposits. No risk. Real rewards delivered right to your doorstep.',
     targetTab: 'bottom-nav-home',
     arrowDir: 'down',
   },

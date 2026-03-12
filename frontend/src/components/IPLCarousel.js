@@ -170,10 +170,6 @@ export default function IPLCarousel() {
         ))}
       </div>
 
-      {/* Disclaimer */}
-      <div className="absolute bottom-3 right-3">
-        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>PROGA — skill fun only</span>
-      </div>
     </div>
   );
 }

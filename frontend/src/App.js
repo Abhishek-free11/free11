@@ -5,6 +5,13 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download } from 'lucide-react';
 import { trackButtonClick } from './utils/analytics';
+
+// Scroll to top on every route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 // Critical path — load eagerly
 // Landing page intentionally not shown to unauthenticated users — they go directly to /login
 // const Landing = lazy(() => import('./pages/Landing')); // kept as lazy if needed in future
@@ -328,6 +335,7 @@ function AppRouter() {
 
   return (
     <Suspense fallback={<PageSpinner />}>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<RootRoute />} />
         <Route path="/login" element={<Login />} />

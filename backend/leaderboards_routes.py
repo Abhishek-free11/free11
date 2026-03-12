@@ -52,7 +52,7 @@ async def get_global_leaderboard(limit: int = 50):
     """
     # Get users with prediction data
     pipeline = [
-        {"$match": {"total_predictions": {"$gte": 5}}},  # Min 5 predictions to qualify
+        {"$match": {"total_predictions": {"$gte": 5}, "is_admin": {"$ne": True}, "is_seed": {"$ne": True}}},
         {"$addFields": {
             "accuracy": {
                 "$cond": {
@@ -135,7 +135,7 @@ async def get_weekly_leaderboard(limit: int = 50):
     result = []
     for i, entry in enumerate(weekly_data):
         user = await db.users.find_one(
-            {"id": entry["_id"]},
+            {"id": entry["_id"], "is_admin": {"$ne": True}, "is_seed": {"$ne": True}},
             {"_id": 0, "name": 1, "level": 1}
         )
         if user:
@@ -165,7 +165,7 @@ async def get_streak_leaderboard(limit: int = 50):
     Streak leaderboard - who has the longest prediction streak
     """
     users = await db.users.find(
-        {"prediction_streak": {"$gt": 0}},
+        {"prediction_streak": {"$gt": 0}, "is_admin": {"$ne": True}, "is_seed": {"$ne": True}},
         {"_id": 0, "id": 1, "name": 1, "level": 1, "prediction_streak": 1}
     ).sort("prediction_streak", -1).limit(limit).to_list(limit)
     
