@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://skill-sports-app.preview.emergentagent.com**
+**https://pwa-submission.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**

@@ -8,7 +8,7 @@ import os
 import json
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://skill-sports-app.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://pwa-submission.preview.emergentagent.com')
 
 # Test credentials
 TEST_EMAIL = "abhishek@free11.com"

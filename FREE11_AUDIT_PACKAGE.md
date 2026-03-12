@@ -8,7 +8,7 @@
 # 1) LIVE ACCESS
 
 ## Public URL (PWA/Web)
-**🔗 https://skill-sports-app.preview.emergentagent.com**
+**🔗 https://pwa-submission.preview.emergentagent.com**
 
 ## Android Build
 **⚠️ NOT YET AVAILABLE**

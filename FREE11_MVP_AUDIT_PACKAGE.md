@@ -10,7 +10,7 @@
 ## 1) LIVE ACCESS (No Gating)
 
 ### Public URL (PWA/Web)
-- **Live URL:** https://skill-sports-app.preview.emergentagent.com
+- **Live URL:** https://pwa-submission.preview.emergentagent.com
 - **PWA Install:** Supported on Chrome Android/iOS Safari
 - **Status:** ✅ Live and accessible
 

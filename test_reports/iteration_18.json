@@ -125,7 +125,7 @@
   
   "should_main_agent_self_test": false,
   
-  "context_for_next_testing_agent": "Public Launch MVP fully verified: (1) Redis caching working with health check showing redis:true, (2) Rate limiting triggers 429 on 6th auth request, (3) EntitySport returns real live cricket data (SA vs NZ, IND vs ENG matches), (4) FREE Bucks balance/packages/history all working, (5) Stripe checkout creates session, (6) Feature gating returns 3 features with costs, (7) Notifications returns array with unread_count, (8) Analytics dashboard returns counts, (9) Cache stats returns hit/miss metrics, (10) Fraud admin endpoint returns flagged users list. All APIs working at https://skill-sports-app.preview.emergentagent.com",
+  "context_for_next_testing_agent": "Public Launch MVP fully verified: (1) Redis caching working with health check showing redis:true, (2) Rate limiting triggers 429 on 6th auth request, (3) EntitySport returns real live cricket data (SA vs NZ, IND vs ENG matches), (4) FREE Bucks balance/packages/history all working, (5) Stripe checkout creates session, (6) Feature gating returns 3 features with costs, (7) Notifications returns array with unread_count, (8) Analytics dashboard returns counts, (9) Cache stats returns hit/miss metrics, (10) Fraud admin endpoint returns flagged users list. All APIs working at https://pwa-submission.preview.emergentagent.com",
   
   "mocked_apis_note": {
     "entitysport": "NOT MOCKED - Real API data from rest.entitysport.com/v2",
