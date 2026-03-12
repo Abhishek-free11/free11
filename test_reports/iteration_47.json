@@ -1,0 +1,65 @@
+{
+  "summary": "Iteration 47: Teen Patti AI game feature testing. Tested all 15 requested features across backend + frontend. All features working correctly. Backend: POST /api/v2/earn/teen-patti-win returns 200 (coins_earned: 40) on first daily call and 400 (already claimed) on second call. Frontend: Full game flow verified - cards deal, hand evaluation, all action buttons (Fold/Call/Raise), AI turn with thinking indicator, 3 rounds, showdown with card reveal, result screen with winner display, Play Again reset, navigation buttons. GameLobby 'Play vs AI' INSTANT PLAY button verified. EarnCoins Mini Games tab shows Teen Patti and Solitaire cards. CardGames hub shows Teen Patti with PLAYABLE badge.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "EarnCoins Mini Games tab on mobile",
+        "issues": ["Tab labels are hidden on mobile (390px) - shows only icons. This is intentional responsive design (hidden sm:inline). Minor UX: users on mobile cannot see 'Mini Games' label on the tab button, just an icon."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_teen_patti_game.py",
+    "/app/test_reports/pytest/teen_patti_47.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "TeenPattiGame.js: Showdown useEffect does not have a phase guard inside the timer callback (only `if (!g) return g` null check). If Play Again is clicked within 600ms of fold (edge case), the stale timer may fire on new game state - however cleanup function clears the timer when phase dependency changes, so this is safe in practice",
+    "TeenPattiGame.js: Game auto-starts in player_turn phase - no need for start button - design is correct per requirements",
+    "App.js routing: /games/teen_patti/play route correctly defined BEFORE /games/:gameType - prevents route conflict",
+    "v2_routes.py: teen-patti-win uses reference_id pattern (f'teen_patti_win_{user.id}_{today}') for idempotency - correct daily limit implementation",
+    "EarnCoins.js: miniGames array correctly includes teen_patti and solitaire at indices 3 and 4"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_teen_patti_game.py"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 tests pass)",
+    "frontend": "100% (15/15 features verified)"
+  },
+  "test_credentials": "test_redesign_ui26@free11test.com / Test@1234",
+  "seed_data_creation": "None - used existing test user. Note: teen-patti-win already claimed today for test user (returns 400 on repeated calls - expected behavior).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Teen Patti AI game at /games/teen_patti/play fully working. Key selectors: [data-testid='teen-patti-game'] (game container), [data-testid='btn-fold'], [data-testid='btn-call'], [data-testid='btn-raise'], [data-testid='ai-thinking'], [data-testid='game-result'], [data-testid='play-again-btn'], [data-testid='back-to-games-result']. GameLobby has [data-testid='play-vs-ai-btn']. EarnCoins Mini Games tab is the 2nd tab button (key='games'), click using `.flex.gap-2 button:nth-child(2)`. Mini Games cards: [data-testid='teen-patti-card'], [data-testid='solitaire-card']. Backend /api/v2/earn/teen-patti-win: 200 on first daily call, 400 on repeat. All card game routes working: /games (hub), /games/teen_patti (lobby), /games/teen_patti/play (AI game), /games/solitaire.",
+  "passed_tests": [
+    "POST /api/v2/earn/teen-patti-win: 401 without auth",
+    "POST /api/v2/earn/teen-patti-win: 200/400 with auth",
+    "Response structure: success=true, coins_earned=40, new_balance present",
+    "Duplicate claim returns 400 with 'already claimed' message",
+    "Login with test credentials works",
+    "Teen Patti game loads at /games/teen_patti/play",
+    "Player cards shown face-up, AI cards face-down initially",
+    "Player hand name (Pair, High Card, etc.) shown in real-time",
+    "Fold button: player folds → showdown → result (AI wins)",
+    "Call +10 button: adds to pot, AI thinking shown, round advances",
+    "Raise +20 button: AI responds, round counter advances",
+    "3 rounds → showdown → AI cards revealed face-up",
+    "Result screen shows winner name and win/lose message",
+    "Play Again resets game: fresh cards, Round 1/3, POT 30, action buttons visible",
+    "All Games button (back-to-games-result) navigates to /games hub",
+    "Back to Lobby navigates to /games/teen_patti",
+    "Teen Patti lobby (/games/teen_patti) shows Play vs AI with INSTANT PLAY badge",
+    "Clicking Play vs AI navigates to /games/teen_patti/play",
+    "CardGames hub (/games) shows Teen Patti with PLAYABLE badge",
+    "EarnCoins Mini Games tab (key='games') shows Teen Patti and Solitaire cards",
+    "Teen Patti card in Mini Games: label='Teen Patti vs AI', badge='+40 coins daily', btn='Play Now'",
+    "Clicking Teen Patti card in Missions navigates to /games/teen_patti/play"
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "project_name": "FREE11 - Premium Sports Experience",
+  "version": "2.0",
+  "theme": "dark",
+  "design_philosophy": {
+    "core_concept": "The High-Stakes Control Room",
+    "emotional_tone": "Premium, Electric, Competitive, Authoritative",
+    "visual_style": "Broadcast Dark Mode with Metallic Gold Accents",
+    "principles": [
+      "Data is Beautiful: Dense information must be scanable.",
+      "Gold is Reward: Use gold only for value (wins, rank, money, action).",
+      "Darkness is Stage: Backgrounds are deep charcoal to let content pop.",
+      "Motion is Live: Everything affecting the game state must animate."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Bebas Neue, sans-serif",
+      "body": "Noto Sans, sans-serif",
+      "numbers": "Oswald, sans-serif"
+    },
+    "scale": {
+      "h1": "text-4xl md:text-6xl font-heading tracking-wide uppercase",
+      "h2": "text-2xl md:text-4xl font-heading tracking-wide uppercase",
+      "h3": "text-xl md:text-2xl font-heading tracking-wide",
+      "body_lg": "text-lg font-body",
+      "body_base": "text-base font-body",
+      "body_sm": "text-sm font-body text-muted-foreground",
+      "caption": "text-xs font-body tracking-wider uppercase text-muted-foreground",
+      "score": "text-3xl md:text-5xl font-numbers font-bold tabular-nums"
+    },
+    "imports": [
+      "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:wght@400;500;700&family=Oswald:wght@400;500;700&display=swap"
+    ]
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#C6A052",
+      "hover": "#E0B84F",
+      "foreground": "#0F1115"
+    },
+    "secondary": {
+      "DEFAULT": "#1B1E23",
+      "foreground": "#FFFFFF"
+    },
+    "accent": {
+      "DEFAULT": "#E0B84F",
+      "foreground": "#0F1115"
+    },
+    "background": {
+      "DEFAULT": "#0F1115",
+      "paper": "#15181C",
+      "card": "#1B1E23",
+      "overlay": "rgba(15, 17, 21, 0.85)"
+    },
+    "neutral": {
+      "100": "#FFFFFF",
+      "200": "#E2E8F0",
+      "300": "#CBD5E1",
+      "400": "#94A3B8",
+      "500": "#64748B",
+      "600": "#475569",
+      "700": "#334155",
+      "800": "#1E293B",
+      "900": "#0F172A"
+    },
+    "status": {
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444",
+      "info": "#3B82F6"
+    },
+    "special": {
+      "gold_gradient": "linear-gradient(135deg, #C6A052 0%, #E0B84F 50%, #C6A052 100%)",
+      "dark_gradient": "linear-gradient(to bottom, #1B1E23, #0F1115)",
+      "glass": "rgba(27, 30, 35, 0.7)"
+    }
+  },
+  "layout": {
+    "grid_system": {
+      "mobile": "grid-cols-1 gap-4",
+      "desktop": "grid-cols-12 gap-6",
+      "bento_dense": "grid-cols-2 md:grid-cols-4 gap-3"
+    },
+    "spacing": {
+      "section_padding": "py-8 md:py-16",
+      "container_padding": "px-4 md:px-8"
+    },
+    "container": {
+      "max_width": "max-w-7xl mx-auto"
+    }
+  },
+  "components": {
+    "Button": {
+      "variants": {
+        "default": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(198,160,82,0.3)] uppercase font-bold tracking-wider",
+        "outline": "border border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/60 uppercase font-bold tracking-wider",
+        "ghost": "hover:bg-white/5 text-white uppercase tracking-wider",
+        "glass": "bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-white"
+      },
+      "border_radius": "rounded-sm"
+    },
+    "Card": {
+      "base": "bg-card border border-white/5 shadow-lg",
+      "hover": "hover:border-primary/30 transition-colors duration-300",
+      "variants": {
+        "live": "border-l-4 border-l-red-500 bg-gradient-to-r from-red-500/5 to-transparent",
+        "winner": "border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent"
+      }
+    },
+    "Input": {
+      "base": "bg-background/50 border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50 text-white"
+    },
+    "Navbar": {
+      "style": "sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-white/5",
+      "mobile_bottom": "fixed bottom-0 left-0 right-0 z-50 bg-[#15181C]/95 backdrop-blur-xl border-t border-white/5 pb-safe"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "glow_gold": "0 0 20px rgba(198, 160, 82, 0.15)",
+      "glow_text": "0 0 10px rgba(198, 160, 82, 0.5)",
+      "elevation": "0 10px 30px -10px rgba(0, 0, 0, 0.5)"
+    },
+    "animations": {
+      "pulse_slow": "animate-pulse",
+      "shimmer": "animate-shimmer"
+    }
+  },
+  "assets": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "stroke-width-1.5",
+      "active_color": "#C6A052",
+      "inactive_color": "#94A3B8"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. FIRST: Install 'lucide-react' if not present.",
+    "2. UPDATE 'tailwind.config.js' with the new color palette (primary, background, card, etc.).",
+    "3. UPDATE 'index.css' to import Google Fonts (Bebas Neue, Oswald, Noto Sans) and set base styles.",
+    "4. CREATE a 'BottomNav' component for mobile navigation. It should be visible only on mobile screens.",
+    "5. REFACTOR the 'MatchCentre' to use a dense grid layout (Bento Grid Mode B) for matches.",
+    "6. APPLY the 'Gold Gradient' text effect to important numbers and rankings.",
+    "7. ENSURE all cards have a subtle border (`border-white/5`) to define edges in dark mode.",
+    "8. REPLACE all purple/blue gradients with Gold/Charcoal themes.",
+    "9. USE 'data-testid' on all interactive elements."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for backgrounds unless specified.",
+    "Ensure text contrast is at least 4.5:1.",
+    "Use 'sonner' for notifications.",
+    "Avoid generic 'Inter' font; use 'Bebas Neue' for headings.",
+    "Mobile-first approach is mandatory."
+  ]
+}

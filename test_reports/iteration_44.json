@@ -1,0 +1,129 @@
+{
+  "summary": "Iteration 44: Compliance/branding fixes verification. All 7 required test items PASS. Root route, PWA banner, footer copyright, support email (4 pages), blog routes, T20 branding (locale+ContestHub), locale files all verified. One additional finding: SponsoredPools backend data still contains Pepsi/Parle-G/IPL trademark names not in scope of this fix.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "SponsoredPools (/sponsored)",
+        "issues": [
+          "Backend DB data for sponsored pools still contains trademark names: 'Pepsi India', 'PEPSI BOOST', 'Pepsi IPL Boost Pool', 'Parle-G Cricket Champions', 'Parle-G is backing cricket fans'. Pool title 'Pepsi IPL Boost Pool' also contains 'IPL' trademark. This is backend seed data, not a frontend code issue — but it renders in user-facing UI. Out of scope for this PR but should be addressed for full compliance."
+        ]
+      }
+    ]
+  },
+
+  "passed_tests": [
+    {
+      "test": "1. ROOT ROUTE - UNAUTHENTICATED",
+      "result": "PASS",
+      "details": "Visiting '/' while not logged in shows Landing page (URL stays at /). Login and START PLAYING buttons visible."
+    },
+    {
+      "test": "2. ROOT ROUTE - AUTHENTICATED",
+      "result": "PASS",
+      "details": "After login, visiting '/' redirects to /dashboard (RootRoute component correctly redirects authenticated users)."
+    },
+    {
+      "test": "3. PWA INSTALL BANNER",
+      "result": "PASS (code verified)",
+      "details": "PWAInstallBanner component exists in App.js (lines 97-183). Has beforeinstallprompt event listener, localStorage guard (appInstalled + pwaInstallNudgeCount up to 5), data-testid='pwa-install-banner'. Used in App() component."
+    },
+    {
+      "test": "4. FOOTER COPYRIGHT",
+      "result": "PASS",
+      "details": "SiteFooter.js line 44: '© {new Date().getFullYear()} FREE11. All rights reserved.' — confirmed in live UI on /about page: '© 2026 FREE11. All rights reserved.'"
+    },
+    {
+      "test": "5. SUPPORT EMAIL - AboutUs",
+      "result": "PASS",
+      "details": "AboutUs.js: 'For support, reach us through the in-app Support section or email support@free11.com' — confirmed in live UI."
+    },
+    {
+      "test": "6. SUPPORT EMAIL - PrivacyPolicy",
+      "result": "PASS",
+      "details": "PrivacyPolicy.js: '...by contacting support at support@free11.com' — confirmed in live UI."
+    },
+    {
+      "test": "7. SUPPORT EMAIL - FAQ",
+      "result": "PASS",
+      "details": "FAQ.js: 'Contact Support' button (data-testid='faq-contact-btn') uses onClick={() => window.open('mailto:support@free11.com', '_blank')} — button confirmed present in live UI."
+    },
+    {
+      "test": "8. SUPPORT EMAIL - RefundPolicy",
+      "result": "PASS",
+      "details": "RefundPolicy.js: 'For refund inquiries, contact support@free11.com' — confirmed in live UI."
+    },
+    {
+      "test": "9. BLOG ROUTE - /blog/cricket-guide",
+      "result": "PASS",
+      "details": "App.js line 295: Route path='/blog/cricket-guide' → Blog component. Loads correctly in live UI with 'FREE11 CRICKET 2026 GUIDE: SKILL PREDICTIONS & FREE REWARDS' content."
+    },
+    {
+      "test": "10. BLOG ROUTE - /blog/ipl-guide",
+      "result": "PASS",
+      "details": "App.js line 296: Route path='/blog/ipl-guide' → Blog component (unchanged, still works). Loads same Blog content."
+    },
+    {
+      "test": "11. DASHBOARD - T20 branding (no IPL 2026)",
+      "result": "PASS",
+      "details": "Dashboard shows T20 branding. No 'IPL 2026' found in user-facing text. Banner at top: 'T20 LEAGUE 2026 STARTS IN 17 DAYS!'. The locale ipl_coming key ('T20 Season 2026 Starts March 26') renders correctly."
+    },
+    {
+      "test": "12. CONTESTHUB - No Pepsi/Parle-G",
+      "result": "PASS",
+      "details": "ContestHub.js line 429: 'Popular brands · Snacks · Oils — brand-funded prizes, skill-only!' — no Pepsi/Parle-G trademark names in the component code."
+    },
+    {
+      "test": "13. LOCALE FILES - ipl_coming key (all 5 languages)",
+      "result": "PASS",
+      "details": "All 5 locale files confirmed: en='T20 Season 2026 Starts March 26', hi='T20 सीज़न 2026, 26 मार्च से शुरू', te='T20 సీజన్ 2026 మార్చి 26 నుండి', bn='T20 সিজন 2026 শুরু ২৬ মার্চ', ta='T20 சீசன் 2026 மார்ச் 26 முதல்'. None contain 'IPL'."
+    },
+    {
+      "test": "14. CONTESTS.JS - T20 Season 2026 text",
+      "result": "PASS (code verified)",
+      "details": "Contests.js line 140: '🏏 T20 Season 2026' banner confirmed. Note: Contests.js is not directly routed in App.js (orphan component — /contests redirects to /match-centre), so live UI verification not possible, but code is correct."
+    }
+  ],
+
+  "test_report_links": [
+    "/app/test_reports/iteration_44.json"
+  ],
+
+  "action_items": [
+    "MEDIUM: SponsoredPools backend seed data contains trademark names: 'Pepsi India', 'PEPSI BOOST', 'Pepsi IPL Boost Pool' (IPL + Pepsi!), 'Parle-G Cricket Champions' — visible in /sponsored UI. Update MongoDB sponsored_pools collection to use generic names for compliance.",
+    "INFO: Contests.js is imported nowhere and not used in App.js routing (/contests redirects to /match-centre). If Contests.js is intended for future use, route it; otherwise it is dead code."
+  ],
+
+  "critical_code_review_comments": [
+    "SponsoredPools.js has BRAND_COLORS map with 'pepsi' and 'parle' as internal CSS keys — these are styling keys only, not user-visible. The user-visible content (Pepsi/Parle-G) comes from MongoDB backend pool documents. Backend data must be updated for full compliance.",
+    "Contests.js is an orphan component — not imported or routed in App.js. The /contests route (line 262) redirects to /match-centre. Either route Contests.js or remove it.",
+    "Dashboard.js still has React 'key' prop warning (noted in iteration_42, still present)"
+  ],
+
+  "updated_files": [],
+
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "100% (14/14 compliance checks passed)"
+  },
+
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234"
+  },
+
+  "seed_data_creation": "None",
+
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+
+  "context_for_next_testing_agent": "All 7 compliance/branding fixes from the PR are verified and passing: (1) RootRoute shows Landing/redirects to /dashboard correctly, (2) PWAInstallBanner exists with localStorage guard, (3) Footer shows © 2026 FREE11, (4) support@free11.com in all 4 legal pages, (5) Blog /cricket-guide and /ipl-guide both work, (6) ContestHub.js has generic brand names, (7) All 5 locale files have T20 Season 2026. Additional: SponsoredPools page still shows Pepsi/Parle-G/IPL from backend DB data (out of this PR's scope). Contests.js is orphan (no route in App.js).",
+
+  "rca_of_issue": "N/A - All compliance fixes confirmed working. The only outstanding issue is SponsoredPools backend data containing trademark names (Pepsi, Parle-G, IPL), which requires updating the MongoDB sponsored_pools collection, not frontend code."
+}

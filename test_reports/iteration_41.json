@@ -1,0 +1,85 @@
+{
+  "summary": "Iteration 41: Focused testing of FREE11 EMAIL OTP Login tab feature. All 14 backend tests passed. Frontend: happy path (correct OTP → /match-centre) WORKS. Found 1 MEDIUM bug: wrong OTP shows 'Network error' instead of 'Incorrect code' (root cause: Sentry replayIntegration consumes 4xx response bodies before res.json() is called in verifyOtp()). Password login regression: PASS.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Login.js → verifyOtp()",
+        "issue": "Wrong OTP shows 'Network error' instead of 'Incorrect code'. Root cause: Sentry's replayIntegration (replaysOnErrorSampleRate: 1.0) consumes the 4xx response body to capture it for error replay. When verifyOtp() calls await res.json() on a 400 response, the body stream is already read, throwing 'TypeError: Failed to execute json on Response: body stream already read'. This is caught by the outer catch {} block which shows 'Network error' instead of the actual error detail.",
+        "selector": "[data-testid='verify-otp-btn']",
+        "priority": "MEDIUM",
+        "fix": "In verifyOtp(), check res.ok BEFORE calling res.json(). For error responses, wrap res.json() in try/catch with fallback: if (!res.ok) { let detail = 'Incorrect code'; try { detail = (await res.json()).detail || detail; } catch {} toast.error(detail); setOtpLoading(false); return; } const data = await res.json();"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "passed_frontend_checks": [
+    "Both tabs visible on /login (PASSWORD + EMAIL OTP)",
+    "PASSWORD tab is default - shows email + password inputs",
+    "EMAIL OTP tab click - shows otp-login-section, otp-email-input, send-otp-btn, no password field",
+    "Switching back to PASSWORD tab restores password form",
+    "Send OTP → 6 OTP boxes (otp-box-0 to otp-box-5) appear",
+    "Resend timer shows 'Resend in Xs' immediately after Send OTP",
+    "Correct OTP → Verify & Sign In → navigates to /match-centre (HAPPY PATH WORKS)",
+    "Password login (test_redesign_ui26@free11test.com / Test@1234) → navigates to /match-centre",
+    "Google login button present (data-testid=google-login-btn, onClick sets window.location.href to auth.emergentagent.com)",
+    "Biometric button hidden (not enabled in test env)",
+    "Sign up link → /register"
+  ],
+
+  "test_report_links": [
+    "/app/backend/tests/test_otp_login_tab.py",
+    "/app/test_reports/pytest/otp_login_tab_41.xml"
+  ],
+
+  "action_items": [
+    "Fix verifyOtp() in Login.js: check res.ok BEFORE calling res.json() to handle Sentry consuming 4xx response bodies. The fix: if (!res.ok) { let detail = 'Incorrect code'; try { detail = (await res.json()).detail || detail; } catch {} toast.error(detail); setOtpLoading(false); return; } const data = await res.json(); await loginWithToken(data.access_token);",
+    "Minor UX: sendOtp() always shows 'OTP sent to your email' even for 429 (cooldown) responses, since it doesn't check res.ok. Consider adding response status check to show appropriate message on rate-limit."
+  ],
+
+  "critical_code_review_comments": [
+    "verifyOtp() calls await res.json() unconditionally before checking res.ok. For 4xx responses, Sentry (with replaysOnErrorSampleRate: 1.0) reads the response body for replay capture, causing 'body stream already read' TypeError. Fix: check res.ok first, then try/catch res.json() for error path.",
+    "sendOtp() lacks response status checking - always transitions to code stage and shows success toast, even for 429 (rate limited) or 5xx errors. Minor UX issue.",
+    "OTP expiry is 10 minutes (confirmed). The send-otp endpoint returns email_delivered:true when Resend API key is configured, so dev_otp is NOT returned in production API responses. Testers must read OTP from MongoDB otp_codes collection, field 'otp'."
+  ],
+
+  "updated_files": [
+    "/app/backend/tests/test_otp_login_tab.py"
+  ],
+
+  "success_rate": {
+    "backend": "100% (14/14 tests passed)",
+    "frontend": "92% (11/12 checks passed - wrong OTP error toast failing)"
+  },
+
+  "seed_data_creation": "Created test users via verify-otp-register during backend tests (prefixed TEST_otp_*). These should be cleaned up if needed.",
+
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+
+  "context_for_next_testing_agent": "The OTP EMAIL tab happy path (correct OTP → /match-centre) WORKS. The only bug is wrong OTP shows 'Network error' instead of 'Incorrect code' in Login.js verifyOtp(). After fixing verifyOtp(), test: (1) enter wrong OTP → should show toast 'Invalid OTP. X attempts remaining.' or 'Incorrect code', (2) correct OTP → navigate to /match-centre. Backend 100% passing. Password login regression passing. Test using pre-fetched OTP from MongoDB (otp_codes collection, field 'otp') since Resend API delivers emails in production (no dev_otp in response). To get OTP: POST /api/auth/send-otp, then read from MongoDB otp_codes where email matches.",
+
+  "rca_of_the_issue": {
+    "bug": "Wrong OTP shows 'Network error' instead of 'Incorrect code'",
+    "reproduction_steps": [
+      "1. Navigate to /login",
+      "2. Click EMAIL OTP tab",
+      "3. Enter any email, click Send OTP",
+      "4. Wait for 6 OTP boxes to appear",
+      "5. Enter wrong 6-digit OTP (e.g., 000000)",
+      "6. Click Verify & Sign In",
+      "7. Observe: 'Network error' toast appears instead of 'Incorrect code'"
+    ],
+    "root_cause": "Sentry SDK (v8) with replayIntegration (replaysOnErrorSampleRate: 1.0) reads the response body of 4xx HTTP responses to capture them for Sentry error session replay. This is done via CDP network interception at the browser level, consuming the fetch Response body stream. When Login.js verifyOtp() subsequently calls await res.json() on the same Response object, it throws 'TypeError: Failed to execute json on Response: body stream already read'. This exception is caught by the outer catch {} block, which shows 'Network error' instead of the actual error detail.",
+    "affected_code": "/app/frontend/src/pages/Login.js → verifyOtp() function",
+    "mitigation": "In verifyOtp(), reorder the logic: check res.ok FIRST (before calling res.json()), and for the error path, wrap res.json() in a try/catch with a fallback message. For the success path (res.ok=true), Sentry does NOT consume the body, so res.json() works normally.",
+    "verification": "Direct page.evaluate() test confirmed: fetch() to /api/auth/verify-otp-register with wrong OTP (400 response) → res.json() throws 'body stream already read'. Same fetch to /api/auth/login with correct credentials (200 response) → res.json() succeeds (json_ok: True)."
+  }
+}

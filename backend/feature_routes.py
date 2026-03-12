@@ -1,0 +1,266 @@
+"""
+Feature Flags & Compliance System for FREE11
+Age Gate, Geo-blocking, and Feature Toggles
+"""
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+from datetime import datetime, timezone
+import os
+
+feature_router = APIRouter(prefix="/features", tags=["Features"])
+
+# ==================== COUNTRY RESTRICTION ====================
+# FREE11 is restricted to India only
+ALLOWED_COUNTRIES = ["India", "IN"]
+
+# ==================== BLOCKED STATES ====================
+# No state-level blocking - all Indian states allowed
+BLOCKED_STATES = {}
+BLOCKED_STATE_NAMES = []
+
+# ==================== FEATURE FLAGS ====================
+# Default feature flag configuration
+DEFAULT_FEATURE_FLAGS = {
+    "fantasy_contests": True,
+    "over_predictions": True,
+    "match_predictions": True,
+    "ball_by_ball": True,
+    "ball_by_ball_limit": 20,  # Max ball predictions per match per user
+    "private_leagues": True,
+    "clans": True,
+    "leaderboards": True,
+    "catalog_redemption": True,
+    "mini_games": True,  # Quiz, Spin, Scratch
+    "daily_checkin": True,
+    "referral_system": False,  # Not in Beta
+    "push_notifications": False,  # Not in Beta
+}
+
+# In-memory feature flags (in production, use Redis/DB)
+_feature_flags = DEFAULT_FEATURE_FLAGS.copy()
+
+# ==================== MODELS ====================
+
+class AgeVerification(BaseModel):
+    date_of_birth: str  # YYYY-MM-DD format
+    
+class GeoCheckRequest(BaseModel):
+    state: str
+    state_code: Optional[str] = None
+    country: Optional[str] = "India"
+
+class GeoCheckResponse(BaseModel):
+    allowed: bool
+    state: str
+    country: str
+    message: str
+
+class FeatureFlagResponse(BaseModel):
+    flags: Dict[str, Any]
+    environment: str
+
+# ==================== HELPER FUNCTIONS ====================
+
+def calculate_age(dob_str: str) -> int:
+    """Calculate age from date of birth string (YYYY-MM-DD)"""
+    try:
+        dob = datetime.strptime(dob_str, "%Y-%m-%d")
+        today = datetime.now()
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        return age
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+
+def is_country_allowed(country: str) -> bool:
+    """Check if country is India (the only allowed country)"""
+    country_normalized = country.strip().title()
+    return country_normalized in ["India"] or country.strip().upper() == "IN"
+
+def is_state_blocked(state: str) -> bool:
+    """Check if a state is blocked - currently no states are blocked"""
+    return False  # All Indian states allowed
+
+def get_feature_flag(flag_name: str) -> any:
+    """Get a feature flag value"""
+    return _feature_flags.get(flag_name, False)
+
+def set_feature_flag(flag_name: str, value: any) -> None:
+    """Set a feature flag value (admin only)"""
+    _feature_flags[flag_name] = value
+
+# ==================== ROUTES ====================
+
+@feature_router.post("/verify-age")
+async def verify_age(data: AgeVerification):
+    """
+    Verify if user meets minimum age requirement (18+)
+    """
+    age = calculate_age(data.date_of_birth)
+    
+    if age < 18:
+        return {
+            "allowed": False,
+            "age": age,
+            "message": "You must be 18 years or older to use FREE11",
+            "min_age": 18
+        }
+    
+    return {
+        "allowed": True,
+        "age": age,
+        "message": "Age verification successful",
+        "min_age": 18
+    }
+
+@feature_router.post("/check-geo", response_model=GeoCheckResponse)
+async def check_geo(data: GeoCheckRequest):
+    """
+    Check if user's location allows access to FREE11
+    - Country must be India
+    - All Indian states are allowed
+    """
+    country = data.country.strip() if data.country else "India"
+    state = data.state.strip()
+    
+    # Check country first - must be India
+    if not is_country_allowed(country):
+        return GeoCheckResponse(
+            allowed=False,
+            state=state,
+            country=country,
+            message="FREE11 is currently available only in India"
+        )
+    
+    # All Indian states are allowed
+    return GeoCheckResponse(
+        allowed=True,
+        state=state,
+        country="India",
+        message="Welcome to FREE11!"
+    )
+
+@feature_router.get("/blocked-states")
+async def get_blocked_states():
+    """
+    Get geo-restriction info for client-side validation
+    """
+    return {
+        "blocked_states": [],  # No states blocked
+        "blocked_state_names": [],  # No states blocked
+        "allowed_countries": ALLOWED_COUNTRIES,
+        "country_restriction": "India only",
+        "reason": "FREE11 is currently available only in India"
+    }
+
+@feature_router.get("/flags", response_model=FeatureFlagResponse)
+async def get_feature_flags():
+    """
+    Get current feature flags for the app
+    """
+    env = os.environ.get("FREE11_ENV", "sandbox")
+    return FeatureFlagResponse(
+        flags=_feature_flags,
+        environment=env
+    )
+
+@feature_router.get("/flags/{flag_name}")
+async def get_single_flag(flag_name: str):
+    """
+    Get a specific feature flag value
+    """
+    if flag_name not in _feature_flags:
+        raise HTTPException(status_code=404, detail=f"Feature flag '{flag_name}' not found")
+    
+    return {
+        "flag": flag_name,
+        "value": _feature_flags[flag_name],
+        "environment": os.environ.get("FREE11_ENV", "sandbox")
+    }
+
+@feature_router.put("/flags/{flag_name}")
+async def update_feature_flag(flag_name: str, value: bool):
+    """
+    Update a feature flag (admin only)
+    In production, this should be protected with admin authentication
+    """
+    if flag_name not in DEFAULT_FEATURE_FLAGS:
+        raise HTTPException(status_code=404, detail=f"Feature flag '{flag_name}' not found")
+    
+    old_value = _feature_flags.get(flag_name)
+    _feature_flags[flag_name] = value
+    
+    return {
+        "flag": flag_name,
+        "old_value": old_value,
+        "new_value": value,
+        "message": f"Feature flag '{flag_name}' updated successfully"
+    }
+
+@feature_router.post("/flags/reset")
+async def reset_feature_flags():
+    """
+    Reset all feature flags to defaults (admin only)
+    """
+    global _feature_flags
+    _feature_flags = DEFAULT_FEATURE_FLAGS.copy()
+    
+    return {
+        "message": "All feature flags reset to defaults",
+        "flags": _feature_flags
+    }
+
+# ==================== COMPLIANCE CHECK ====================
+
+@feature_router.post("/compliance-check")
+async def full_compliance_check(
+    date_of_birth: str,
+    state: str,
+    country: str = "India",
+    state_code: Optional[str] = None
+):
+    """
+    Full compliance check for registration:
+    1. Country must be India
+    2. Age verification (18+)
+    3. All Indian states allowed
+    """
+    errors = []
+    
+    # Country check - must be India
+    if not is_country_allowed(country):
+        errors.append({
+            "type": "country",
+            "message": "FREE11 is currently available only in India",
+            "details": {"country": country, "allowed": ["India"]}
+        })
+    
+    # Age check
+    try:
+        age = calculate_age(date_of_birth)
+        if age < 18:
+            errors.append({
+                "type": "age",
+                "message": "You must be 18 years or older to use FREE11",
+                "details": {"age": age, "min_age": 18}
+            })
+    except HTTPException as e:
+        errors.append({
+            "type": "age",
+            "message": str(e.detail),
+            "details": {}
+        })
+    
+    if errors:
+        return {
+            "allowed": False,
+            "errors": errors,
+            "message": "Registration not allowed due to compliance requirements"
+        }
+    
+    return {
+        "allowed": True,
+        "errors": [],
+        "message": "All compliance checks passed"
+    }

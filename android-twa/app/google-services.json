@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "725923627857",
+    "project_id": "free11-cf539",
+    "storage_bucket": "free11-cf539.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725923627857:android:a15987db746b66aac00970",
+        "android_client_info": {
+          "package_name": "com.free11.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMRjuuazsPK8YXaKuI93v6yTE96k3Z0Gg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

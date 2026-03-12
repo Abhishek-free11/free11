@@ -1,0 +1,102 @@
+{
+  "summary": "Mobile optimization audit for FREE11 platform. Tested all 12 feature requirements across 320px, 375px, and 414px viewports. 11/12 pass, 1 minor UI bug found in the new quick start banner at 320px where the 'Earn coins →' CTA link overflows the viewport.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Dashboard - Quick Start Banner",
+        "issue": "At 320px viewport, the 'Earn coins →' link in the quick start banner is not visible. The link starts at x=317 and extends to x=390 (73px wide) but is clipped by overflow-x:hidden on body. The left flex child needs 'min-w-0' to allow text truncation to work and keep the link visible.",
+        "selector": ".mb-4.p-3.bg-slate-900 a[href='/earn']",
+        "priority": "LOW",
+        "reproduction": "View /dashboard at 320px viewport - the 'Earn coins →' link is outside the visible area"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Dashboard Quick Start Banner - 320px",
+        "issues": [
+          "The flex layout has 'justify-between' but the left child (text) lacks 'min-w-0' to enable proper truncation, causing the right child (Earn coins link) to overflow beyond viewport at 320px"
+        ]
+      }
+    ]
+  },
+
+  "test_results_by_feature": {
+    "1_freebucks_no_crash": {
+      "status": "PASS",
+      "details": "FreeBucks.js loads correctly. useSearchParams import confirmed present. All 4 packs visible (Starter ₹49, Popular ₹149, Value ₹499, Mega ₹999). Mocked Razorpay shows 'Razorpay payments coming soon! Keys being activated.' toast when pack is clicked."
+    },
+    "2_dashboard_mobile_375px": {
+      "status": "PASS",
+      "details": "No horizontal scroll at 375px. Beta banner NOT present (confirmed). Quick start banner present with 'Earn coins →' link. User header is compact. Bottom nav visible."
+    },
+    "3_navbar_320px_minimal": {
+      "status": "PASS",
+      "details": "Language selector hidden (data-testid='lang-selector': not visible), wallet btn hidden, invite btn hidden. Search button (data-testid='search-btn') visible. Coin balance (100530) and avatar visible. Desktop nav links hidden on mobile."
+    },
+    "4_landing_320_375": {
+      "status": "PASS",
+      "details": "Landing page: scrollWidth === clientWidth at both 320px and 375px. No horizontal overflow. Hero text 'Make the right calls. / Get real rewards.' visible. 'Start Playing' CTA and 'Login' button visible at both sizes."
+    },
+    "5_match_centre_tabs": {
+      "status": "PASS",
+      "details": "Match Centre loads at 375px. 3 tabs: Live, Upcoming, Completed - all clickable. No horizontal overflow. Bottom navigation shows Matches highlighted. Build Team and Contests action buttons in match cards."
+    },
+    "6_shop_2col_grid": {
+      "status": "PASS",
+      "details": "Shop renders 2-column grid at 375px and 414px. 16 Redeem Now buttons found. 8 category tabs. No horizontal overflow at either viewport."
+    },
+    "7_profile_menu": {
+      "status": "PASS",
+      "details": "Profile page loads at 375px. All 5 menu items present: Invite Friends ✓, My Orders ✓, Earn Coins ✓, Redeem Shop ✓, Settings ✓. No overflow."
+    },
+    "8_leaderboards_tabs": {
+      "status": "PASS",
+      "details": "Leaderboards loads at 375px. 3 tabs: Global, Weekly, Streaks. No horizontal overflow."
+    },
+    "9_predict_320px": {
+      "status": "PASS",
+      "details": "Predict page at 320px: 4-stat row (Total, Correct, Accuracy, Streak) renders in single row correctly. Prediction types in 2-column grid. No overflow."
+    },
+    "10_earn_coins_320px": {
+      "status": "PASS",
+      "details": "EarnCoins at 320px: 3 tabs (Earn, Games, Tasks) all clickable and functional. Task cards use flex-col on mobile. No overflow."
+    },
+    "11_bottom_navigation": {
+      "status": "PASS",
+      "details": "Bottom nav (data-testid='bottom-navbar') found and visible at 375px. 5 buttons confirmed: Matches, Predict, Earn, Games, Profile. Clicking Profile navigates to /profile ✓. Clicking Games navigates to /games ✓."
+    },
+    "12_pwa_manifest_name": {
+      "status": "PASS",
+      "details": "manifest.json confirms name: 'FREE11 - Social Entertainment Sports Platform'. short_name: 'FREE11'. File verified at /app/frontend/public/manifest.json."
+    }
+  },
+
+  "test_report_links": [],
+  "action_items": [
+    "LOW: Fix Quick Start Banner in Dashboard.js at 320px - add 'min-w-0' class to the left flex child div (the one containing Zap icon + text) so the text truncates properly and 'Earn coins →' link remains visible: change <div className='flex items-center gap-2'> to <div className='flex items-center gap-2 min-w-0'>"
+  ],
+  "critical_code_review_comments": [
+    "Dashboard.js Quick Start Banner (line ~210): Left flex child missing 'min-w-0' causing 'Earn coins →' link to overflow at 320px. Fix: add 'min-w-0' to the left div holding the text. Simple 1-line fix.",
+    "Dashboard.js (line ~215): 'Earn coins →' uses hardcoded English text instead of t() key - minor i18n miss for the new banner"
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "92% (11/12 features pass, 1 minor visual bug at 320px)"
+  },
+  "test_credentials_used": {
+    "admin": "admin@free11.com / Admin@123"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "mocked_apis": ["Razorpay payments (shows 'coming soon' toast)", "Xoxoday rewards", "Firebase FCM", "AdMob"],
+  "context_for_next_testing_agent": "Mobile audit iteration 22. All 12 requirements tested. Key findings: (1) FreeBucks fix confirmed working - useSearchParams import present; (2) Dashboard beta banner removed + quick start banner added; (3) All pages load without horizontal scroll at 375px; (4) One minor bug: Quick Start Banner 'Earn coins →' link is cut off at 320px due to missing min-w-0 on left flex child. Bottom nav has data-testid='bottom-navbar' with 5 buttons (not anchor links). Programmatic login: POST /api/auth/login then set token in localStorage. Auth: admin@free11.com/Admin@123."
+}

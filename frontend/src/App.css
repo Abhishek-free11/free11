@@ -1,0 +1,49 @@
+/* Safe area for mobile bottom nav - ensure content isn't hidden behind it */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+
+.App {
+  min-height: 100%;
+  background-color: #0F1115;
+}
+
+/* Thin gold-tinted scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(198, 160, 82, 0.3) rgba(27, 30, 35, 0.5);
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(198, 160, 82, 0.3);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(198, 160, 82, 0.6);
+}
+
+@keyframes coin-spin {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.animate-coin-spin {
+  animation: coin-spin 2s ease-in-out infinite;
+}

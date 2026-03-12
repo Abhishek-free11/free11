@@ -1,0 +1,77 @@
+// FREE11 Android TWA - App Module build.gradle
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android' version '1.9.22'
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    namespace 'com.free11.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.free11.app"
+        minSdk 26          // Android 8.0 (Oreo)
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        // TWA configuration
+        manifestPlaceholders = [
+            hostName: "free11.com",
+            launchUrl: "https://free11.com",
+            assetStatements: '[{ "relation": ["delegate_permission/common.handle_all_urls"], "target": { "namespace": "android_app", "package_name": "com.free11.app", "sha256_cert_fingerprints": ["REPLACE_WITH_YOUR_SHA256"] } }]'
+        ]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.create("release") {
+                // Configure signing for release builds
+                // storeFile file("free11.keystore")
+                // storePassword "your_keystore_password"
+                // keyAlias "free11key"
+                // keyPassword "your_key_password"
+            }
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // Trusted Web Activity library
+    implementation 'androidx.browser:browser:1.8.0'
+
+    // Core Android
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
+
+    // Splash Screen API (Android 12+)
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    // Google AdMob SDK
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
+    // OkHttp for backend API calls
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // Firebase BoM (Bill of Materials) - manages all Firebase SDK versions
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
+}

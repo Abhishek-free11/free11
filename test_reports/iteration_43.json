@@ -1,0 +1,136 @@
+{
+  "summary": "Iteration 43: Full E2E testing of Smart Commerce Router feature. All 12 tests PASSED (or have expected behavior). Backend: 29/29 pytest tests pass. Frontend: All critical flows verified including smart deals carousel, category filtering, tease modal, ONDC settle, Xoxoday voucher, balance UX, existing redemption dialog, and admin Router tab.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/v2/kpis/router (conversion_rate_pct)",
+        "issue": "Conversion rate always shows 0% because Redis is unavailable — tease_views counter (r.incr('router:tease:total_views')) silently fails without Redis. This is documented expected behavior but means admin analytics show misleading 0% conversion.",
+        "priority": "LOW"
+      }
+    ]
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Admin Router tab",
+        "issues": [
+          "Conversion Rate always shows 0% (0 tease views) because Redis is unavailable to increment the tease_views counter. This is expected per the notes but admins will always see 0% conversion."
+        ]
+      }
+    ]
+  },
+
+  "passed_tests": [
+    {
+      "test": "1. SHOP - Smart Deals section loads",
+      "result": "PASS",
+      "details": "smart-deals-section visible, 'SMART DEALS AUTO-ROUTED' heading shown, 33 deals count text accurate, all 33 deal cards in DOM with correct provider badges and ETA labels"
+    },
+    {
+      "test": "2. SHOP - Category filtering",
+      "result": "PASS",
+      "details": "Vouchers pill → 5 deals (amazon_gc x3, flipkart_gc x2). Groceries pill → 11 deals (ONDC x10 + bigbasket_200). All Deals → 33 deals. Filtering works correctly."
+    },
+    {
+      "test": "3. SHOP - Tease modal opens",
+      "result": "PASS",
+      "details": "Clicking salt_pack Redeem button → router-tease-modal opens → shows ONDC Network, 25 COINS, ₹25 VALUE, ~45 min ETA, 'Best value' badge, balance 55→30 preview. Cancel and Confirm buttons present."
+    },
+    {
+      "test": "4. SHOP - Router Settle ONDC physical order",
+      "result": "PASS",
+      "details": "salt_pack confirm → Toast 'Order placed! Track via order ID: ONDC-4F7E2C44'. Balance updated from 55 to 30 coins in navbar. status='placed' + order_id verified."
+    },
+    {
+      "test": "5. SHOP - Router Settle Xoxoday voucher",
+      "result": "PASS",
+      "details": "swiggy_100 → tease modal shows 'Xoxoday Plum', 110 COINS, ₹100 VALUE, Instant ETA → Confirm → router-success-dialog opens with 'VOUCHER UNLOCKED!', QR code (router-voucher-qr), voucher code 'SWI-BAB221-FREE11' (router-voucher-code), instructions shown"
+    },
+    {
+      "test": "6. SHOP - Insufficient balance UX",
+      "result": "PASS",
+      "details": "atta_5kg (265 coins) shows '235 more' button text (user has 30 coins after previous test). Button has disabled attribute. opacity-40 class applied."
+    },
+    {
+      "test": "7. SHOP - Existing product flow",
+      "result": "PASS",
+      "details": "Old redemption-dialog opens when clicking REDEEM NOW on existing catalog product (Lay's Chips 50g). Shows product image, mobile number input, balance/cost/new balance breakdown."
+    },
+    {
+      "test": "8. BACKEND - /router/skus endpoint",
+      "result": "PASS",
+      "details": "Returns exactly 33 SKUs across 4 providers (ONDC:10, Xoxoday:11, Amazon:6, Flipkart:6). All have sku, name, coins, category, provider fields."
+    },
+    {
+      "test": "9. BACKEND - /router/tease scoring",
+      "result": "PASS",
+      "details": "atta_5kg + MH → status=success, best_provider=ondc, eta_label='~45 min'. amazon_gc_100 + MH → best_provider=xoxoday (instant delivery wins). Scoring formula verified."
+    },
+    {
+      "test": "10. ADMIN - Router tab",
+      "result": "PASS",
+      "details": "Navigate /admin/v2 → click Router tab → KPI cards show Total Orders (14), Avg Coin Price (97.8), Avg Value Score (1), Conversion Rate (0%). Provider Distribution pie chart shows ONDC 71.4%, Xoxoday 21.4%, Amazon 7.1%. Top SKUs: chips_pack, swiggy_100, salt_pack."
+    },
+    {
+      "test": "11. ADMIN - Router KPI refresh",
+      "result": "PASS",
+      "details": "refresh-router-kpis button clickable. After click, KPIs reload without errors. All 4 KPI cards still visible post-refresh."
+    },
+    {
+      "test": "12. BACKEND - Rate limiting",
+      "result": "PASS (expected behavior)",
+      "details": "Redis unavailable — all 6 sequential settle requests return 200 (graceful fallback as documented). Rate limiting is Redis-dependent and correctly falls back when Redis is down."
+    }
+  ],
+
+  "test_report_links": [
+    "/app/backend/tests/test_smart_router_43.py",
+    "/app/test_reports/pytest/router_43.xml"
+  ],
+
+  "action_items": [
+    "INFO: Admin route path is /admin/v2 (not /admin-v2 as mentioned in review_request). Not a bug, just a doc correction.",
+    "INFO: Conversion Rate KPI always 0% because Redis is unavailable for tease_views counter. Consider persisting tease view counts to MongoDB as fallback for Redis-less environments.",
+    "LOW: Rate limiting works only when Redis is available. Without Redis, all settle requests succeed. Consider MongoDB-based rate limiting as fallback."
+  ],
+
+  "critical_code_review_comments": [
+    "router_service.py line 235-242: tease_views increment via Redis only — when Redis is unavailable, conversion rate will always be 0 in Admin Router KPI. Should persist view counts to MongoDB as fallback.",
+    "v2_routes.py line 1089-1096: Rate limiting via Redis only — no fallback to MongoDB. Without Redis, 5 settle/min limit is not enforced. Low risk in current MOCK mode.",
+    "Shop.js: The data-testid='smart-deals-section' wraps only the carousel overflow container (line 240), not the entire section including header/pills. Works for testing but is narrowly scoped.",
+    "Review request says admin path is '/admin-v2' but App.js registers it as '/admin/v2'. Minor doc inconsistency."
+  ],
+
+  "updated_files": [
+    "/app/backend/tests/test_smart_router_43.py"
+  ],
+
+  "success_rate": {
+    "backend": "100% (29/29 pytest tests passed)",
+    "frontend": "100% (12/12 E2E scenarios verified)"
+  },
+
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234 (balance reduced from 55 to 30 coins after salt_pack settle)",
+    "admin_user": "admin@free11.com / Admin@123 (balance ~99446 after swiggy_100 settle)"
+  },
+
+  "seed_data_creation": "Created 14 router_orders in MongoDB via backend tests (7x chips_pack, 3x swiggy_100, 2x salt_pack, 1x earbuds_basic, 1x biscuits_pack)",
+
+  "mocked_integrations": [
+    "ONDC provider - returns fake ONDC-XXXXXXXX order IDs (MOCK mode)",
+    "Xoxoday provider - returns fake SWI-XXXXXX-FREE11 voucher codes (MOCK mode)",
+    "Amazon provider - returns mock affiliate redirect URLs (MOCK mode)",
+    "Flipkart provider - returns mock affiliate redirect URLs (MOCK mode)"
+  ],
+
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+
+  "context_for_next_testing_agent": "Smart Commerce Router feature is fully tested and working. Key notes: (1) Admin panel is at /admin/v2 not /admin-v2. (2) Test user now has ~30 coins (was 55, redeemed salt_pack for 25). Admin has ~99446 coins. (3) Rate limiting requires Redis which is unavailable — graceful fallback works. (4) Conversion rate in admin always 0% due to Redis-less tease view tracking. (5) All 4 providers are MOCK. (6) 29/29 backend tests in /app/backend/tests/test_smart_router_43.py. (7) Tease modal uses /v2/router/tease (no auth), settle uses POST /v2/router/settle (auth required). (8) ONDC settle returns status=placed+order_id; Xoxoday returns status=delivered+voucher_code; Amazon/Flipkart return status=redirect+redirect_url."
+}

@@ -1,0 +1,104 @@
+{
+  "summary": "AdMob Rewarded Ads Integration (FREE11) fully tested. All 12 backend tests passed. Frontend UI verified: page loads correctly, Watch Ad button shows 10 coins on web, mock simulation countdown + claim works, admob_complete/failed URL params work with toasts. One minor double-execution issue due to React StrictMode in dev.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "?admob_complete=1 URL param",
+        "issue": "React StrictMode (development mode) causes useEffect([]) to run TWICE — the backend is called twice, crediting 40 coins instead of 20, and toast appears twice. NOT a production issue (StrictMode effects run once in production builds). Fix: add a useRef guard inside the useEffect to prevent double execution.",
+        "affected_selectors": ["[data-testid='rewarded-ads-page']"],
+        "severity": "MINOR - dev-only, won't happen in production"
+      },
+      {
+        "flow": "Navbar balance after reward claim",
+        "issue": "After claiming AdMob reward (handleAdMobCallback), loadStatus() only refreshes ad status. user.coins_balance in AuthContext is NOT immediately updated. Navbar shows stale balance until next auth/me fetch. Fix: call updateUser or fetchUser after reward claim.",
+        "affected_selectors": ["[data-testid='coin-balance-display']"],
+        "severity": "MINOR"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admob_rewards.py",
+    "/app/test_reports/pytest/test_admob_rewards_results.xml"
+  ],
+  "action_items": [
+    "LOW: Add useRef guard in RewardedAds.js useEffect to prevent double-call of handleAdMobCallback in React StrictMode: `const callbackRanRef = useRef(false); if (callbackRanRef.current) return; callbackRanRef.current = true;`",
+    "LOW: In handleAdMobCallback, after reward is credited, call updateUser({coins_balance: ...}) or fetchUser() from AuthContext to refresh navbar balance immediately"
+  ],
+  "critical_code_review_comments": [
+    "RewardedAds.js handleAdMobCallback: No idempotency key — if the web page is opened twice with ?admob_complete=1 (e.g., due to StrictMode or user navigating back), the backend will credit coins multiple times. The backend /api/v2/ads/reward does not check for duplicate requests within the same session.",
+    "POST /api/v2/ads/reward endpoint: The daily limit check uses count_documents on ad_events. Both mock (/ads/complete) and real AdMob (/ads/reward) share the same counter and DAILY_LIMIT=5. This means if a user watches 3 mock ads and 2 AdMob ads, they hit the limit. This is correct behavior but should be documented.",
+    "v2ClaimAdMobReward in api.js correctly maps to POST /api/v2/ads/reward (20 coins). The mock v2StartAd/v2CompleteAd remain separate (10 coins). The separation is clean.",
+    "Android TWA: RewardedAdActivity.java BACKEND_URL points to https://free11.com/api/v2/ads/reward (hardcoded production URL). This is acceptable for production APK but would require a build variant for testing against staging/preview URLs."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_admob_rewards.py"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12 tests passed)",
+    "frontend": "100% (all features working, 2 minor issues noted)"
+  },
+  "test_credentials": {
+    "admin_email": "admin@free11.com",
+    "admin_password": "Admin@123",
+    "fresh_test_user": "test_admob_fix@free11.com / TestPass@123"
+  },
+  "seed_data_creation": "Registered test users: test_admob_fix@free11.com, test_limit_* (for daily limit testing), test_decr_* (for decrement testing). These users have varying ad_events counts from tests.",
+  "features_tested": {
+    "backend_401_no_token": "PASS - POST /api/v2/ads/reward returns 401 without auth",
+    "backend_401_invalid_token": "PASS - Returns 401 with invalid token",
+    "backend_ad_status_401": "PASS - GET /api/v2/ads/status returns 401 without auth",
+    "backend_20_coins_credit": "PASS - Valid token credits 20 coins and returns success",
+    "backend_response_structure": "PASS - success, reward_coins=20, watched_today, remaining_today, daily_limit=5",
+    "backend_status_watched_today": "PASS - watched_today reflects AdMob reward calls",
+    "backend_daily_limit_5_then_429": "PASS - Returns 429 after 5 calls",
+    "backend_remaining_decrements": "PASS - remaining_today decrements correctly 4→3→2→1→0",
+    "backend_mock_start_ad": "PASS - POST /api/v2/ads/start returns ad_id, 10 coins (mock)",
+    "backend_reward_type_field": "PASS - reward_type field accepted",
+    "backend_coins_constant_20": "PASS - ADMOB_REWARD_COINS=20 confirmed",
+    "frontend_page_loads": "PASS - /watch-earn loads with rewarded-ads-page element",
+    "frontend_status_card": "PASS - ad-status-card shows Reward per ad, Today's progress, remaining",
+    "frontend_info_tiles": "PASS - Instant, Safe, 5x/day tiles present",
+    "frontend_watch_earn_title": "PASS - 'Watch & Earn' title shown",
+    "frontend_watch_btn_10_coins": "PASS - 'Watch Ad → Earn 10 Coins' on web (non-Android)",
+    "frontend_daily_limit_msg": "PASS - 'Daily limit reached (5/5). Come back tomorrow!' when at limit",
+    "frontend_mock_countdown": "PASS - Clicking Watch Ad starts 10-second countdown",
+    "frontend_simulated_ad": "PASS - 'Simulated Ad (Web Preview)' shown during countdown",
+    "frontend_claim_btn": "PASS - Claim 10 Coins button appears after countdown",
+    "frontend_mock_claim_toast": "PASS - '+10 Coins earned!' toast shown after mock claim",
+    "frontend_admob_complete_toast": "PASS - '+20 Coins earned! Great watch!' toast on ?admob_complete=1",
+    "frontend_admob_complete_url_cleanup": "PASS - URL cleaned to /watch-earn after admob_complete",
+    "frontend_admob_complete_status_update": "PASS - watched_today increments after admob_complete",
+    "frontend_admob_failed_toast": "PASS - 'Ad was dismissed early. Watch the full ad to earn coins!' (error) on ?admob_failed=1",
+    "frontend_admob_failed_url_cleanup": "PASS - URL cleaned after admob_failed",
+    "frontend_navbar_balance_update": "PASS (with delay) - Navbar balance updates eventually after reward",
+    "android_twa_manifest": "PASS - AndroidManifest has AdMob meta-data and RewardedAdActivity with free11:// scheme",
+    "android_twa_build_gradle": "PASS - play-services-ads:22.6.0 dependency added",
+    "android_twa_rewarded_activity": "PASS - RewardedAdActivity.java exists with correct AdMob integration"
+  },
+  "mocked_apis_noted": [
+    "POST /api/v2/ads/start - MOCKED (10 coins, web simulation)",
+    "POST /api/v2/ads/complete - MOCKED (10 coins, web simulation)",
+    "POST /api/v2/ads/reward - REAL backend (20 coins, AdMob integration)"
+  ],
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "AdMob Rewarded Ads (FREE11 FREE11 feature) fully implemented and tested. Backend: POST /api/v2/ads/reward at v2_routes.py line 333, ADMOB_DAILY_LIMIT=5, ADMOB_REWARD_COINS=20, stores in ad_events collection (shared with mock). Frontend: RewardedAds.js at /watch-earn, isAndroidTWA() detection, buildAdIntent() for Android, web mock fallback (v2StartAd/v2CompleteAd), handleAdMobCallback() for ?admob_complete=1 URL param. Android TWA: RewardedAdActivity.java exists, AndroidManifest has free11://rewarded-ad intent filter. Admin account is at daily limit (5/5). Use test_admob_fix@free11.com for further UI testing. Two minor issues: (1) React StrictMode double-execution in dev (not prod), (2) Navbar balance doesn't immediately refresh after reward claim.",
+  "rca_of_issues": {
+    "double_execution": {
+      "root_cause": "React 18 StrictMode (in development mode) intentionally double-invokes effects to detect side effects. The useEffect in RewardedAds.js with empty deps [] runs twice: mount → cleanup → remount. handleAdMobCallback() is called twice per page load in development.",
+      "reproduction_steps": "Navigate to /watch-earn?admob_complete=1 in development mode with React StrictMode enabled (index.js wraps in <React.StrictMode>)",
+      "mitigation": "Add useRef guard: `const ranRef = useRef(false); if(ranRef.current) return; ranRef.current = true;` as first lines inside the useEffect callback",
+      "production_impact": "None - StrictMode double-invocation only occurs in development builds"
+    },
+    "navbar_balance_stale": {
+      "root_cause": "handleAdMobCallback calls loadStatus() which only fetches ad status (via v2GetAdStatus). The user.coins_balance in AuthContext is not refreshed. The Navbar reads user.coins_balance from AuthContext.",
+      "mitigation": "Call updateUser({coins_balance: prevBalance + data.reward_coins}) or call fetchUser() from AuthContext after reward claim"
+    }
+  }
+}

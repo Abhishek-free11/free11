@@ -1,0 +1,144 @@
+{
+  "summary": "V2 Engine API Comprehensive Testing COMPLETE - 32/32 backend tests passed, all frontend pages verified working. MOCKED providers (Voucher, Ads, Payment) confirmed functional.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "v2_api_verification": {
+    "contests": {
+      "POST /api/v2/contests/create (public)": "200 OK - Creates public contest",
+      "POST /api/v2/contests/create (private)": "200 OK - Creates private contest with invite code",
+      "POST /api/v2/contests/join": "200 OK - Joins contest, 400 on duplicate",
+      "POST /api/v2/contests/join-code": "200 OK - Joins by invite code",
+      "GET /api/v2/contests/user/my": "200 OK - Returns user contests"
+    },
+    "predictions": {
+      "GET /api/v2/predictions/types": "200 OK - Returns 6 prediction types with rewards",
+      "POST /api/v2/predictions/submit": "200 OK - Submits prediction, 400 on duplicate (idempotent)",
+      "GET /api/v2/predictions/my": "200 OK - Returns user predictions",
+      "GET /api/v2/predictions/stats": "200 OK - Returns accuracy stats"
+    },
+    "cards": {
+      "GET /api/v2/cards/types": "200 OK - Returns 5 card types (2x, 3x, shield, extra, insight)",
+      "GET /api/v2/cards/inventory": "200 OK - Returns user card inventory"
+    },
+    "ledger": {
+      "GET /api/v2/ledger/balance": "200 OK - Returns derived balance from double-entry ledger",
+      "GET /api/v2/ledger/history": "200 OK - Returns transaction history with entries"
+    },
+    "ads_mock": {
+      "GET /api/v2/ads/status": "200 OK - Returns daily limit (5), watched, remaining",
+      "POST /api/v2/ads/start": "200 OK - Starts ad watching session",
+      "POST /api/v2/ads/complete": "200 OK - Completes ad and credits coins via ledger"
+    },
+    "referral": {
+      "GET /api/v2/referral/code": "200 OK - Returns F11-XXXXXX format code",
+      "GET /api/v2/referral/stats": "200 OK - Returns total referrals, earned",
+      "POST /api/v2/referral/bind": "400 on self-referral (correctly prevented)"
+    },
+    "match_state": {
+      "GET /api/v2/matches/live": "200 OK - Returns live matches",
+      "GET /api/v2/matches/all": "200 OK - Returns all matches",
+      "GET /api/v2/match/{id}/state": "200 OK - Returns match state snapshot"
+    },
+    "admin_v2": {
+      "POST /api/admin/v2/match/test/create": "200 OK - Creates test match for simulation",
+      "POST /api/admin/v2/match/test/advance": "200 OK - Advances ball-by-ball",
+      "POST /api/admin/v2/predictions/resolve-over": "200 OK - Resolves predictions, credits coins",
+      "POST /api/admin/v2/wallet/adjust": "200 OK - Admin coin adjustment",
+      "POST /api/admin/v2/feature-flag": "200 OK - Sets feature flags",
+      "GET /api/admin/v2/feature-flags": "200 OK - Returns all flags"
+    }
+  },
+
+  "frontend_verification": {
+    "ledger_page": {
+      "status": "WORKING",
+      "elements": ["Balance card (150 coins)", "Transaction list", "Filters (All/Credits/Debits)"],
+      "data_testids": "All present and functional"
+    },
+    "cards_page": {
+      "status": "WORKING",
+      "elements": ["5 card types displayed", "Inventory section", "Rarity badges"],
+      "card_types": ["Double Coins (Common)", "Prediction Shield (Rare)", "Triple Coins (Epic)", "Extra Prediction (Rare)", "Match Insight (Common)"]
+    },
+    "referrals_page": {
+      "status": "WORKING",
+      "elements": ["Referral code displayed (F11-0B4A2C)", "Copy/Share buttons", "Stats grid", "Apply code section", "How it works guide"],
+      "data_testids": "All present and functional"
+    },
+    "watch_earn_page": {
+      "status": "WORKING",
+      "elements": ["Ad status card (2/5 today)", "Watch Now button", "10 coins per ad reward"],
+      "mock_status": "MOCKED - MockAdsProvider simulates ad completion"
+    },
+    "admin_v2_page": {
+      "status": "WORKING",
+      "tabs": ["Match", "Resolve", "Wallet", "Flags", "Logs"],
+      "controls": ["Create Test Match", "Advance ball", "Resolve Over", "Adjust Coins", "Feature Flags toggles"]
+    }
+  },
+
+  "full_flow_verification": {
+    "status": "WORKING",
+    "flow": "Admin creates test match -> User submits prediction (over_runs: 6-10) -> Admin resolves over (runs: 8) -> Coins credited to ledger",
+    "ledger_evidence": "Transaction history shows 'Correct prediction! Over 99' with +15 coins credit"
+  },
+
+  "edge_case_testing": {
+    "duplicate_prediction_prevention": "PASSED - 400 error on duplicate for same type+over+match",
+    "duplicate_contest_join_prevention": "PASSED - 400 error on rejoining same contest",
+    "self_referral_prevention": "PASSED - 400 error when using own referral code",
+    "daily_ad_limit": "WORKING - Shows 2/5 watched, 3 remaining"
+  },
+
+  "mocked_providers": {
+    "MockVoucherProvider": "services/voucher_provider.py - Simulates voucher creation with auto-complete after 5s",
+    "MockAdsProvider": "services/ads_provider.py - Simulates rewarded ads with daily limit (5), 10 coins per ad",
+    "MockPaymentProvider": "Placeholder - payments are not implemented in V2 routes"
+  },
+
+  "test_credentials_used": {
+    "admin": "admin@free11.com / Admin@123",
+    "note": "tester@free11.com / tester123 was specified but may not exist - admin used for all tests"
+  },
+
+  "test_report_links": [
+    "/app/backend/tests/test_v2_api.py",
+    "/app/test_reports/pytest/v2_api_results.xml"
+  ],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [
+    "Double-entry ledger engine correctly derives balance from SUM(credits) - SUM(debits)",
+    "All V2 routes properly use data-testid attributes for UI testing",
+    "Idempotent prediction submission prevents duplicate bets",
+    "Admin V2 controls are admin-gated with require_admin() check"
+  ],
+
+  "updated_files": [
+    "/app/backend/tests/test_v2_api.py"
+  ],
+
+  "success_rate": {
+    "backend": "100% (32/32 tests passed)",
+    "frontend": "100% (all 5 V2 pages loading and functional)"
+  },
+
+  "seed_data_creation": "Test matches and predictions created during testing (prefixed with TEST_)",
+
+  "retest_needed": false,
+
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "V2 Engine testing complete. All backend engines (ledger, contests, predictions, cards, matchstate, referral) working correctly. Mock providers (ads, voucher) confirmed functional. Full prediction lifecycle validated: create match -> predict -> resolve -> coins credited. Frontend pages /ledger, /cards, /referrals, /watch-earn, /admin/v2 all loading with proper data-testids."
+}

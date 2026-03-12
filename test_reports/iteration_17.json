@@ -1,0 +1,135 @@
+{
+  "summary": "All 7 critical bugs have been VERIFIED as fixed. Login redirect, route redirects, navbar updates, EntitySport V2 API integration, and profile dropdown all working correctly. 15/15 backend tests passed, all frontend pages verified.",
+
+  "bug_fixes_verification": {
+    "issue_1_login_redirect": {
+      "status": "FIXED ✓",
+      "description": "Login with admin@free11.com / Admin@123 succeeds and redirects to /match-centre",
+      "evidence": "Playwright test confirmed redirect to /match-centre after login"
+    },
+    "issue_2_contests_redirect": {
+      "status": "FIXED ✓",
+      "description": "/contests route redirects to /match-centre (not 404)",
+      "evidence": "Playwright test confirmed /contests and /cricket both redirect to /match-centre"
+    },
+    "issue_3_cards_page_layout": {
+      "status": "FIXED ✓",
+      "description": "Cards page header does not overlap with card content, Navbar is present",
+      "evidence": "Screenshot shows proper spacing with sticky header and Navbar at top"
+    },
+    "issue_4_dashboard_entitysport": {
+      "status": "FIXED ✓",
+      "description": "Dashboard fetches live match data from EntitySport V2 API (ENG vs NZ, NOT old CSK vs MI mock data)",
+      "evidence": "Dashboard shows real match: ENG vs NZ *55/0 (6.1 ov) from EntitySport API"
+    },
+    "issue_5_navbar_links": {
+      "status": "FIXED ✓",
+      "description": "Navbar has Matches, Cards, Wallet, Invite, Profile (no old /contests or /cricket links)",
+      "evidence": "Navbar HTML verified - contains V2 routes, no legacy routes"
+    },
+    "issue_6_match_centre_page": {
+      "status": "FIXED ✓",
+      "description": "/match-centre page loads with Navbar and tabs (Live/Upcoming/Completed)",
+      "evidence": "Match Centre shows real EntitySport matches with all 3 tabs working"
+    },
+    "issue_7_profile_dropdown": {
+      "status": "FIXED ✓",
+      "description": "Profile dropdown has Profile, Help & Support, and admin links (Beta Dashboard, Control Panel) for admin users",
+      "evidence": "Screenshot shows dropdown with all required menu items"
+    }
+  },
+
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+
+  "api_verification": {
+    "auth_endpoints": {
+      "POST /api/auth/login": "200 OK - Returns token and user data",
+      "GET /api/auth/me": "200 OK - Returns authenticated user"
+    },
+    "entitysport_v2_endpoints": {
+      "GET /api/v2/es/matches?status=3": "200 OK - Returns LIVE matches from EntitySport (ENG vs NZ)",
+      "GET /api/v2/es/matches?status=1": "200 OK - Returns upcoming matches",
+      "GET /api/v2/es/matches?status=2": "200 OK - Returns completed matches"
+    },
+    "v2_engine_endpoints": {
+      "GET /api/v2/ledger/balance": "200 OK - Returns balance (100175)",
+      "GET /api/v2/ledger/history": "200 OK - Returns transaction history",
+      "GET /api/v2/cards/types": "200 OK - Returns 5 card types",
+      "GET /api/v2/cards/inventory": "200 OK - Returns user cards",
+      "GET /api/v2/referral/stats": "200 OK - Returns referral code and stats"
+    }
+  },
+
+  "frontend_verification": {
+    "login_page": {
+      "status": "WORKING",
+      "redirect": "Redirects to /match-centre after successful login"
+    },
+    "match_centre_page": {
+      "status": "WORKING",
+      "elements": ["Navbar with V2 routes", "Live/Upcoming/Completed tabs", "Real EntitySport matches"],
+      "data_source": "REAL EntitySport API"
+    },
+    "dashboard_page": {
+      "status": "WORKING",
+      "elements": ["Navbar", "Live Cricket section with ENG vs NZ", "User stats", "Progress to Next Reward"],
+      "data_source": "REAL EntitySport V2 API"
+    },
+    "cards_page": {
+      "status": "WORKING",
+      "elements": ["Navbar", "Sticky header with proper spacing", "5 card types", "My Inventory section"]
+    },
+    "ledger_page": {
+      "status": "WORKING",
+      "elements": ["Navbar", "Balance card", "Transaction filters", "Transaction history"]
+    },
+    "referrals_page": {
+      "status": "WORKING",
+      "elements": ["Navbar", "Referral code", "Stats grid", "Apply code section"]
+    }
+  },
+
+  "test_report_links": [
+    "/app/backend/tests/test_bug_fixes.py",
+    "/app/test_reports/pytest/bug_fixes_results.xml"
+  ],
+
+  "action_items": [],
+
+  "critical_code_review_comments": [],
+
+  "updated_files": [
+    "/app/backend/tests/test_bug_fixes.py"
+  ],
+
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (all 7 bugs verified fixed)"
+  },
+
+  "test_credentials_used": {
+    "admin": "admin@free11.com / Admin@123"
+  },
+
+  "seed_data_creation": "None - used existing admin user",
+
+  "retest_needed": false,
+
+  "should_main_agent_self_test": false,
+
+  "context_for_next_testing_agent": "All 7 critical bugs verified as fixed: (1) Login redirects to /match-centre, (2) /contests and /cricket redirect to /match-centre, (3) Cards page has Navbar with proper header spacing, (4) Dashboard uses EntitySport V2 API showing real ENG vs NZ match, (5) Navbar has V2 routes only, (6) Match Centre has Navbar with tabs, (7) Profile dropdown has admin links. EntitySport API returns real live cricket data.",
+
+  "mocked_apis_note": {
+    "entitysport": "NOT MOCKED - Real API data from rest.entitysport.com/v2",
+    "still_mocked": ["voucher_provider.py", "ads_provider.py", "payment_provider.py"]
+  }
+}

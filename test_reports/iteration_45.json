@@ -1,0 +1,126 @@
+{
+  "summary": "Iteration 45: 9/10 upgrade batch verification. Tested all new components: LiveActivityTicker (landing+dashboard), Stats bar, T20EmptyState (Contests), Shop affordability banner + ₹ chips + stock warnings, WishlistGoal (profile), Leaderboard rank names. 10/12 test items PASS. 2 issues found: (1) T20EmptyState in orphan Contests.js not accessible in production UI; (2) Coca-Cola/Sprite trademark in MongoDB products collection visible in Shop.",
+
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "MongoDB products collection",
+        "issue": "Product 'Sprite 2L Bottle' has brand='Coca-Cola' (trademarked). This renders in Shop page brand field. Should be replaced with generic names (e.g., 'Lemon-Lime Soda 2L', brand='Snack Partner').",
+        "priority": "MEDIUM"
+      }
+    ]
+  },
+
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Contests / T20 Empty State",
+        "issue": "T20EmptyState component is defined in Contests.js (lines 18-99) but Contests.js has no active route in App.js. The route '/contests' (App.js line 263) redirects to '/match-centre'. The T20 countdown + earn cards (Daily Puzzle, Check-in Streak, Leaderboard) will NEVER show to users because Contests.js is an orphan component.",
+        "affected_selectors": ["/contests", "T20EmptyState"]
+      }
+    ],
+    "design_issues": []
+  },
+
+  "passed_tests": [
+    {
+      "test": "1. Landing Page - LiveActivityTicker LIVE indicator",
+      "result": "PASS",
+      "details": "LIVE green dot + rotating messages visible. Sample: 'Karan from Kolkata climbed to Top 10 on the leaderboard'. 3.5s rotation interval working."
+    },
+    {
+      "test": "2. Landing Page - Stats bar (1.5L+, ₹8.2L+, 73%)",
+      "result": "PASS",
+      "details": "[data-testid=stats-bar] confirmed: '1.5L+ Users Joined', '₹8.2L+ Rewards Earned', '73% Avg Accuracy'. All 3 stat chips visible in mobile viewport."
+    },
+    {
+      "test": "3. Landing Page - Trust bullets + START PLAYING button",
+      "result": "PASS",
+      "details": "Trust bullets: 'Free to play', 'Real grocery rewards', '100% skill-based', 'No deposits or risk'. START PLAYING button [data-testid=hero-primary-btn] clickable."
+    },
+    {
+      "test": "4. Dashboard - LiveActivityTicker community activity",
+      "result": "PASS",
+      "details": "LIVE text + community activity visible on dashboard. Sample: 'Vikas from Lucknow just redeemed Atta 5kg — FREE!'. Component placed at line 376 of Dashboard.js (above recent transactions)."
+    },
+    {
+      "test": "5. Dashboard - WishlistGoal component",
+      "result": "PASS",
+      "details": "[data-testid=wishlist-empty-cta] visible showing 'Set a reward goal — track your progress here'. Renders from Dashboard.js line 211: WishlistGoal coinsBalance={45}."
+    },
+    {
+      "test": "6. Shop - Affordability banner",
+      "result": "PASS",
+      "details": "Banner shows 'You can redeem 12 items now' with green styling. Appears when user coins_balance (45) >= product coin_price. Inline implementation in Shop.js lines 194-202."
+    },
+    {
+      "test": "7. Shop - ₹ value chips on product cards",
+      "result": "PASS",
+      "details": "50 ₹ value chips found on page. Examples: '≈ ₹8' (10-coin items), '≈ ₹12' (15-coin), '≈ ₹16' (20-coin). Formula: Math.round(coin_price * 0.8). Visible in product cards (Shop.js line 410)."
+    },
+    {
+      "test": "8. Shop - 'Only X left!' warning (stock < 20)",
+      "result": "PASS",
+      "details": "Multiple stock warnings found: 'Only 10 left!', 'Only 5 left!'. Orange color styling applied. Implementation in Shop.js lines 414-416."
+    },
+    {
+      "test": "9. Profile - WishlistGoal component visible",
+      "result": "PASS",
+      "details": "[data-testid=wishlist-empty-cta] visible on Profile page: 'Set a reward goal — track your progress here'. Located after coins card (Profile.js line 134). Dashed border CTA links to /shop."
+    },
+    {
+      "test": "10. Leaderboard - Cricket-themed ranks (no IPL Champ)",
+      "result": "PASS",
+      "details": "Rank names: Cricket Champion (#1), Prediction Ace (#2), Pitch Master (#3), Six King (#4), Match Oracle (#5). No 'IPL Champ' or IPL trademark found. No Pepsi/Parle-G visible."
+    }
+  ],
+
+  "failed_tests": [
+    {
+      "test": "11. Contests/Play empty state - T20 countdown + action cards",
+      "result": "FAIL",
+      "details": "T20EmptyState component exists in Contests.js (lines 18-99) with countdown targeting 2026-03-26T18:00+05:30 and 3 action cards (Daily Puzzle, Check-in Streak, Leaderboard). However, Contests.js is NOT routed — App.js line 263 redirects /contests to /match-centre. The match-centre shows live matches, not the empty state. This feature is unreachable by users."
+    },
+    {
+      "test": "12. No trademark violations in UI",
+      "result": "PARTIAL",
+      "details": "No IPL/Pepsi/Parle-G trademarks in frontend code. However: MongoDB product 'Sprite 2L Bottle' has brand='Coca-Cola' rendering in Shop page product card brand field. This is a DB data issue, not frontend code. The generic LiveActivityTicker uses 'Cola Drink 2L' (correct)."
+    }
+  ],
+
+  "test_report_links": ["/app/test_reports/iteration_45.json"],
+
+  "action_items": [
+    "HIGH: T20EmptyState is unreachable — Contests.js is an orphan (not routed). App.js routes /contests to /match-centre (line 263). Either: (A) Add a direct route for Contests.js, OR (B) Implement T20EmptyState inside MatchCentre.js as the empty-no-match state when no live/upcoming matches. Currently the T20 countdown + earn cards (Daily Puzzle, Check-in Streak) are dead code.",
+    "MEDIUM: MongoDB products collection has 'Sprite 2L Bottle' with brand='Coca-Cola' — trademarked brand visible in Shop page. Update to generic: name='Lemon-Lime Soda 2L', brand='Snack Partner' (same as 'Cola Drink 2L' convention)."
+  ],
+
+  "critical_code_review_comments": [
+    "Contests.js T20EmptyState is dead code: component exists (lines 18-99) but Contests.js has no route in App.js. Main agent must either route it or merge into MatchCentre.",
+    "Shop.js affordability banner uses an IIFE pattern (lines 194-202) which works but is harder to test — consider extracting to a named function.",
+    "WishlistGoal.js: uses api.v2GetWishlist() which may fail silently — verify API returns {pinned: false, product: null} for users with no wishlist (not just 404/500).",
+    "LiveActivityTicker uses Math.random() seeded activity with no deduplication — could show same message twice in a row. Consider tracking last N to avoid repeats."
+  ],
+
+  "updated_files": [],
+
+  "success_rate": {
+    "backend": "N/A (frontend-only test)",
+    "frontend": "83% (10/12 test items pass; T20EmptyState unreachable + Coca-Cola trademark in DB)"
+  },
+
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234"
+  },
+
+  "seed_data_creation": "None",
+
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+
+  "context_for_next_testing_agent": "Iteration 45 tests verified 9/10 upgrade batch. Passing: (1) LiveActivityTicker on landing + dashboard, (2) Stats bar 1.5L+/₹8.2L+/73%, (3) Trust bullets + START PLAYING, (4) Shop affordability banner 'You can redeem X items now', (5) ₹ value chips on all product cards, (6) 'Only X left!' stock warnings, (7) WishlistGoal on profile page, (8) Leaderboard has Cricket Champion/Prediction Ace/Pitch Master (no IPL Champ). Two outstanding issues: (A) T20EmptyState in Contests.js is dead code - not routed; (B) 'Coca-Cola'/'Sprite' trademark in MongoDB products. Login flow redirects to /match-centre (not /dashboard) after successful auth — normal behavior based on app routing.",
+
+  "rca_of_issue": "T20EmptyState RCA: Main agent created T20EmptyState component inside Contests.js. However, Contests.js was already established as an orphan component (confirmed in iteration_44 report). App.js line 263 routes '/contests' to Navigate('/match-centre'). The T20EmptyState component needs to be moved to or implemented in MatchCentre.js, or /contests must be routed to Contests.js directly. This is a placement/routing bug."
+}

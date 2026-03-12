@@ -1,0 +1,126 @@
+{
+  "summary": "FREE11 PWA - Complete platform audit after navbar layout fix. CRITICAL FIX VERIFIED: Bottom nav now renders at viewport bottom (y=778 on 844px mobile). All 20 backend tests pass. All navigation paths working correctly.",
+  
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/health", "issue": "Returns redis:false (Redis not running in preview env)", "priority": "LOW - expected in this environment"}
+    ]
+  },
+  
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Earn page", "issues": ["404 error for /api/v2/ads/status shown in console - AdsProvider is mocked"]}
+    ]
+  },
+  
+  "feature_verification": {
+    "TOP_BAR": {
+      "status": "PASSED",
+      "elements": ["Logo", "Search btn", "Wallet btn", "Invite btn", "Coin balance (100175)", "Avatar dropdown"],
+      "data_testids": ["top-navbar", "search-btn", "wallet-btn", "invite-btn"]
+    },
+    "BOTTOM_NAV": {
+      "status": "PASSED - CRITICAL FIX VERIFIED",
+      "position": "y=778 on 844px viewport (at viewport bottom)",
+      "items": ["Matches", "Predict", "Earn", "Games", "Profile"],
+      "active_state": "Yellow highlight on active tab",
+      "data_testid": "bottom-navbar"
+    },
+    "SEARCH_OVERLAY": {
+      "status": "PASSED",
+      "elements": ["Text input", "Voice mic button", "Quick access links"],
+      "data_testids": ["app-search-overlay", "search-input", "voice-search-btn"]
+    },
+    "LOGIN": {
+      "status": "PASSED",
+      "credentials": "admin@free11.com / Admin@123",
+      "redirect": "/match-centre"
+    },
+    "TUTORIAL": {
+      "status": "PASSED",
+      "behavior": "NOT shown for returning admin user (tutorial_completed=true in DB)"
+    },
+    "MATCH_CENTRE": {
+      "status": "PASSED",
+      "data_source": "Real EntitySport API",
+      "matches": ["SA vs NZ", "IND vs ENG", "WI-W vs SL-W", "NZ-W vs ZIM-W"]
+    },
+    "PREDICT_PAGE": {
+      "status": "PASSED",
+      "elements": ["Prediction types (Runs/Wicket/Boundary/Milestones)", "Coming Up matches"]
+    },
+    "EARN_PAGE": {
+      "status": "PASSED",
+      "elements": ["Coin Boosters", "Fantasy Contests", "Match Winner Predictions", "Over Outcome"]
+    },
+    "GAMES_PAGE": {
+      "status": "PASSED",
+      "elements": ["Card Games header", "Rummy Quick Play", "Teen Patti Quick Play", "Active rooms list"]
+    },
+    "CARDS_PAGE": {
+      "status": "PASSED",
+      "elements": ["Power-Ups header", "Double Coins", "Prediction Shield", "Triple Coins", "Extra Prediction", "Match Insight"]
+    },
+    "FREEBUCKS_PAGE": {
+      "status": "PASSED",
+      "elements": ["Balance (0)", "Starter Pack (₹49)", "Pro Pack (₹149)", "Elite Pack (₹499)", "Transaction History"]
+    },
+    "REFERRALS_PAGE": {
+      "status": "PASSED",
+      "elements": ["Referral code (F11-0B4A2C)", "Stats", "Apply code input", "How it works"]
+    },
+    "LEDGER_PAGE": {
+      "status": "PASSED",
+      "elements": ["Available Balance (150)", "All/Credits/Debits tabs", "Transaction history"]
+    },
+    "PROFILE_PAGE": {
+      "status": "PASSED",
+      "elements": ["User info (FREE11 Admin)", "Level (Legend 5)", "Coins balance", "Stats", "Invite Friends", "My Orders", "Earn Coins"]
+    },
+    "THEME_COLOR": {
+      "status": "PASSED",
+      "value": "#0a0e17 (dark - no yellow bar)"
+    }
+  },
+  
+  "test_report_links": [
+    "/app/backend/tests/test_navbar_audit.py",
+    "/app/test_reports/pytest/navbar_audit_results.xml"
+  ],
+  
+  "action_items": [],
+  
+  "critical_code_review_comments": [
+    "NAVBAR FIX CORRECTLY IMPLEMENTED: Bottom nav is now OUTSIDE the <nav> element, avoiding the backdrop-filter CSS bug that breaks fixed positioning"
+  ],
+  
+  "updated_files": [
+    "/app/backend/tests/test_navbar_audit.py"
+  ],
+  
+  "success_rate": {
+    "backend": "100% (20/20 tests passed)",
+    "frontend": "100% (all navigation and UI verified)"
+  },
+  
+  "test_credentials_used": {
+    "admin": "admin@free11.com / Admin@123"
+  },
+  
+  "seed_data_creation": "None - used existing admin user",
+  
+  "retest_needed": false,
+  
+  "should_main_agent_self_test": false,
+  
+  "context_for_next_testing_agent": "Platform audit complete after navbar fix. All critical issues resolved: (1) Bottom nav now renders at y=778 on mobile viewport (was rendering inside sticky header due to backdrop-filter bug), (2) Search/Wallet/Invite icons visible with bg-white/10 circles, (3) Tutorial NOT showing for admin (tutorial_completed=true), (4) All routes accessible via bottom nav and search overlay. APIs: EntitySport returns real cricket data, FREE Bucks shows 3 packages, Cards shows 5 power-up types. Mocked APIs: voucher_provider.py, ads_provider.py.",
+  
+  "mocked_apis_note": {
+    "entitysport": "NOT MOCKED - Real API (rest.entitysport.com/v2)",
+    "stripe": "Test mode (sk_test_emergent)",
+    "still_mocked": ["voucher_provider.py", "ads_provider.py"]
+  }
+}

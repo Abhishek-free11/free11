@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base app theme -->
+    <style name="Theme.Free11" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+
+    <!-- Splash screen theme (Android 12+) -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Splash screen icon background -->
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <!-- Splash screen icon (use your free11-icon.png or adaptive icon) -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <!-- Duration of the animated icon (ms) -->
+        <item name="windowSplashScreenAnimationDuration">500</item>
+        <!-- Post-splash theme (the actual app theme) -->
+        <item name="postSplashScreenTheme">@style/Theme.Free11</item>
+    </style>
+</resources>

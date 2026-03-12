@@ -1,0 +1,155 @@
+{
+  "summary": "Complete end-to-end user journey test for FREE11 app. Covered: Landing page, Login, Dashboard, Predict, Watch-Earn, Shop, Redemption, ShareCard, SkillDisclaimerModal, Blog, Admin V2, Leaderboard, Sponsored, Register/OTP. All 33 backend tests passed (100%). Frontend success rate: ~93%.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Leaderboard top-3 Share buttons",
+        "issue": "Leaderboard shows 'No entries yet' because global leaderboard requires min_predictions >= 5. No qualifying users in test environment. Share button code IS implemented (data-testid='share-rank-{rank}') but cannot be tested without qualifying data.",
+        "affected_selectors": ["[data-testid='share-rank-1']", "[data-testid='share-rank-2']", "[data-testid='share-rank-3']"],
+        "priority": "LOW - expected behavior, not a bug"
+      },
+      {
+        "flow": "Register OTP dev_otp display",
+        "issue": "dev_otp code NOT shown inline for test email because Resend API returns HTTP 200 (email considered 'delivered' even if domain is unverified). dev_otp logic IS correctly implemented (lines 226-234 Register.js) and triggers when Resend returns non-200. MOCKED: Resend email delivery.",
+        "affected_selectors": ["[data-testid='dev-otp-display']"],
+        "priority": "LOW - works as designed"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "landing_page": {
+      "hero_visible": "PASS",
+      "tagline_visible": "PASS",
+      "footer_disclaimer_btn_opens_modal": "PASS",
+      "skill_disclaimer_modal_closes": "PASS"
+    },
+    "login_page": {
+      "email_password_login": "PASS",
+      "redirects_to_match_centre": "PASS",
+      "biometric_modal_skippable": "PASS",
+      "google_login_btn_visible": "PASS"
+    },
+    "dashboard": {
+      "coin_balance_visible": "PASS (100 coins shown in navbar)",
+      "ipl_carousel_renders": "PASS",
+      "bottom_nav_visible_mobile": "PASS"
+    },
+    "predict_page": {
+      "page_loads": "PASS",
+      "skill_badge_in_header": "PASS",
+      "match_list_visible": "PASS",
+      "prediction_stats_visible": "PASS",
+      "pred_type_cards": "PASS (4 cards)",
+      "refresh_btn": "PASS"
+    },
+    "watch_earn_page": {
+      "page_loads": "PASS",
+      "watch_ad_btn_visible": "PASS",
+      "ad_countdown_10s": "PASS",
+      "claim_reward_btn": "PASS",
+      "coins_credited_after_claim": "PASS (+10 coins, toast shown)"
+    },
+    "shop_page": {
+      "50_products_visible": "PASS",
+      "category_filter_all": "PASS (50 products)",
+      "category_filter_rations": "PASS (30 products)",
+      "skill_badge_in_header": "PASS",
+      "skill_disclaimer_modal_from_badge": "PASS",
+      "product_images_load": "PASS"
+    },
+    "redemption_flow": {
+      "redeem_dialog_opens": "PASS",
+      "mobile_number_field": "PASS",
+      "confirm_btn": "PASS",
+      "success_screen_visible": "PASS",
+      "success_headline": "PASS ('REWARD UNLOCKED!')",
+      "success_subcopy": "PASS ('Earned through skill. PRORGA compliant')",
+      "voucher_qr_code": "PASS",
+      "share_card_opens": "PASS",
+      "share_card_closes": "PASS"
+    },
+    "blog_page": {
+      "loads_with_article_content": "PASS",
+      "article_title": "FREE11 IPL 2026 Guide: Skill Predictions & Free Rewards",
+      "breadcrumb_navigation": "PASS"
+    },
+    "admin_v2": {
+      "page_loads": "PASS",
+      "kpi_total_users": "PASS (42)",
+      "kpi_repeat_redemptions": "PASS (33.3%)",
+      "kpi_households_reached": "PASS (3)",
+      "kpi_quest_opt_in": "PASS (0%)",
+      "arr_forecast_chart": "PASS",
+      "7_day_chart": "PASS",
+      "all_tabs_visible": "PASS (Analytics, Sponsored, Match, Resolve, Wallet, Flags, Logs)"
+    },
+    "leaderboard": {
+      "page_loads": "PASS",
+      "global_weekly_streak_tabs": "PASS",
+      "entries_display": "No entries yet (min_predictions >= 5 required)",
+      "share_btns_top3": "NOT TESTABLE (no qualifying entries)"
+    },
+    "sponsored_page": {
+      "page_loads": "PASS",
+      "skill_badge_visible": "PASS",
+      "pools_listed": "PASS (3 pools visible: Fortune Atta, Parle-G, Pepsi IPL)"
+    },
+    "register_otp": {
+      "form_loads": "PASS",
+      "otp_step_triggered": "PASS",
+      "code_sent_to_email_message": "PASS",
+      "dev_otp_gold_style_code": "NOT TRIGGERED (Resend returns HTTP 200)",
+      "resend_otp_btn": "PASS"
+    }
+  },
+  "backend_test_results": {
+    "total_tests": 33,
+    "passed": 33,
+    "failed": 0,
+    "test_file": "/app/backend/tests/test_e2e_full_audit_35.py"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_e2e_full_audit_35.py",
+    "/app/test_reports/pytest/e2e_36.xml"
+  ],
+  "action_items": [
+    "MINOR: Add seed data for leaderboard testing - users need >=5 predictions to appear in global leaderboard. Create fixture data or lower min_predictions threshold in dev environment.",
+    "MINOR: The Leaderboard Share button for top-3 entries (data-testid='share-rank-{rank}') is correctly implemented but cannot be verified without qualifying entries.",
+    "INFO: dev_otp fallback only triggers when Resend API returns non-200. Consider adding a test mode where dev_otp is always returned for @free11test.com domain."
+  ],
+  "critical_code_review_comments": [
+    "Leaderboard min_predictions threshold (5 for global, 3 for weekly) means no entries in fresh test environments. Consider adding a /api/leaderboards/global?min_predictions=0 admin bypass or seeding test data.",
+    "otp_engine.py: _send_via_resend returns True (email_delivered=true) even for unverified domains because Resend accepts all emails with HTTP 200. This prevents dev_otp from showing in UI for testing. Consider always returning dev_otp when email domain matches test patterns.",
+    "All MOCKED APIs (ONDC, Xoxoday, Razorpay, Resend) are clearly noted and handled gracefully.",
+    "Shop page correctly shows 50 products with working category filters. All redemption dialogs working."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (33/33 tests passed)",
+    "frontend": "93% (13/14 major flows fully verified, 1 not testable due to no leaderboard data)"
+  },
+  "mocked_apis": [
+    "Resend email - dev_otp fallback only when Resend fails",
+    "ONDC Router - mocked",
+    "Xoxoday - mocked",
+    "Razorpay test mode - mocked"
+  ],
+  "seed_data_creation": "Redeemed 1 product (Lay's Chips 50g for 10 coins) during testing. Test user balance changed: 90 -> 100 (watched ad +10) -> 90 (redemption -10). Also created test OTP user test_otp_x1@free11test.com.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All core flows work end-to-end. The /api/leaderboards/global and /weekly require min_predictions (5 and 3 respectively) so leaderboard stays empty in test env. dev_otp only shows when Resend fails. Test user: test_redesign_ui26@free11test.com / Test@1234 (balance ~90). Admin: admin@free11.com / Admin@123. Watch ad is at /watch-earn, earn coins overview is at /earn. Sponsored pool testid is sponsored-pool-{id} not pool-{id}. Login via Playwright: use desktop viewport + focus() + keyboard.type() approach (page.fill() unreliable in some test environments).",
+  "rca_of_issues": {
+    "leaderboard_empty": {
+      "issue": "Leaderboard shows 'No entries yet' despite users existing in DB",
+      "root_cause": "/api/leaderboards/global?limit=50 returns empty array because it filters users with total_predictions < 5 (min_predictions threshold). The test user has 0 predictions.",
+      "reproduction": "Navigate to /leaderboards with a user who has <5 predictions",
+      "mitigation": "Seed test data with users having >=5 predictions, or use /api/leaderboard?type=global endpoint which shows all users by total_earned (no prediction threshold)"
+    }
+  }
+}

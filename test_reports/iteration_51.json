@@ -1,0 +1,60 @@
+{
+  "summary": "Iteration 51: Regression test for GlobalAnalyticsTracker + existing app flows. 19/19 backend tests pass. All 8 frontend flows verified. Analytics deduplication CONFIRMED WORKING (4 rapid clicks on same element within 1s = 1 analytics call). All pages load correctly with authenticated session.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "1_app_loads_login_redirect": "PASS — unauthenticated / and /shop redirect to /login",
+    "2_login_flow": "PASS — test_redesign_ui26@free11test.com / Test@1234 logs in, navigates to /match-centre",
+    "3_dashboard_loads": "PASS — /dashboard shows 'Test's XI', coin balance 385, streak 3d, accuracy 0%, XP 25",
+    "4_shop_page": "PASS — FREE SHOP title, MOBILE RECHARGE section (Jio/Airtel/Vi/BSNL), SMART DEALS grid with 41 deals, 39 redeemable items",
+    "5_earn_page": "PASS — /earn loads correctly with earn content",
+    "6_predict_page": "PASS — /predict loads with Daily Cricket Puzzle, Live Cricket Prediction, Mega Contest banner",
+    "7_analytics_deduplication": "PASS — GlobalAnalyticsTracker: 4 rapid clicks on same button within 1s → exactly 1 analytics API call. After 1.2s gap, new click fires another event (expected). 1-second deduplication window working correctly.",
+    "8_analytics_api": "PASS — POST /api/v2/analytics/event returns {ok:true}. POST /api/v2/analytics/event/anon returns {ok:true}. No auth → 401.",
+    "9_backend_health": "PASS — GET /api/health returns status=ok, db_connected=true",
+    "10_login_redirects": "PASS — After login, app navigates to /match-centre (Home route). /dashboard also accessible and loads correctly."
+  },
+  "analytics_deduplication_details": {
+    "mechanism": "GlobalAnalyticsTracker in App.js (lines 105-129) uses document event listener with lastEvent/lastTime state",
+    "test_result": "4 clicks on 'UPCOMING' button within 400ms → 1 analytics call to /api/v2/analytics/event/anon",
+    "cooldown_test": "After 1.2s delay, new click on same button → 1 new analytics call (dedup window reset)",
+    "verdict": "WORKING CORRECTLY — no API flooding"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_51.py",
+    "/app/test_reports/pytest/iteration_51.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "INFO: After login, app navigates to /match-centre instead of /dashboard. This is by design (MatchCentre is the Home page). /dashboard is accessible directly and works correctly.",
+    "INFO: Analytics events go to /anon endpoint on match-centre (public page, no token in localStorage before login). After login, events correctly use authenticated endpoint when token is available.",
+    "INFO: MOCKED APIs are working as expected: ONDC Router returns mock grocery data, Reloadly gift cards/airtime have mock fallback. Shop shows 'Brand-funded' items with real food images."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_51.py"
+  ],
+  "success_rate": {
+    "backend": "100% (19/19 tests passed)",
+    "frontend": "100% (all 10 flows verified)"
+  },
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234 (385 coins)",
+    "admin": "admin@free11.com / Admin@123"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All iteration 51 tests pass. GlobalAnalyticsTracker deduplication verified working: same-label clicks within 1s fire only 1 API call. Key pages work: /dashboard (coin balance visible), /shop (FREE SHOP + MOBILE RECHARGE + SMART DEALS), /earn, /predict, /match-centre (home). Backend analytics endpoints (/api/v2/analytics/event and /api/v2/analytics/event/anon) both return {ok:true}. Mocked APIs: ONDC Router (grocery mock), Reloadly (gift cards + airtime mock fallback). Previous bug fixed (analytics.js token key) remains fixed.",
+  "mocked_apis": [
+    "ONDC Router (ROUTER_MODE=mock) — GET /api/v2/router/skus returns mock grocery data",
+    "Reloadly Gift Cards — POST /api/reloadly/orders uses mock fallback",
+    "Reloadly Airtime — POST /api/airtime/topup uses mock fallback"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "summary": "FREE11 Firebase Push Notification Integration tested (iteration 30). Backend 100% (15/15 tests pass). All Android TWA file structures verified. Frontend firebase.js and AuthContext integration confirmed working.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_push_notifications.py",
+    "/app/test_reports/pytest/push_notifications_results.xml"
+  ],
+  "action_items": [
+    "INFO: Add firebase-service-account.json to /app/backend/ to enable actual FCM push delivery (currently sent=false, MOCKED). Get JSON from Firebase Console → Project Settings → Service Accounts.",
+    "INFO: Set REACT_APP_FIREBASE_APP_ID in frontend/.env — currently empty, which silently disables web push initialization (initFirebase returns null without error).",
+    "INFO: Set REACT_APP_FIREBASE_VAPID_KEY in frontend/.env — required for web push token registration via getToken(). Get from Firebase Console → Project Settings → Cloud Messaging → Web Push certificates.",
+    "INFO: Free11MessagingService.kt uses hardcoded BACKEND_URL='https://free11.com/api/v2/push/register' — this is correct for production but would need updating for staging builds."
+  ],
+  "critical_code_review_comments": [
+    "firebase.js: REACT_APP_FIREBASE_APP_ID is empty so initFirebase() always returns null (expected/intentional until app is configured). This is handled gracefully with a console.info log — no crashes.",
+    "firebase.js: getToken is imported twice — once inside initFirebase() and once inside requestAndGetToken(). The second dynamic import is redundant but harmless (module caching prevents re-fetching).",
+    "AuthContext.js: registerWebPushToken is called fire-and-forget (non-blocking) after both login() and register() — correct implementation as per spec.",
+    "fcm_service.py: send_push() returns False when no tokens registered (user has no devices) or Firebase not initialized. Both cases correctly return sent=false.",
+    "AndroidManifest.xml: Free11MessagingService exported=false (correct — should not be exportable). MESSAGING_EVENT intent-filter properly registered."
+  ],
+  "features_tested": {
+    "push_register_200_registered_true": "PASS - POST /api/v2/push/register returns 200 {registered: true}",
+    "push_register_upsert_same_device_type": "PASS - Second call with same device_type updates same record",
+    "push_register_401_no_auth": "PASS - Returns 401 without auth token",
+    "push_register_401_invalid_token": "PASS - Returns 401 with invalid bearer token",
+    "push_register_422_missing_device_token": "PASS - Returns 422 for missing device_token",
+    "push_register_default_device_type": "PASS - Default device_type=android when not provided",
+    "push_send_returns_sent_bool_and_target_user_id": "PASS - Response has {sent: bool, target_user_id: string}",
+    "push_send_sent_false_dev_mode": "PASS - sent=false without Firebase service account (MOCKED expected)",
+    "push_send_401_no_auth": "PASS - Returns 401 without auth token",
+    "push_send_user_id_targets_specific_user": "PASS - user_id param sets target_user_id in response",
+    "push_send_no_user_id_uses_self": "PASS - No user_id → target_user_id=caller's id",
+    "push_send_422_missing_title": "PASS - Returns 422 for missing title",
+    "push_send_422_missing_body": "PASS - Returns 422 for missing body",
+    "push_send_with_deep_link_200": "PASS - Push with deep_link returns 200",
+    "android_twa_google_services_json_exists": "PASS - at android-twa/app/google-services.json",
+    "android_twa_google_services_project_id": "PASS - project_id=free11-cf539",
+    "android_twa_google_services_sender_id": "PASS - messagingSenderId=725923627857",
+    "android_twa_google_services_mobilesdk_app_id": "PASS - mobilesdk_app_id=1:725923627857:android:a15987db746b66aac00970",
+    "android_twa_google_services_package_name": "PASS - package_name=com.free11.app",
+    "android_twa_Free11MessagingService_exists": "PASS - .kt file at correct path",
+    "android_twa_onMessageReceived_method": "PASS - override fun onMessageReceived(remoteMessage: RemoteMessage) present",
+    "android_twa_onNewToken_method": "PASS - override fun onNewToken(token: String) present",
+    "android_twa_LaunchActivity_fcm_registration": "PASS - refreshFcmToken() called in onCreate()",
+    "android_twa_AndroidManifest_service_registered": "PASS - Free11MessagingService registered",
+    "android_twa_AndroidManifest_messaging_event_filter": "PASS - MESSAGING_EVENT intent-filter present",
+    "android_twa_app_build_gradle_firebase_bom": "PASS - firebase-bom:32.7.0",
+    "android_twa_app_build_gradle_firebase_messaging": "PASS - firebase-messaging dependency",
+    "android_twa_build_gradle_google_services_classpath": "PASS - google-services:4.4.1 classpath",
+    "frontend_firebase_js_exists": "PASS - src/firebase.js exists",
+    "frontend_firebase_js_initFirebase_export": "PASS - export async function initFirebase()",
+    "frontend_firebase_js_requestAndGetToken_export": "PASS - export async function requestAndGetToken()",
+    "frontend_AuthContext_registerWebPushToken_after_login": "PASS - called in login()",
+    "frontend_AuthContext_registerWebPushToken_after_register": "PASS - called in register()",
+    "frontend_AuthContext_non_blocking": "PASS - fire-and-forget (no await, silent catch)",
+    "frontend_fcm_permission_denied_no_crash": "PASS - console shows [FCM] Notification permission denied, no crash",
+    "frontend_firebase_app_id_empty_no_crash": "PASS - firebase.js returns null gracefully when appId empty"
+  },
+  "mocked_apis_noted": [
+    "MOCKED: FCM push delivery (sent=false) — needs /app/backend/firebase-service-account.json for actual push delivery to devices",
+    "Web push disabled: REACT_APP_FIREBASE_APP_ID and REACT_APP_FIREBASE_VAPID_KEY both empty in frontend/.env"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_push_notifications.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (all file structures verified, integration code correct, FCM gracefully degraded)"
+  },
+  "seed_data_creation": "FCM test tokens stored in user_devices and fcm_tokens collections for admin user. Harmless test data.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Push notification integration tested (iteration 30). Backend 100% pass. Android TWA file structure complete. Frontend firebase.js and AuthContext correct. FCM delivery is MOCKED (sent=false) until firebase-service-account.json is provided. Web push needs REACT_APP_FIREBASE_APP_ID and REACT_APP_FIREBASE_VAPID_KEY set. Prev iteration 29: OTP email verification.",
+  "rca_of_issues": {}
+}

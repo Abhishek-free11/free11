@@ -1,0 +1,92 @@
+{
+  "summary": "Resend Email OTP Integration (FREE11) fully tested - Backend 100% (21/21), Frontend flow verified. RESEND_API_KEY loaded, Resend API called (403 domain-not-verified as expected), dev_otp correctly returned. 2-step Register UI flow works. One minor UX bug: wrong OTP shows 'Registration failed' instead of specific backend error 'Invalid OTP. X attempts remaining.'",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Register.js - Wrong OTP toast",
+        "issue": "When wrong OTP is entered, toast shows generic 'Registration failed' instead of specific backend error 'Invalid OTP. 4 attempts remaining.'. Backend correctly returns 400 with {'detail': 'Invalid OTP. 4 attempts remaining.'} (confirmed in network trace). The `if (!verifyRes.ok) { toast.error(verifyData.detail || ...) }` block should show the detail but shows catch block message instead.",
+        "selector": "[data-testid='submit-btn'] → toast",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_otp_resend.py",
+    "/app/test_reports/pytest/otp_resend_results.xml"
+  ],
+  "action_items": [
+    "MEDIUM: Investigate why wrong OTP shows 'Registration failed' toast (t('auth.register_failed')) instead of 'Invalid OTP. X attempts remaining.' (verifyData.detail). Backend returns correct error. Code path: Register.js line 83 `if (!verifyRes.ok) { toast.error(verifyData.detail || t('auth.otp_verify_failed')) }` - possible silent exception in toast.error() causing fallback to catch block, or closure/strict-mode issue.",
+    "INFO: Domain free11.com not verified in Resend dashboard - add DNS records at resend.com/domains to enable live email delivery"
+  ],
+  "critical_code_review_comments": [
+    "Register.js line 83: The toast error for wrong OTP falls through to catch block showing 'Registration failed' instead of the specific backend message. Suspected issue: the `if (!verifyRes.ok) { ... return; }` guard may not be catching the error path correctly. Consider adding explicit error logging: `console.error('OTP verify failed:', verifyData.detail)` to debug.",
+    "Register.js: No resend OTP button shown in the OTP step. Users cannot request a new OTP from the UI if they need to resend (e.g., after 60-second cooldown). Only `POST /api/auth/resend-verification` exists but no UI trigger in Register.js OTP step.",
+    "otp_engine.py: Resend rate limiting (429) - when running many concurrent users, 2 req/s limit from Resend will cause OTP delivery failures. The 429 fallback correctly returns dev_otp but in production this means emails not delivered. Consider queuing or rate limiting at application level."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_otp_resend.py"
+  ],
+  "success_rate": {
+    "backend": "100% (21/21 tests passed)",
+    "frontend": "85% (OTP flow works, 1 minor toast message bug)"
+  },
+  "test_credentials": {
+    "admin_email": "admin@free11.com",
+    "admin_password": "Admin@123",
+    "note": "Test emails used: TEST_otp_*@mail.example.com (do not register these)"
+  },
+  "seed_data_creation": "OTP test records created in otp_codes collection for TEST_otp_*@mail.example.com emails. These are temporary and will expire/be cleaned up automatically (24h cleanup).",
+  "features_tested": {
+    "backend_send_otp_200": "PASS - POST /api/auth/send-otp returns 200 with sent:true",
+    "backend_send_otp_email_echoed": "PASS - response echoes email (lowercased)",
+    "backend_dev_otp_when_resend_fails": "PASS - dev_otp returned when Resend domain unverified (403 from Resend confirmed in logs)",
+    "backend_expires_in_600": "PASS - expires_in=600 (10 minutes)",
+    "backend_cooldown_429": "PASS - second request within 60s returns 429",
+    "backend_invalid_email_422": "PASS - invalid email format returns 422 (Pydantic)",
+    "backend_missing_email_422": "PASS - missing email field returns 422",
+    "backend_verify_correct_otp": "PASS - correct dev_otp returns {verified:true}",
+    "backend_verify_email_in_response": "PASS - email in verify response (lowercased)",
+    "backend_wrong_otp_400": "PASS - wrong OTP returns 400",
+    "backend_attempts_remaining": "PASS - '4 attempts remaining' in detail",
+    "backend_max_attempts_too_many": "PASS - 6th wrong attempt returns 'Too many attempts'",
+    "backend_no_otp_record_400": "PASS - verify for unknown email returns 400",
+    "backend_invalid_email_verify_422": "PASS - invalid email in verify returns 422",
+    "backend_expired_otp_400": "PASS - expired OTP returns 400 with 'expired' in detail",
+    "backend_email_status_no_auth_401": "PASS - GET /api/auth/email-status returns 401 without token",
+    "backend_email_status_fake_token_401": "PASS - invalid token returns 401",
+    "backend_email_status_valid_token_200": "PASS - valid admin token returns 200 with {email, verified}",
+    "backend_resend_key_in_env": "PASS - RESEND_API_KEY=re_Taq6Pwd2... loaded",
+    "backend_resend_from_email_set": "PASS - RESEND_FROM_EMAIL='FREE11 <noreply@free11.com>'",
+    "backend_resend_called_evidenced_by_dev_otp": "PASS - dev_otp in response confirms Resend called but failed (expected)",
+    "resend_logs_confirm_api_called": "PASS - Backend logs show 403 from Resend: 'The free11.com domain is not verified'",
+    "frontend_register_page_loads": "PASS - all form fields visible (name, email, mobile, password, dob, state, submit)",
+    "frontend_step1_verify_email_btn": "PASS - submit button shows 'Verify Email' on step 1",
+    "frontend_otp_step_appears": "PASS - OTP step appears after Verify Email click (step=otp)",
+    "frontend_dev_otp_yellow_banner": "PASS - 'Dev OTP: XXXXXX' shown in yellow banner",
+    "frontend_otp_input_6_digits": "PASS - OTP input accepts exactly 6 numeric digits",
+    "frontend_wrong_otp_toast": "FAIL - Shows 'Registration failed' (generic) instead of 'Invalid OTP. X attempts remaining.'",
+    "frontend_change_email_returns_to_step1": "PASS - clicking 'Change email' clears OTP step, shows 'Verify Email' button",
+    "frontend_complete_signup_btn": "PASS - 'Complete Sign Up' button appears on OTP step"
+  },
+  "mocked_apis_noted": [
+    "MOCKED: Resend email delivery (domain not verified - free11.com needs DNS setup at resend.com/domains)",
+    "dev_otp is returned in API response as fallback when Resend fails"
+  ],
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "OTP email verification fully tested (iteration 29). Backend: 100% pass. Frontend: OTP flow works end-to-end. One MEDIUM bug: wrong OTP toast shows generic 'Registration failed' instead of specific backend error. To investigate: check Register.js handleSubmit error handling for OTP step (line 83). The RESEND_API_KEY is active and making real API calls to Resend but free11.com domain not verified (intentional for now). Previous iterations: 28=AdMob, 27=prior, next test should verify the toast bug fix if E1 fixes it.",
+  "rca_of_issues": {
+    "wrong_otp_toast_generic_message": {
+      "root_cause": "Register.js line 83: `if (!verifyRes.ok) { toast.error(verifyData.detail || t('auth.otp_verify_failed')); setLoading(false); return; }` - the `return` statement SHOULD prevent the catch block. However, the toast shows 'Registration failed' (t('auth.register_failed')) which is only in the catch block. Possible causes: (1) silent exception in toast.error() or setLoading() causing catch to run, (2) React re-render causing double submission, (3) the fetch response.ok evaluation. Network trace CONFIRMS backend returns 400 with correct detail message.",
+      "reproduction": "1. Fill Register form, click Verify Email → OTP step appears. 2. Enter wrong OTP (e.g. 000000). 3. Click Complete Sign Up. 4. Toast shows 'Registration failed' instead of 'Invalid OTP. 4 attempts remaining.'",
+      "mitigation": "Add specific error logging in Register.js: `console.error('OTP verify failed:', verifyRes.status, verifyData)` and check if catch block is somehow being triggered. Also consider: the `return` in inline if without braces might have unexpected behavior in some transpiler versions - rewrite as explicit block: `if (!verifyRes.ok) {\n  toast.error(verifyData.detail || t('auth.otp_verify_failed'));\n  setLoading(false);\n  return;\n}`",
+      "severity": "MEDIUM - user gets wrong error message but OTP flow is not broken"
+    }
+  }
+}

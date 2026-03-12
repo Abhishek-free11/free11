@@ -1,0 +1,70 @@
+{
+  "summary": "FREE11 Comprehensive Regression Test (Iteration 31) - ALL features tested and verified. Backend: 36/36 tests pass (100%). Frontend: All 28 UI scenarios pass. Razorpay, Wallet History, AdMob Rewards, Resend OTP, Firebase Push, Contest Share button, Team Builder Playing XI filter, Contest voided label - all working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_regression_31.py",
+    "/app/test_reports/pytest/regression_31_results.xml"
+  ],
+  "action_items": [
+    "INFO: Match ID 94717 now refers to ENG vs NZ (not IND vs ENG as stated in review request) - data may have changed, but Playing XI filter works correctly with 22 players",
+    "INFO: Watch & Earn shows 'Reward per ad: 10' on web (correct - 20 coins is Android TWA only)",
+    "INFO: MOCKED - Resend email delivery (dev_otp shown in response - domain not verified at resend.com)",
+    "INFO: MOCKED - Firebase push delivery (sent=false - no production firebase-service-account.json)",
+    "INFO: Razorpay in test mode (test API keys configured, create-order returns real Razorpay test orders)"
+  ],
+  "critical_code_review_comments": [],
+  "features_tested": {
+    "login_admin_credentials": "PASS - admin@free11.com / Admin@123 logs in, redirects to /match-centre",
+    "navbar_coins_balance": "PASS - 100630 coins visible in navbar after login",
+    "match_centre_live_upcoming_tabs": "PASS - LIVE/UPCOMING/COMPLETED tabs, shows ENG vs NZ match with LIVE badge",
+    "team_builder_loads": "PASS - /team-builder/94717 loads with all data",
+    "team_builder_playing_xi_filter": "PASS - Shows 22 playing XI players (11 per team, filtered from full squad)",
+    "team_builder_green_banner": "PASS - 'Showing confirmed Playing XI only' green banner visible",
+    "team_builder_filter_tabs": "PASS - ALL(22), WK(4), BAT(6), AR(7), BOWL(5) - correct counts",
+    "contest_hub_share_button": "PASS - Green Share button (color rgb(74,222,128)) always visible in top-right of action row",
+    "contest_hub_joined_invite_friends": "PASS - 'Invite Friends' button visible on joined Head to Head contest",
+    "contest_hub_joined_view_standing": "PASS - 'View Standing' button visible on joined contests",
+    "contest_hub_voided_label": "PASS - 'Contest Voided' label in red on voided contests (Mega, Standard, Practice)",
+    "wallet_history_page": "PASS - /wallet loads with Coin History + FREE Bucks tabs",
+    "wallet_history_coin_tab": "PASS - 7 coin transactions with green(+)/red(-) color coding",
+    "wallet_history_bucks_tab": "PASS - FREE Bucks tab shows Starter Pack purchases",
+    "watch_earn_page": "PASS - /watch-earn loads with status card and daily limit info",
+    "watch_earn_status_card": "PASS - Shows 5/5 watched, 0 remaining, 10 coins per ad (web)",
+    "watch_earn_info_tiles": "PASS - Instant, Safe, 5x/day tiles visible",
+    "profile_wallet_history_menu": "PASS - 'Wallet History' menu item in Profile links to /wallet",
+    "payments_history_api": "PASS - GET /api/v2/payments/history returns free_bucks_purchases + coin_transactions",
+    "admob_reward_api": "PASS - POST /api/v2/ads/reward credits 20 coins or 429 when daily limit reached",
+    "push_register_api": "PASS - POST /api/v2/push/register stores device token, returns registered:true",
+    "push_send_auth": "PASS - POST /api/v2/push/send returns 401 without token",
+    "razorpay_create_order": "PASS - POST /api/razorpay/create-order creates real Razorpay order (test mode)",
+    "otp_send_returns_sent_true": "PASS - POST /api/auth/send-otp returns sent:true with dev_otp (Resend MOCKED)",
+    "otp_wrong_otp_specific_error": "PASS - POST /api/auth/verify-otp with wrong OTP returns specific error, not generic 'Registration failed'",
+    "register_page_resend_otp_btn": "PASS - Register OTP step shows 'Resend OTP' button",
+    "register_page_dev_otp": "PASS - Dev OTP displayed in OTP step (Resend MOCKED)"
+  },
+  "mocked_apis_noted": [
+    "MOCKED: Resend email delivery (domain not verified - dev_otp returned in API response)",
+    "MOCKED: Firebase push delivery (sent=false - no real device token / FCM service account)",
+    "TEST MODE: Razorpay in test mode (not live payments)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_regression_31.py"
+  ],
+  "success_rate": {
+    "backend": "100% (36/36 tests passed)",
+    "frontend": "100% (all 28 UI scenarios passed)"
+  },
+  "seed_data_creation": "OTP codes created for test emails (regression_test_31_*, regression_verify_31_*, etc.) - all expired/harmless",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Comprehensive regression test (iteration 31) passed 100% backend and frontend. Key verified features: Team Builder Playing XI filter (22 players, green banner), Contest Hub (Share green button, 'Contest Voided' red label, Invite Friends + View Standing for joined contests), Wallet History (Coin + FreeBucks tabs with color-coded transactions), Watch & Earn (5/5 daily limit shown), Register Resend OTP button, Push notifications (push/register + push/send), AdMob 20 coins reward. All MOCKED integrations noted. Previous iteration 30: Firebase Push. Admin: admin@free11.com / Admin@123. Match 94717 is now ENG vs NZ (not IND vs ENG).",
+  "rca_of_issues": {}
+}

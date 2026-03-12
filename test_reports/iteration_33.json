@@ -1,0 +1,80 @@
+{
+  "summary": "Tested all FREE11 Production Release Candidate features (iteration 33): 23/23 backend tests pass. All core frontend features verified. Two minor issues found: duplicate title tags in index.html and SkillDisclaimerModal/ShareCard not yet integrated into any page.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "index.html",
+        "issue": "Duplicate <title> tags — 3 <title> elements at lines 23, 50, 64. Only the last one ('FREE11 - Your Time = Free Shopping List') takes effect in the browser, overriding the correct SEO title on line 23.",
+        "selector": "head > title",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "SkillDisclaimerModal / ShareCard",
+        "issue": "Components are defined with correct data-testids in /components/ folder but NOT imported/used in any page (no import found in any .js page). The review request requires 'SkillDisclaimerModal renders and closes correctly' and 'ShareCard renders with share button' — neither can be tested as they're not mounted anywhere.",
+        "selector": "[data-testid='skill-disclaimer-modal'], [data-testid='share-card-modal']",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_production_release_33.py",
+    "/app/test_reports/pytest/prod_release_33.xml"
+  ],
+  "action_items": [
+    "Fix index.html: Remove duplicate <title> tags at lines 50 and 64. Keep only the SEO-optimized title at line 23: 'FREE11 Fantasy Cricket App - Free Predictions & Real Rewards India'.",
+    "Integrate SkillDisclaimerModal into at least one page (e.g., Shop, SponsoredPools, Landing footer skill-disclaimer section). Add a trigger button or auto-show on first visit.",
+    "Integrate ShareCard into at least one page (e.g., Dashboard after redemption, Leaderboards after rank achieved). Currently both components are orphaned."
+  ],
+  "critical_code_review_comments": [
+    "index.html: 3 duplicate <title> tags (lines 23, 50, 64) — browser renders the last one ('FREE11 - Your Time = Free Shopping List') which is stale/wrong. Remove lines 50 and 64 title tags.",
+    "SkillDisclaimerModal.js & ShareCard.js: Both components are complete with correct data-testids and framer-motion animations but are not imported in any page. They are orphaned components.",
+    "Landing.js: 'scale-section' is placed AFTER the footer (lines 323-354), which means it renders below the footer in the page flow. This is a layout ordering issue.",
+    "Landing.js: 'seo-section' is also placed after the footer (lines 356-379). SEO content block should be above the footer for proper page flow."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_production_release_33.py"
+  ],
+  "success_rate": {
+    "backend": "100% (23/23 tests pass)",
+    "frontend": "87% (13/15 verified items pass, 2 not testable due to missing integration)"
+  },
+  "test_credentials": "admin@free11.com / Admin@123",
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All backend APIs for production release candidate are working: /api/v2/kpis/breakage (unredeemed_coin_ratio_pct), /api/v2/push/templates, /api/auth/google-oauth (returns 401 for invalid session), /api/v2/router/skus (dynamic_coin_price). Landing page hero/scale/SEO/tagline all working. Blog page /blog/ipl-guide fully functional with FAQ, H1, CTA. Login has Google OAuth button. Admin V2 ARR forecast chart renders. Two outstanding issues: 1) duplicate title tags in index.html, 2) SkillDisclaimerModal and ShareCard are orphaned components not integrated into any page.",
+  "verified_features": {
+    "backend": [
+      "GET /api/v2/kpis/breakage returns unredeemed_coin_ratio_pct ✅",
+      "GET /api/v2/push/templates returns 5 campaign templates ✅",
+      "POST /api/auth/google-oauth?session_id=invalid returns 401 ✅",
+      "GET /api/v2/router/skus returns dynamic_coin_price per SKU ✅",
+      "POST /api/v2/push/campaign creates campaign (admin) ✅",
+      "GET /robots.txt accessible with Allow: / ✅",
+      "GET /sitemap.xml accessible with /blog/ipl-guide URL ✅"
+    ],
+    "frontend": [
+      "Landing page hero with stadium background image ✅",
+      "225M Untapped Cricket Fans headline ✅",
+      "PLAY CRICKET. EARN ESSENTIALS. tagline ✅",
+      "data-testid=seo-section visible ✅",
+      "data-testid=scale-section visible ✅",
+      "Blog link in landing footer ✅",
+      "Login Google OAuth button (data-testid=google-login-btn) ✅",
+      "Blog /blog/ipl-guide: H1, 5×H2, 5 FAQ items ✅",
+      "Blog keywords: FREE11, IPL 2026, free fantasy cricket, PRORGA ✅",
+      "data-testid=blog-cta-predict navigates to /predict (auth redirect to /login) ✅",
+      "Admin V2 analytics tab ARR forecast chart (data-testid=arr-forecast-chart) ✅",
+      "index.html OG title + description meta tags ✅",
+      "index.html JSON-LD MobileApplication + FAQPage schemas ✅",
+      "SkillDisclaimerModal: component defined with correct data-testids but NOT integrated in any page ⚠️",
+      "ShareCard: component defined with correct data-testids but NOT integrated in any page ⚠️"
+    ]
+  }
+}

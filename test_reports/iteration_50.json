@@ -1,0 +1,66 @@
+{
+  "summary": "Iteration 50: Validated all UI/UX changes — root redirect, brand line, FREE SHOP, no avatar dropdown, shop icon, analytics endpoints, bottom nav, dashboard, blog PROGA. 18/18 backend tests pass. 1 bug found and fixed: analytics.js used wrong localStorage key 'free11_token' instead of 'token'. All new features working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Analytics event tracking",
+        "issue": "BUG FIXED: analytics.js line 9 used localStorage.getItem('free11_token') but AuthContext stores token as 'token'. All authenticated user events were being sent to /analytics/event/anon instead of /analytics/event (authenticated endpoint). Fixed to use 'token' key.",
+        "affected_selectors": ["/app/frontend/src/utils/analytics.js:9"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_results": {
+    "1_root_redirect": "PASS — unauthenticated / redirects to /login",
+    "2_login_brand_line": "PASS — 'India's No.1 choice for Social Entertainment & Skilled Games Free App' visible",
+    "3_register_brand_line": "PASS — Same brand line on /register page",
+    "4_no_avatar_dropdown": "PASS — Top navbar has only: logo, lang-selector, shop-btn, search-btn, wallet-btn, coin-balance. No avatar dropdown.",
+    "5_shop_icon_navbar": "PASS — shop-btn (ShoppingBag icon, title='Free Shop') present in top navbar, navigates to /shop",
+    "6_free_shop_title": "PASS — /shop page H1 reads 'FREE SHOP' (not 'SHOP STORE')",
+    "7_dashboard": "PASS — Loads correctly, coin balance (385) visible, no errors",
+    "8_bottom_nav": "PASS — All 5 items (Home→/match-centre, Play→/predict, Games→/games, Missions→/earn, Profile→/profile) clickable and navigate correctly",
+    "9_blog_proga": "PASS — Blog shows 'PROGA' and 'Online Gaming Act' context correctly",
+    "10_pwa_fab": "PASS — No old PWA banner code, new FAB (data-testid=pwa-install-fab) implemented. Not visible in test browser (requires beforeinstallprompt event on real mobile Chrome).",
+    "11_analytics_anon": "PASS — POST /api/v2/analytics/event/anon returns {ok: true} without auth",
+    "12_analytics_authed": "PASS — POST /api/v2/analytics/event with JWT returns {ok: true}",
+    "13_analytics_requires_auth": "PASS — POST /api/v2/analytics/event without auth returns 401",
+    "14_health": "PASS — GET /api/health returns 200, db_connected=true",
+    "15_router_skus": "PASS — GET /api/v2/router/skus returns 200, no Lay's/Pepsi/Parle-G trademarks",
+    "16_products": "PASS — GET /api/products returns 200 with 50+ products",
+    "17_admin_analytics_dashboard": "PASS — GET /api/v2/analytics/dashboard (admin) returns 200"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_50.py",
+    "/app/test_reports/pytest/iteration_50.xml"
+  ],
+  "action_items": [
+    "MINOR: analytics.js localStorage key bug FIXED (free11_token → token). Authenticated events now correctly use /api/v2/analytics/event endpoint."
+  ],
+  "critical_code_review_comments": [
+    "BUG FIXED: /app/frontend/src/utils/analytics.js line 9: localStorage.getItem('free11_token') → localStorage.getItem('token'). AuthContext uses key 'token', analytics.js was looking for 'free11_token' which never exists. All authenticated events were being routed to the anon endpoint.",
+    "INFO: PWA install FAB (PWAInstallButton component) only shows when beforeinstallprompt event fires — this won't trigger in test environments. Code correctly returns null when !visible.",
+    "INFO: Top navbar lang-selector button is present but has no data-testid — consider adding data-testid='lang-selector-btn' for completeness (low priority)."
+  ],
+  "updated_files": [
+    "/app/frontend/src/utils/analytics.js",
+    "/app/backend/tests/test_iteration_50.py"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18 tests pass)",
+    "frontend": "100% (all 10 UI flows verified)"
+  },
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234 (385 coins)",
+    "admin": "admin@free11.com / Admin@123"
+  },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All iteration 50 UI/UX changes verified. Root → /login redirect works. Brand line correct on both Login and Register. No avatar dropdown in top navbar (only: logo, lang-selector, shop-btn, search-btn, wallet-btn, coin-balance). FREE SHOP title on /shop. Analytics endpoints (/api/v2/analytics/event and /api/v2/analytics/event/anon) both return {ok:true}. Bottom nav all 5 items working. Dashboard loads with coin balance. Bug fixed in analytics.js (token key). Previous iteration 49 bug (reloadly_provider.py KeyError) remains fixed.",
+  "mocked_apis": ["ONDC Router (ROUTER_MODE=mock)", "Reloadly live orders", "Cashfree (no live keys)"]
+}

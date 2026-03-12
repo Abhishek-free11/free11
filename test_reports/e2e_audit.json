@@ -1,0 +1,361 @@
+{
+  "pass": 70,
+  "fail": 1,
+  "tests": [
+    {
+      "name": "Health check returns 200",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Health: Redis connected",
+      "status": "PASS",
+      "detail": "{'status': 'ok', 'redis': True, 'env': 'production', 'version': '2.0.0'}"
+    },
+    {
+      "name": "Health: Production env",
+      "status": "PASS",
+      "detail": "production"
+    },
+    {
+      "name": "Fresh user registration",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Registration returns token",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Registration returns user ID",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Welcome bonus in response",
+      "status": "PASS",
+      "detail": "coins=50"
+    },
+    {
+      "name": "Admin login succeeds",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No password_hash in response",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No hashed_password in response",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Auth/me returns user",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Device fingerprint recorded on login",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Wrong password returns 401",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Banned user gets 403",
+      "status": "PASS",
+      "detail": "got 403"
+    },
+    {
+      "name": "Upcoming matches returns 200",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Upcoming matches returns array",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Match has required fields",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Cache reduces latency (2nd call faster)",
+      "status": "PASS",
+      "detail": "first=0.045s, second=0.044s"
+    },
+    {
+      "name": "Completed matches returns 200",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Match info returns data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Match scorecard returns data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Coins balance endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Ledger V2 balance",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "FREE Bucks balance",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "FREE Bucks starts at 0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "FREE Bucks packages returns 3",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Coin transactions endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Daily check-in works",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Gated features list returns 3",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Feature check: denied when no bucks",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Feature use: fails without bucks",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Contest creation",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Contest join",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Duplicate contest join blocked",
+      "status": "PASS",
+      "detail": "status=400"
+    },
+    {
+      "name": "Prediction types returns data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "My contests returns list",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Card types returns data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Card inventory returns list",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Notifications endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Notifications has unread_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Notifications has array",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Referral code generation",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Referral stats",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No-auth blocked: /v2/ledger/balance",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "No-auth blocked: /v2/freebucks/balance",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "No-auth blocked: /v2/cards/inventory",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "No-auth blocked: /v2/notifications",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "No-auth blocked: /auth/me",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "No-auth blocked: /v2/contests/user/my",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "Non-admin blocked from fraud panel",
+      "status": "PASS",
+      "detail": "got 403"
+    },
+    {
+      "name": "Non-admin blocked from wallet adjust",
+      "status": "PASS",
+      "detail": "got 403"
+    },
+    {
+      "name": "Fake token rejected",
+      "status": "PASS",
+      "detail": "got 401"
+    },
+    {
+      "name": "Auth rate limit triggers 429",
+      "status": "FAIL",
+      "detail": "statuses=[200, 200, 200, 200, 200, 200, 200, 200]"
+    },
+    {
+      "name": "Payment packages returns data",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Stripe checkout creates session",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Invalid package rejected",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Payment without auth rejected",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: feature flags",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: action log",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: fraud flagged users",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: analytics dashboard",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Analytics has total_users",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Analytics has DAU",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: cache stats",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Invalid match ID handled gracefully",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Invalid contest ID handled",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Empty predictions returns list",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No negative coin balances",
+      "status": "PASS",
+      "detail": "found 0"
+    },
+    {
+      "name": "No orphaned ledger entries",
+      "status": "PASS",
+      "detail": "found 0"
+    },
+    {
+      "name": "Users collection has data",
+      "status": "PASS",
+      "detail": "count=12"
+    },
+    {
+      "name": "No duplicate email addresses",
+      "status": "PASS",
+      "detail": "dupes=[]"
+    }
+  ]
+}

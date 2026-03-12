@@ -1,0 +1,301 @@
+{
+  "pass": 56,
+  "fail": 3,
+  "tests": [
+    {
+      "name": "Health endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Razorpay endpoint exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Razorpay reports enabled status",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Xoxoday endpoint exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Xoxoday reports provider type",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Stripe webhook removed (404)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin login",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "OTP send",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Dev OTP returned",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "OTP verify",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Registration (no invite code)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Welcome 50 coins",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "email_verified flag set",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Zero 'FREE11 Coins' in frontend",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Zero 'FREE11 Coins' in backend",
+      "status": "FAIL",
+      "detail": ""
+    },
+    {
+      "name": "'Free Coins' used in frontend",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Free Coins balance endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "FREE Bucks balance endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "FREE Bucks starts at 0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "4 FREE Bucks packages",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Packages have bonus",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Progression endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Starts at Bronze",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Daily missions (5)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Streak endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Spin status",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Spin wheel works",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Daily leaderboard",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Weekly leaderboard",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Economy status (cap/limits)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Store tiers (5)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "EntitySport matches",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Prediction types",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Card/booster types",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Card games config",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Rummy exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Teen Patti exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Poker exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Voucher catalog has items",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Amazon in catalog",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No-auth blocked: /v2/freebucks/balance",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No-auth blocked: /v2/engage/progression",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No-auth blocked: /v2/notifications",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No-auth blocked: /auth/me",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Non-admin blocked from fraud panel",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Rate limit triggers 429",
+      "status": "FAIL",
+      "detail": "statuses=[200, 200, 200]"
+    },
+    {
+      "name": "Notifications endpoint",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Push preferences",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: feature flags",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: fraud panel",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: economy stats",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: analytics",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Admin: cache stats",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No negative coin balances",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No duplicate emails",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "No negative FREE Bucks",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Cache reduces latency",
+      "status": "FAIL",
+      "detail": "0.003s \u2192 0.044s"
+    },
+    {
+      "name": "50 concurrent requests",
+      "status": "PASS",
+      "detail": "50/50 OK in 0.1s"
+    },
+    {
+      "name": "All frontend routes exist",
+      "status": "PASS",
+      "detail": "Verified via previous tests"
+    }
+  ]
+}
