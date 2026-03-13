@@ -60,6 +60,7 @@ const SponsoredPools = lazy(() => import('./pages/SponsoredPools'));
 const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 const WalletExplainer = lazy(() => import('./pages/WalletExplainer'));
 const Blog = lazy(() => import('./pages/Blog'));
+const GameSEO = lazy(() => import('./pages/GameSEO'));
 import { I18nProvider } from './context/I18nContext';
 import SiteFooter from './components/SiteFooter';
 import { toast } from 'sonner';
@@ -380,7 +381,13 @@ function AppRouter() {
         <Route path="/sponsored" element={<PrivateRoute><SponsoredPools /></PrivateRoute>} />
         <Route path="/blog/cricket-guide" element={<Blog />} />
         <Route path="/blog/ipl-guide" element={<Blog />} />
+        <Route path="/blog/:slug" element={<Blog />} />
         <Route path="/blog" element={<Blog />} />
+        {/* SEO Game Landing Pages */}
+        <Route path="/rummy" element={<GameSEO />} />
+        <Route path="/teen-patti" element={<GameSEO />} />
+        <Route path="/poker" element={<GameSEO />} />
+        <Route path="/cricket-prediction" element={<GameSEO />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />

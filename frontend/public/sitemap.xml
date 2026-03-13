@@ -1,143 +1,282 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-  <!-- ── HOME / ENTRY ── -->
+  <!-- ══════════════════════════════════════════
+       HOME
+  ══════════════════════════════════════════ -->
   <url>
     <loc>https://free11.com/</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en-in" href="https://free11.com/"/>
+    <xhtml:link rel="alternate" hreflang="hi" href="https://free11.com/?lang=hi"/>
+    <xhtml:link rel="alternate" hreflang="te" href="https://free11.com/?lang=te"/>
+    <xhtml:link rel="alternate" hreflang="ta" href="https://free11.com/?lang=ta"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://free11.com/?lang=bn"/>
+    <xhtml:link rel="alternate" hreflang="mr" href="https://free11.com/?lang=mr"/>
+    <image:image>
+      <image:loc>https://free11.com/free11_icon_512.png</image:loc>
+      <image:title>FREE11 — Free Cricket Prediction and Card Games India</image:title>
+    </image:image>
   </url>
 
-  <!-- ── AUTH ── -->
+  <!-- ══════════════════════════════════════════
+       SEO GAME LANDING PAGES (HIGH PRIORITY)
+  ══════════════════════════════════════════ -->
+  <url>
+    <loc>https://free11.com/rummy</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/teen-patti</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/poker</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/cricket-prediction</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ══════════════════════════════════════════
+       AUTH
+  ══════════════════════════════════════════ -->
   <url>
     <loc>https://free11.com/login</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://free11.com/register</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- ── CORE APP (auth-required, high SEO value) ── -->
+  <!-- ══════════════════════════════════════════
+       CORE APP PAGES
+  ══════════════════════════════════════════ -->
   <url>
-    <loc>https://free11.com/match-centre</loc>
-    <lastmod>2026-03-11</lastmod>
+    <loc>https://free11.com/predict</loc>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://free11.com/predict</loc>
-    <lastmod>2026-03-11</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://free11.com/match-centre</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>hourly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://free11.com/games</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/games/rummy/play</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/games/teen_patti/play</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/games/poker/play</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/games/solitaire</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://free11.com/earn</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://free11.com/shop</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://free11.com/leaderboards</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://free11.com/sponsored</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://free11.com/referrals</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/freebucks</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/wallet</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/clans</loc>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- ── CONTENT / BLOG ── -->
+  <!-- ══════════════════════════════════════════
+       BLOG — ALL ARTICLES (KEY SEO PAGES)
+  ══════════════════════════════════════════ -->
   <url>
     <loc>https://free11.com/blog</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/what-is-free11</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://free11.com/blog/cricket-guide</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/free-rummy-india</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/free-teen-patti</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/free-poker-india</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/cricket-players-2026</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/blog/earn-free-coins-india</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ══════════════════════════════════════════
+       ABOUT, FAQ, BRAND
+  ══════════════════════════════════════════ -->
+  <url>
+    <loc>https://free11.com/about</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
   <url>
     <loc>https://free11.com/faq</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
-
-  <!-- ── BRAND / PARTNERS ── -->
   <url>
     <loc>https://free11.com/brand</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- ── ABOUT & COMPANY ── -->
   <url>
-    <loc>https://free11.com/about</loc>
-    <lastmod>2026-03-11</lastmod>
+    <loc>https://free11.com/support</loc>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
 
-  <!-- ── LEGAL (important for E-E-A-T trust signals) ── -->
+  <!-- ══════════════════════════════════════════
+       LEGAL (E-E-A-T trust signals)
+  ══════════════════════════════════════════ -->
   <url>
     <loc>https://free11.com/terms</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://free11.com/privacy</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://free11.com/disclaimer</loc>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://free11.com/guidelines</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://free11.com/responsible-play</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
     <loc>https://free11.com/refund</loc>
-    <lastmod>2026-03-11</lastmod>
+    <lastmod>2026-03-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>

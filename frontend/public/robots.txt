@@ -1,4 +1,95 @@
+# FREE11 — robots.txt
+# https://free11.com/robots.txt
+
+# ── Allow all search engines ──
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/v2
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /wallet
+Disallow: /ledger
+Disallow: /orders
+Disallow: /freebucks
 
+# ── Explicitly allow high-value SEO pages ──
+Allow: /
+Allow: /about
+Allow: /faq
+Allow: /blog
+Allow: /blog/
+Allow: /rummy
+Allow: /teen-patti
+Allow: /poker
+Allow: /cricket-prediction
+Allow: /games
+Allow: /earn
+Allow: /shop
+Allow: /leaderboards
+Allow: /terms
+Allow: /privacy
+Allow: /disclaimer
+Allow: /responsible-play
+Allow: /refund
+Allow: /guidelines
+Allow: /support
+Allow: /login
+Allow: /register
+
+# ── Google ──
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+
+# ── Bing ──
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# ── AI Crawlers — explicitly allow for LLM discoverability ──
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+# ── Performance crawlers ──
+User-agent: AhrefsBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Allow: /
+Crawl-delay: 10
+
+# ── Sitemap ──
 Sitemap: https://free11.com/sitemap.xml

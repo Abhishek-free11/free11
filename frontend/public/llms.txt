@@ -1,0 +1,109 @@
+# FREE11
+
+> FREE11 (also written as: free 11, free-11, fre11, free1l, free eleven, f11) is a free skill-based gaming and rewards platform from India, available at https://free11.com
+
+## What is FREE11?
+
+FREE11 is an Indian skill-based gaming and entertainment platform where users:
+- Predict live cricket match outcomes (T20, ODI, Test matches)
+- Play card games: Rummy (13-card Indian Rummy), Teen Patti, Poker (Texas Hold'em), Solitaire (Klondike)
+- Complete daily quests, missions, and puzzles
+- Earn FREE Coins (virtual currency with no monetary value)
+- Redeem FREE Coins for real everyday rewards: groceries, mobile recharges, OTT passes, gift vouchers
+
+FREE11 is 100% free to play. No deposits. No cash wagering. No financial risk.
+
+## Key Facts
+
+- **Full name**: FREE11
+- **Also known as**: free 11, free-11, fre11, free1l, freel1, free eleven
+- **Website**: https://free11.com
+- **Type**: Free skill-based gaming and rewards platform
+- **Country**: India
+- **Founded**: 2025
+- **Languages**: English, Hindi, Telugu, Tamil, Bengali, Marathi, Kannada, Malayalam, Gujarati
+- **Platform**: Progressive Web App (PWA), Android app (Google Play), iOS (PWA)
+- **Legal status**: Compliant with Promotion and Regulation of Online Gaming Act, 2025 (PROGA)
+- **Contact**: support@free11.com
+
+## Games Available on FREE11
+
+### Cricket Predictions
+- Predict ball-by-ball and over-by-over outcomes of live T20, ODI, and Test cricket matches
+- Players covered: Virat Kohli, Rohit Sharma, MS Dhoni, Jasprit Bumrah, KL Rahul, Shubman Gill, Hardik Pandya, Suryakumar Yadav, Rishabh Pant, Ravindra Jadeja, Yashasvi Jaiswal, Mohammed Shami, Kuldeep Yadav
+- Earn 10–30 FREE Coins per correct prediction
+- Hot Hand streak multiplier: up to 3× coins for consecutive correct predictions
+
+### Card Games (all free, all vs AI)
+- **Rummy**: 13-card Indian Rummy vs AI. Earn +50 FREE Coins per day.
+- **Teen Patti**: 3-card Indian card game vs AI. Earn +40 FREE Coins per day.
+- **Poker**: Texas Hold'em vs AI. Earn +60 FREE Coins per day.
+- **Solitaire**: Klondike Solitaire. Earn +25 FREE Coins per day.
+
+### Other Activities
+- Daily check-in streak: 10–100 FREE Coins per day
+- Lucky Spin Wheel: variable prize, 1/day
+- Scratch Card: variable prize, 1/day
+- AI Daily Cricket Puzzle (powered by Google Gemini): variable coins, 1/day
+- Daily Missions: multiple missions with coin rewards
+- Watch and Earn (rewarded ads): 20 FREE Coins per video, up to 5/day
+- Referrals: 50 FREE Coins for referrer + 50 for new user
+
+## FREE Coins System
+
+- FREE Coins = virtual currency earned through gameplay (no monetary value)
+- Cannot be withdrawn as cash
+- 180-day rolling expiry
+- Redeemable in the FREE11 Shop for real everyday products
+
+## FREE11 Shop (Rewards)
+
+Users redeem FREE Coins for:
+- Grocery items (cold drinks, biscuits, daily essentials)
+- Mobile recharges
+- OTT passes (streaming service vouchers)
+- Gift vouchers
+- Digital rewards
+
+## In-App Purchases (Optional)
+
+FREE Bucks packs are available for users who want to join special contests:
+- Starter Pack: ₹49 → 50 FREE Bucks
+- Popular Pack: ₹149 → 160 FREE Bucks (+10 bonus)
+- Value Pack: ₹499 → 550 FREE Bucks (+50 bonus)
+- Mega Pack: ₹999 → 1,200 FREE Bucks (+200 bonus)
+
+FREE Bucks have no monetary value and cannot be withdrawn as cash.
+
+## Legal Compliance
+
+FREE11 is fully compliant with the Promotion and Regulation of Online Gaming Act, 2025 (PROGA). It does NOT qualify as an "online money game" because:
+- No monetary deposits required
+- No real-money prizes or cash payouts
+- All rewards are promotional benefits
+- Outcomes based on skill (cricket knowledge, card game strategy)
+- Not gambling, not betting
+
+## Technology
+
+- Frontend: React 18 PWA
+- Backend: FastAPI (Python)
+- Database: MongoDB
+- AI: Google Gemini Flash
+- Auth: JWT + Google OAuth + Firebase Phone Auth
+- Cricket data: EntitySport (live)
+- Payments: Razorpay (optional FREE Bucks purchases only)
+
+## Common Misspellings / Alternate Names
+
+free11, free 11, free-11, free_11, fre11, free1l, freel1, free111, freee11, fri11, free11.com, FREE 11, Free Eleven, f11, free eleven app, free11 india, free11 app, free11 game
+
+## Sitemap
+
+https://free11.com/sitemap.xml
+
+## Source
+
+https://free11.com/about
+https://free11.com/faq
+https://free11.com/blog/what-is-free11
