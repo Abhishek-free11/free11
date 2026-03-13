@@ -149,7 +149,7 @@ class FCMService:
         for i in range(0, len(messages), 500):
             batch = messages[i:i + 500]
             try:
-                resp = messaging.send_all(batch)
+                resp = messaging.send_each(batch)
                 logger.info("FCM bulk batch %d: %d sent, %d failed", i // 500, resp.success_count, resp.failure_count)
                 # Deactivate invalid tokens
                 for idx, r in enumerate(resp.responses):
@@ -157,7 +157,7 @@ class FCMService:
                         bad_token = tokens[i + idx]
                         await self.db.fcm_tokens.update_one({"token": bad_token}, {"$set": {"active": False}})
             except Exception as e:
-                logger.error("FCM send_all error: %s", e)
+                logger.error("FCM send_each error: %s", e)
 
     async def send_single(self, token: str, title: str, body: str, data: Optional[Dict] = None):
         """Send push to a single FCM token directly."""
