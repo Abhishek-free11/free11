@@ -205,7 +205,7 @@ const Landing = () => {
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-5 text-xs"
             style={{ background:'rgba(198,160,82,0.08)', border:'1px solid rgba(198,160,82,0.2)', color:'#C6A052' }}>
             <span className="w-1.5 h-1.5 rounded-full animate-live-pulse" style={{ background:'#C6A052' }} />
-            India's #1 Skill-Based Cricket Prediction Platform
+            India's Skill-Based Gaming & Rewards Platform
           </motion.div>
 
           {/* H1 — exact PRD tagline */}
@@ -396,7 +396,7 @@ const Landing = () => {
               Every T20 cricket over becomes a micro-earning opportunity. Every correct prediction brings you closer to your next grocery redemption. Earn rewards from cricket the smart way — predictions, daily puzzles, streaks, Crowd Meter, and sponsored brand pools all generate coins.
             </p>
             <p>
-              The <a href="/shop" className="underline" style={{ color: '#C6A052' }}>FREE11 Shop</a> stocks 50+ brand-funded SKUs delivered via ONDC, Zepto, and BigBasket. Start free, play skill, earn real.
+              The <a href="/shop" className="underline" style={{ color: '#C6A052' }}>FREE11 Shop</a> stocks 50+ rewards including groceries, vouchers, and digital products. Start free, play skill, earn real.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <a href="/predict" className="text-xs px-3 py-1.5 rounded-full font-medium" style={{ background: 'rgba(198,160,82,0.1)', color: '#C6A052', border: '1px solid rgba(198,160,82,0.25)' }}>Start Predicting Free</a>

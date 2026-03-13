@@ -89,7 +89,7 @@ export default function Blog() {
             What is FREE11 and How Does It Work?
           </h2>
           <p className="text-sm leading-relaxed mb-4">
-            <strong style={{ color: '#C6A052' }}>FREE11</strong> is India's leading free fantasy cricket app — built for the T20 cricket season and beyond. Unlike traditional fantasy platforms that require deposits or carry financial risk, FREE11 is entirely free to play. You earn <strong style={{ color: 'white' }}>FREE Coins</strong> by making accurate cricket predictions, then redeem those coins for real everyday products: cold drinks, biscuits, wheat flour, mobile recharges, OTT passes, and much more.
+            <strong style={{ color: '#C6A052' }}>FREE11</strong> is a free skill-based gaming platform built around cricket and card games. Unlike traditional fantasy platforms that require deposits or carry financial risk, FREE11 is entirely free to play. You earn <strong style={{ color: 'white' }}>FREE Coins</strong> by making accurate cricket predictions, then redeem those coins for real everyday products: cold drinks, biscuits, wheat flour, mobile recharges, OTT passes, and much more.
           </p>
           <p className="text-sm leading-relaxed mb-4">
             The platform is built around <strong style={{ color: 'white' }}>skill-based free fantasy cricket India</strong> gameplay. Every over of every T20 cricket match becomes an earning opportunity. Predict runs, wickets, or boundaries correctly and watch your coin balance grow in real time.
@@ -133,20 +133,20 @@ export default function Blog() {
             ))}
           </div>
           <p className="text-sm leading-relaxed mb-4">
-            All rewards are fulfilled via ONDC, Zepto, BigBasket, and direct brand partnerships. No shipping cost — your FREE Coins cover it all.
+            All rewards are fulfilled via our partner network. Coins cover the reward cost — no additional payment needed from you.
           </p>
 
           <h2 className="text-xl font-bold text-white mb-3 mt-6" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>
             Is FREE11 Safe, Legal and PROGA Compliant?
           </h2>
           <p className="text-sm leading-relaxed mb-4">
-            FREE11 operates exclusively under India's Promotion and Regulation of Online Gaming Act, 2025 (PROGA) framework. It is a <strong style={{ color: 'white' }}>skill-based platform</strong> — not a gambling or betting product. There are no deposits, no cash prizes, and no financial risk. Every reward you earn is a sponsored promotional perk backed by India's top FMCG and consumer brands. All prediction outcomes are determined by your cricket knowledge and analytical skill, not chance.
+            FREE11 operates exclusively under India's Promotion and Regulation of Online Gaming Act, 2025 (PROGA) framework. It is a <strong style={{ color: 'white' }}>skill-based platform</strong> — not a gambling or betting product. There are no deposits, no cash prizes, and no financial risk. All prediction outcomes are determined by your cricket knowledge and analytical skill, not chance.
           </p>
 
           {/* CTA */}
           <div className="rounded-2xl p-5 my-6 text-center" style={{ background: 'linear-gradient(135deg, rgba(198,160,82,0.1), rgba(198,160,82,0.05))', border: '1px solid rgba(198,160,82,0.25)' }}>
             <p className="text-lg font-bold text-white mb-1" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>PLAY FREE. EARN ESSENTIALS.</p>
-            <p className="text-xs mb-3" style={{ color: '#8A9096' }}>Join 225M cricket fans. No deposit. Cricket Season 2026 live now.</p>
+            <p className="text-xs mb-3" style={{ color: '#8A9096' }}>No deposit required. Cricket Season 2026 live now.</p>
             <button
               onClick={() => navigate('/predict')}
               className="px-6 py-2.5 rounded-xl text-sm font-bold"
