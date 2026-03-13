@@ -1,10 +1,9 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download } from 'lucide-react';
 import { trackButtonClick } from './utils/analytics';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -195,73 +194,7 @@ function LegacyUserPermissions() {
 
   return null;
 }
-function PWAInstallButton() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [visible, setVisible] = useState(false);
-  const [pulse, setPulse] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem('appInstalled')) return;
-
-    const handler = (e) => {
-      e.preventDefault();
-      window.__pwaPrompt = e;
-      setDeferredPrompt(e);
-      setVisible(true);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    if (window.__pwaPrompt && !localStorage.getItem('appInstalled')) {
-      setDeferredPrompt(window.__pwaPrompt);
-      setVisible(true);
-    }
-    const installed = () => { localStorage.setItem('appInstalled', 'true'); setVisible(false); };
-    window.addEventListener('appinstalled', installed);
-
-    // Pulse every 8s to draw attention
-    const interval = setInterval(() => setPulse(p => !p), 8000);
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-      window.removeEventListener('appinstalled', installed);
-      clearInterval(interval);
-    };
-  }, []);
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    try { const { trackPWAInstall } = await import('./utils/analytics'); trackPWAInstall(); } catch (_) {}
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') { localStorage.setItem('appInstalled', 'true'); setVisible(false); }
-  };
-
-  if (!visible) return null;
-  return (
-    <button
-      onClick={handleInstall}
-      title="Install FREE11 App"
-      data-testid="pwa-install-fab"
-      style={{
-        position: 'fixed',
-        bottom: '80px',
-        right: '16px',
-        zIndex: 9998,
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        background: 'linear-gradient(135deg, #C6A052, #E0B84F)',
-        border: 'none',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: pulse ? '0 0 0 6px rgba(198,160,82,0.25), 0 4px 16px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.5)',
-        transition: 'box-shadow 0.6s ease',
-      }}
-    >
-      <Download size={18} color="#0F1115" strokeWidth={2.5} />
-    </button>
-  );
-}
+function PWAInstallButton() { return null; }
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -409,7 +342,7 @@ function App() {
           <div className="App">
             <AppRouter />
             <SiteFooter />
-            <PWAInstallButton />
+            <PWAInstallPrompt />
             <GlobalAnalyticsTracker />
             <LegacyUserPermissions />
             <Toaster position="top-center" richColors />

@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://phone-auth-launch.preview.emergentagent.com**
+**https://play-store-ready-8.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**

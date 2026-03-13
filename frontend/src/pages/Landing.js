@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../context/I18nContext';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from '../components/LanguageSelector';
 import {
   Zap, Gamepad2, CheckCircle2, Trophy, Gift, Coins,
-  TrendingUp, Users, ChevronRight, Star, Download, X,
+  TrendingUp, Users, ChevronRight, Star,
   IndianRupee, ShoppingBag, Flame
 } from 'lucide-react';
 import SkillDisclaimerModal from '../components/SkillDisclaimerModal';
 import LiveActivityTicker from '../components/LiveActivityTicker';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const FEATURES = [
   {
@@ -81,79 +81,12 @@ const Landing = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [showDisclaimer, setShowDisclaimer] = useState(false);
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [showInstallBanner, setShowInstallBanner] = useState(false);
-
-  useEffect(() => {
-    const handler = (e) => {
-      e.preventDefault();
-      window.__pwaPrompt = e; // ensure global prompt is always up to date
-      setInstallPrompt(e);
-      if (!sessionStorage.getItem('install-banner-dismissed')) {
-        setShowInstallBanner(true);
-      }
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    // Also pick up prompt if already captured before React loaded
-    if (window.__pwaPrompt && !sessionStorage.getItem('install-banner-dismissed')) {
-      setInstallPrompt(window.__pwaPrompt);
-      setShowInstallBanner(true);
-    }
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') setShowInstallBanner(false);
-    setInstallPrompt(null);
-  };
-
-  const dismissBanner = () => {
-    setShowInstallBanner(false);
-    sessionStorage.setItem('install-banner-dismissed', '1');
-  };
 
   return (
     <div className="min-h-screen bg-[#0F1115] text-white overflow-x-hidden">
       {/* Broadcast grid + glow */}
       <div className="fixed inset-0 bg-broadcast-grid pointer-events-none" />
       <div className="fixed pointer-events-none" style={{ top:'-15%',left:'50%',transform:'translateX(-50%)',width:'100vw',height:'60vh',background:'radial-gradient(ellipse, rgba(198,160,82,0.07) 0%, transparent 65%)' }} />
-
-      {/* ── PWA Install Banner ── */}
-      <AnimatePresence>
-        {showInstallBanner && (
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className="fixed bottom-0 inset-x-0 z-[100] px-4 pb-4 sm:px-6"
-            data-testid="pwa-install-banner"
-          >
-            <div className="max-w-md mx-auto rounded-2xl p-4 flex items-center gap-3"
-              style={{ background: '#1B1E23', border: '1px solid rgba(198,160,82,0.3)', boxShadow: '0 -4px 32px rgba(0,0,0,0.5)' }}>
-              <img src="/free11_icon_192.png" alt="FREE11" className="h-12 w-12 rounded-xl shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm tracking-wider text-white">Install FREE11</p>
-                <p className="text-xs mt-0.5" style={{ color: '#8A9096' }}>Add to Home Screen for the best experience</p>
-              </div>
-              <button
-                onClick={handleInstall}
-                className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold"
-                style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
-                data-testid="pwa-install-btn">
-                <Download className="h-3.5 w-3.5" /> Install
-              </button>
-              <button onClick={dismissBanner} className="shrink-0 p-1 rounded-lg" style={{ color: '#8A9096' }}
-                data-testid="pwa-install-dismiss">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Sticky Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 border-b"

@@ -10,7 +10,7 @@
 ## 1) LIVE ACCESS (No Gating)
 
 ### Public URL (PWA/Web)
-- **Live URL:** https://phone-auth-launch.preview.emergentagent.com
+- **Live URL:** https://play-store-ready-8.preview.emergentagent.com
 - **PWA Install:** Supported on Chrome Android/iOS Safari
 - **Status:** ✅ Live and accessible
 

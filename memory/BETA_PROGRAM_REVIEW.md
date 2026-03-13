@@ -85,7 +85,7 @@ You're invited to try FREE11 — Make the right calls. Get real products.
 
 🔑 Your invite code: [FREE11-XXXXXXXX]
 
-👉 Sign up here: https://phone-auth-launch.preview.emergentagent.com/register
+👉 Sign up here: https://play-store-ready-8.preview.emergentagent.com/register
 
 ⚠️ Important:
 - This is a closed beta — things may break

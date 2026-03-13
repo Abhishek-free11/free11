@@ -1,5 +1,5 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: March 2026 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. -->
+<!-- Last updated: March 2026 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. PWA auto-install prompt implemented. -->
 
 ## What is FREE11?
 

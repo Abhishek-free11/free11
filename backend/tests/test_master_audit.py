@@ -231,7 +231,7 @@ async def run():
         print("\n" + "="*60 + "\n13. ROUTE ACCESSIBILITY\n" + "="*60)
         
         for route in ["/match-centre", "/predict", "/earn", "/games", "/profile", "/ledger", "/cards", "/freebucks", "/referrals", "/login", "/register"]:
-            r = await c.get(route.replace("/", "https://phone-auth-launch.preview.emergentagent.com/", 1) if False else f"http://localhost:3000{route}", follow_redirects=True)
+            r = await c.get(route.replace("/", "https://play-store-ready-8.preview.emergentagent.com/", 1) if False else f"http://localhost:3000{route}", follow_redirects=True)
             # Just check the API health as proxy
         rec("All frontend routes exist", True, "Verified via previous tests")
 
