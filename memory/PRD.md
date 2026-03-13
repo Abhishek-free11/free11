@@ -1,5 +1,5 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: Feb 2026 — Full PRD audit & sync with codebase -->
+<!-- Last updated: March 2026 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. -->
 
 ## What is FREE11?
 
@@ -530,7 +530,7 @@ Location: `/app/android-twa/play_store_assets/`
 - LiveActivityTicker, WishlistGoal, Redemption success dialog
 - MatchCentre empty state → Card Games promo
 
-### Feb 2026 — PWA Polish + Auth + Play Store
+### Feb–March 2026 — PWA Polish + Auth + Play Store + Full Audit
 - Android TWA build errors resolved; signed AAB generated
 - Firebase Phone Auth added (Login.js + /api/auth/phone-verify)
 - FCM fix: send_all → send_each (deployment blocker resolved)
