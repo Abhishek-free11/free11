@@ -18,7 +18,7 @@ Your friends and family can:
 
 ### **Live URL:**
 ```
-https://pwa-submission.preview.emergentagent.com/
+https://phone-auth-launch.preview.emergentagent.com/
 ```
 
 ### **Test Credentials** (or create new account):
@@ -291,7 +291,7 @@ When testing with friends/family, ask:
 
 ## 🔗 **Quick Links**
 
-- **Live App**: https://pwa-submission.preview.emergentagent.com/
+- **Live App**: https://phone-auth-launch.preview.emergentagent.com/
 - **Backend API**: Running on port 8001
 - **Test Account**: demo@free11.com / password123
 

@@ -8,7 +8,7 @@
 # 1) LIVE ACCESS
 
 ## Public URL (PWA/Web)
-**🔗 https://pwa-submission.preview.emergentagent.com**
+**🔗 https://phone-auth-launch.preview.emergentagent.com**
 
 ## Android Build
 **⚠️ NOT YET AVAILABLE**

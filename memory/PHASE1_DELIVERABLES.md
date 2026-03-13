@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://pwa-submission.preview.emergentagent.com**
+**https://phone-auth-launch.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**
