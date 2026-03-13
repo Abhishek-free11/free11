@@ -1066,6 +1066,26 @@ async def poker_win(user: User = Depends(get_current_user)):
     return {"success": True, "coins_earned": coins, "new_balance": updated.get("coins_balance", 0)}
 
 
+@v2_router.post("/earn/app-share")
+async def app_share_reward(user: User = Depends(get_current_user)):
+    """Award 50 coins for sharing the app. Once per user lifetime."""
+    key = f"app_share_{user.id}"
+    already = await db.coin_transactions.find_one({"reference_id": key}, {"_id": 0})
+    if already:
+        raise HTTPException(400, "Share bonus already claimed!")
+
+    coins = 50
+    today = str(date.today())
+    await db.users.update_one({"id": user.id}, {"$inc": {"coins_balance": coins}})
+    await db.coin_transactions.insert_one({
+        "user_id": user.id, "amount": coins, "type": "app_share",
+        "description": "Shared FREE11 app with friends",
+        "reference_id": key, "created_at": today,
+    })
+    updated = await db.users.find_one({"id": user.id}, {"_id": 0, "coins_balance": 1})
+    return {"success": True, "coins_earned": coins, "new_balance": updated.get("coins_balance", 0)}
+
+
 @v2_router.get("/games/card-leaderboard")
 async def card_game_leaderboard():
     """Top 10 card game coin earners this week."""
