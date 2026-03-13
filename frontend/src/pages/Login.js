@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, Loader2, Fingerprint, X, Mail, ArrowRight, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
-import { createRecaptchaVerifier, sendPhoneOTP, confirmPhoneOTP } from '../firebase';
+import { createRecaptchaVerifier, sendPhoneOTP, confirmPhoneOTP, clearRecaptchaVerifier } from '../firebase';
 import {
   isBiometricEnabled,
   getBiometricToken,
@@ -57,6 +57,8 @@ const Login = () => {
     if (user) navigate('/match-centre', { replace: true });
     // Show biometric button if previously enabled
     setBiometricAvailable(isBiometricEnabled());
+    // Cleanup recaptcha on unmount
+    return () => { clearRecaptchaVerifier(); };
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
@@ -230,6 +232,7 @@ const Login = () => {
       }
     } catch (err) {
       toast.error(err?.message || 'Failed to send OTP. Try again.');
+      clearRecaptchaVerifier();
       recaptchaRef.current = null;
     }
     setPhoneLoading(false);
@@ -414,7 +417,7 @@ const Login = () => {
                     {phoneResendTimer > 0 ? (
                       <p className="text-xs" style={{ color: '#8A9096' }}>Resend in {phoneResendTimer}s</p>
                     ) : (
-                      <button onClick={() => { setPhoneStage('number'); recaptchaRef.current = null; }}
+                      <button onClick={() => { setPhoneStage('number'); clearRecaptchaVerifier(); recaptchaRef.current = null; }}
                         className="text-xs font-semibold" style={{ color: '#C6A052' }} data-testid="change-phone-btn">
                         Change number / Resend
                       </button>

@@ -95,9 +95,17 @@ export async function requestAndGetToken() {
 // ─── Phone Auth ───────────────────────────────────────────────────────────────
 
 let _auth = null;
+// Module-level singleton so we can clear() properly before re-creating
+let _recaptchaVerifier = null;
 
 async function getFirebaseAuth() {
   if (_auth) return _auth;
+  // Ensure Firebase app is initialized (independent of push notification init)
+  if (!firebaseApp) {
+    const { initializeApp, getApps } = await import('firebase/app');
+    const existing = getApps();
+    firebaseApp = existing.length > 0 ? existing[0] : initializeApp(firebaseConfig);
+  }
   const { getAuth } = await import('firebase/auth');
   _auth = getAuth(firebaseApp);
   return _auth;
@@ -105,14 +113,27 @@ async function getFirebaseAuth() {
 
 /**
  * Create an invisible reCAPTCHA verifier bound to a DOM container.
+ * Always clears any previous verifier first to avoid stale container errors.
  * @param {string} containerId - ID of the DOM element
  */
 export async function createRecaptchaVerifier(containerId) {
+  // Clear any existing verifier before creating a new one
+  if (_recaptchaVerifier) {
+    try { _recaptchaVerifier.clear(); } catch (_) {}
+    _recaptchaVerifier = null;
+  }
   const { RecaptchaVerifier } = await import('firebase/auth');
   const auth = await getFirebaseAuth();
-  const verifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
-  await verifier.render();
-  return verifier;
+  _recaptchaVerifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
+  await _recaptchaVerifier.render();
+  return _recaptchaVerifier;
+}
+
+export function clearRecaptchaVerifier() {
+  if (_recaptchaVerifier) {
+    try { _recaptchaVerifier.clear(); } catch (_) {}
+    _recaptchaVerifier = null;
+  }
 }
 
 /**
