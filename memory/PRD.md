@@ -5,7 +5,7 @@
 
 FREE11 is a sports entertainment platform where users earn real grocery rewards by making skill-based cricket predictions.
 Users play prediction games during live cricket matches, earn FREE Coins, and redeem them for groceries, vouchers, and digital rewards.
-FREE11 converts idle sports engagement into essential consumption for India's 150M+ constrained households.
+FREE11 converts idle sports engagement into real rewards for India's mobile-first households.
 
 **Tagline (used site-wide on landing hero, footer, share cards, etc.):** "Play Cricket. Earn Essentials."
 
@@ -273,7 +273,7 @@ All 18 sections from the final polish instruction implemented:
 
 ## 9/10 Upgrade Implemented (March 2026)
 - LiveActivityTicker: rotating community activity feed on Landing + Dashboard (15 Indian cities, realistic activity types, 3.5s rotation)
-- Social proof stats bar on Landing: 1.5L+ users, ₹8.2L+ rewards, 73% accuracy
+- Social proof stats bar on Landing: **REMOVED** (fake numbers — 1.5L+ users, ₹8.2L+ rewards, 73% accuracy were never real)
 - T20SeasonCountdown empty state: replaces dead "No matches" screen in MatchCentre + Contests
 - Enhanced ShareCard: product image, ₹ savings value (coins × 0.8), receipt-style design
 - Shop affordability banner: "You can redeem X items now" when user has coins

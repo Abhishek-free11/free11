@@ -281,26 +281,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ───── SOCIAL PROOF STATS BAR ───── */}
-      <section className="px-4 py-5" data-testid="stats-bar">
-        <div className="max-w-2xl mx-auto">
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { value: '1.5L+', label: 'Users Joined', icon: Users, color: '#C6A052' },
-              { value: '₹8.2L+', label: 'Rewards Earned', icon: IndianRupee, color: '#4ade80' },
-              { value: '73%', label: 'Avg Accuracy', icon: Trophy, color: '#a855f7' },
-            ].map(({ value, label, icon: Icon, color }) => (
-              <div key={label} className="rounded-2xl p-3 text-center"
-                style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <Icon className="h-4 w-4 mx-auto mb-1.5" style={{ color }} />
-                <div className="text-lg font-black text-white" style={{ fontFamily: 'Bebas Neue, sans-serif' }}>{value}</div>
-                <div className="text-[10px] mt-0.5" style={{ color: '#8A9096' }}>{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ───── 6-FEATURE GRID ───── */}
       <section className="px-4 py-12 sm:py-20" data-testid="features-section">
         <div className="max-w-6xl mx-auto">
