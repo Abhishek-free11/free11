@@ -1,85 +1,80 @@
 ====================================================
 FREE11 — GOOGLE PLAY STORE LISTING CONTENT
+Last Updated: Feb 2026
 ====================================================
 
 APP NAME
 --------
-FREE11 — Cricket Prediction & Rewards
+FREE11 — Play Games. Earn Real Rewards.
 
 
 SHORT DESCRIPTION (max 80 characters)
 --------------------------------------
-Predict cricket ball-by-ball. Earn Free Coins. Get real vouchers.
+Play skill-based games. Earn coins. Redeem for real rewards.
 
 
 FULL DESCRIPTION (max 4000 characters)
 ---------------------------------------
-FREE11 is India's #1 skill-based cricket prediction platform where your cricket knowledge earns you real rewards — completely free!
+FREE11 is a free skill-based gaming and rewards platform. Play cricket predictions, card games, daily quests, and puzzles — earn FREE Coins — then redeem them for real groceries, vouchers, and digital rewards. No deposits. No wagering. Just skill.
 
-🏏 HOW IT WORKS
-• Watch live cricket and predict ball-by-ball outcomes
-• Earn Free Coins for every correct prediction
-• Redeem coins for real product vouchers and gift cards
-• Climb the leaderboard and win bonus coins
+HOW IT WORKS
+• Play skill-based games and activities
+• Earn FREE Coins for wins, streaks, and daily missions
+• Redeem coins in the FREE11 Shop for real rewards
+• No cash deposits — coins are earned through gameplay only
 
-🎯 100% SKILL-BASED
-FREE11 is a skill-based sports entertainment platform. No real money deposits. No cash wagering. Your cricket knowledge and prediction accuracy determine your rewards.
+GAMES & ACTIVITIES
 
-⚡ WHAT YOU GET
-
-LIVE PREDICTIONS
-• Ball-by-ball prediction during live cricket matches
+CRICKET PREDICTIONS
+• Predict live cricket match outcomes
 • T20, ODI, and Test match coverage
-• Instant coin rewards for correct predictions
-• Real-time accuracy tracking
-
-EARN MORE COINS
-• Daily check-in streak bonuses (up to 100 coins/day)
-• Spin the Lucky Wheel daily
-• Scratch cards for surprise rewards
-• Cricket quiz challenges
-• Mini games: Rummy, Teen Patti, Poker, Solitaire (all vs AI)
-• Daily quests and challenges
-
-FREE SHOP
-• Redeem coins for real vouchers and gift cards
-• Swype Visa gift cards
-• And more rewards added regularly
-• Zero cash required — coins are earned, not bought
+• Earn coins for correct predictions
+• Streak bonuses for consecutive correct calls
 
 CARD GAMES (Play vs AI)
-• Rummy (13-card Indian Rummy)
-• Teen Patti (3-card poker)
-• Poker (Texas Hold'em)
-• Solitaire (Klondike)
-• Win extra coins in all card games
+• Rummy — 13-card Indian Rummy vs AI
+• Teen Patti — 3-card game vs AI opponents
+• Poker — Texas Hold'em vs AI
+• Solitaire — Classic Klondike
+• Earn bonus coins daily from card game wins
 
-LEAGUES & SOCIAL
-• Daily, weekly, and monthly leaderboards
-• Referral bonus: earn coins when friends join
-• Sponsored prize pools with extra big rewards
+DAILY ACTIVITIES
+• Daily quests and missions for bonus coins
+• AI-powered daily cricket puzzle (Gemini)
+• Check-in streak rewards
+• Referral rewards when friends join
 
-📋 ABOUT FREE11
-• Completely free to play — no in-app purchases required
-• Free Coins have no monetary value
+CONTEST HUB
+• Free-entry prediction contests with coin prizes
+• Weekly and monthly leaderboards
+• Sponsored brand pools with extra rewards
+
+FREE11 SHOP
+• Redeem coins for grocery items
+• Gift vouchers and digital rewards
+• New products added regularly
+• Zero cash required — use your earned coins
+
+ABOUT FREE11
+• 100% free to play — no purchases required
+• FREE Coins cannot be withdrawn as cash
+• Skill-based entertainment — NOT a betting or gambling app
+• No real money deposits or wagering of any kind
 • Available for users 18+ in India
-• Skill-based entertainment only — NOT a betting or gambling app
-• No cash deposits, no real money wagering
+• Supports 8 Indian languages: Hindi, Telugu, Bengali, Tamil, Kannada, Marathi, Malayalam, Gujarati
 
-JOIN MILLIONS OF CRICKET FANS
-Make the right calls. Get real products. Play FREE11.
-
-Free Coins are earned through skill-based predictions and activities. They cannot be purchased and have no monetary value. FREE11 is a skill-based entertainment platform regulated under applicable Indian laws for such services.
+FREE11 is a skill-based entertainment platform compliant with the Promotion and Regulation of Online Gaming Act, 2025 (PROGA). All rewards are promotional benefits only.
 
 
 WHAT'S NEW (Version 1.0)
 --------------------------
 Initial launch of FREE11!
-• Ball-by-ball cricket predictions with live match data
-• Daily earn activities: Wheel spin, Scratch card, Quiz, Quests
-• Free Shop with real reward vouchers
+• Cricket match predictions with live match data
 • Card Games: Rummy, Teen Patti, Poker, Solitaire vs AI
-• 8 language support: Hindi, Telugu, Bengali, Tamil, and more
+• Daily AI Puzzle powered by Gemini
+• FREE11 Shop with reward vouchers and groceries
+• Daily quests, streaks, and leaderboards
+• 8 Indian language support
 
 
 APP CATEGORY
@@ -95,14 +90,13 @@ Sexual content: None
 Profanity: None
 Controlled substances: None
 User-generated content: No
-Location sharing: No (optional for leaderboard region only)
-Personal/sensitive info: Email, username for account creation only
-Ads: Yes (AdMob banner and rewarded ads)
-Financial: No real money transactions
-Gambling: NO — skill-based predictions only, no cash wagering
+Location sharing: No
+Personal/sensitive info: Email and username for account creation only
+Ads: Yes (AdMob banner and rewarded ads — rewarded ads give bonus coins)
+Financial transactions: No real money transactions
+Gambling: NO — skill-based predictions only, no cash wagering, no deposits
 
-Final rating: Everyone / ESRB: E
-India age restriction: 18+
+Recommended final rating: Everyone 10+ / India age restriction: 18+
 
 
 PRIVACY POLICY URL
@@ -115,14 +109,14 @@ WEBSITE
 https://free11.com
 
 
-EMAIL FOR PLAY STORE
----------------------
+SUPPORT EMAIL FOR PLAY STORE
+------------------------------
 support@free11.com
 
 
 KEYWORDS (for ASO — App Store Optimization)
 --------------------------------------------
-cricket prediction, free cricket, earn coins, cricket quiz, ball by ball, free11, cricket rewards, skill game, ipl prediction, t20 prediction, cricket fantasy free, earn vouchers, free rewards india, rummy online free, teen patti free
+cricket prediction, free cricket app, earn coins, cricket quiz, ball by ball cricket, free11, cricket rewards, skill game india, rummy online free, teen patti free, earn vouchers india, free rewards india, card games earn coins, daily puzzle
 
 
 PRICING
@@ -132,4 +126,25 @@ Free
 
 IN-APP PURCHASES
 -----------------
-No (coins are earned through gameplay, not purchased)
+No (coins are earned through gameplay only, not purchased)
+
+====================================================
+SCREENSHOTS NEEDED (minimum 2, recommended 4-8)
+====================================================
+Recommended screens to capture at 1080x1920px:
+1. Dashboard / Home screen
+2. Live Cricket Prediction screen
+3. Card Games hub (Rummy/Teen Patti/Poker/Solitaire)
+4. FREE11 Shop / Rewards page
+5. Leaderboard screen
+6. Daily Quest / Missions screen
+
+====================================================
+ASSETS IN THIS FOLDER
+====================================================
+- feature_graphic_1024x500.png  → Upload under "Feature Graphic" in Play Console
+- icon_512x512.png              → Upload under "App Icon" in Play Console
+- screenshot_01_predict.png     → Upload as Phone Screenshot 1
+- screenshot_02_shop.png        → Upload as Phone Screenshot 2
+
+NOTE: Take fresh screenshots from the live app for best quality.
