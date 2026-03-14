@@ -80,7 +80,10 @@ const Shop = () => {
   const fetchProducts = async () => {
     try {
       const response = await api.getProducts();
-      const sorted = response.data.sort((a, b) => a.coin_price - b.coin_price);
+      // Handle paginated response {products: [], total: N} or legacy flat array
+      const raw = response.data;
+      const list = Array.isArray(raw) ? raw : (raw?.products || []);
+      const sorted = list.sort((a, b) => a.coin_price - b.coin_price);
       setProducts(sorted);
       setFilteredProducts(sorted);
     } catch {}

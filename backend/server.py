@@ -59,6 +59,32 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 app = FastAPI(title="FREE11 API")
 api_router = APIRouter(prefix="/api")
 
+# ── Global exception handler: standardized error envelope ────────────────────
+from fastapi import Request as _FastAPIRequest
+from fastapi.responses import JSONResponse as _JSONResp
+from fastapi.exceptions import RequestValidationError
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(_req: _FastAPIRequest, exc: RequestValidationError):
+    """Return a clean, consistent validation error response."""
+    errors = []
+    for err in exc.errors():
+        field = ".".join(str(loc) for loc in err.get("loc", []) if loc != "body")
+        errors.append({"field": field, "message": err.get("msg", "Invalid value")})
+    return _JSONResp(
+        status_code=422,
+        content={"error": "validation_error", "detail": errors, "message": "Invalid request data"},
+    )
+
+@app.exception_handler(500)
+async def server_error_handler(_req: _FastAPIRequest, exc: Exception):
+    req_id = getattr(_req.state, "request_id", "unknown")
+    logger.error(f"[{req_id}] Unhandled exception: {exc}", exc_info=True)
+    return _JSONResp(
+        status_code=500,
+        content={"error": "internal_server_error", "message": "Something went wrong. Please try again.", "request_id": req_id},
+    )
+
 # ==================== MODELS ====================
 
 # User Rank Tiers (Progression System)
@@ -877,17 +903,23 @@ async def get_balance(current_user: User = Depends(get_current_user)):
     return {"coins_balance": current_user.coins_balance}
 
 @api_router.get("/coins/transactions")
-async def get_transactions(current_user: User = Depends(get_current_user)):
+async def get_transactions(
+    current_user: User = Depends(get_current_user),
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(50, ge=1, le=200, description="Records per page (max 200)")
+):
+    """Paginated transaction history for current user."""
+    total = await db.coin_transactions.count_documents({"user_id": current_user.id})
     transactions = await db.coin_transactions.find(
         {"user_id": current_user.id},
         {"_id": 0}
-    ).sort("timestamp", -1).limit(50).to_list(50)
+    ).sort("timestamp", -1).skip(skip).limit(limit).to_list(limit)
     # Ensure every entry has a unique id for frontend key prop
-    for i, tx in enumerate(transactions):
+    for tx in transactions:
         if not tx.get("id"):
             import uuid as _uuid
             tx["id"] = str(_uuid.uuid4())
-    return transactions
+    return {"transactions": transactions, "total": total, "skip": skip, "limit": limit}
 
 @api_router.post("/coins/checkin")
 async def daily_checkin(current_user: User = Depends(get_current_user)):
@@ -1134,31 +1166,44 @@ async def complete_task(task_data: TaskComplete, current_user: User = Depends(ge
 # ==================== PRODUCTS ROUTES ====================
 
 @api_router.get("/products")
-async def get_products(category: Optional[str] = None):
+async def get_products(
+    category: Optional[str] = None,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=200),
+    search: Optional[str] = None
+):
+    """Paginated, searchable product listing with Redis cache for full catalog."""
+    # Only use Redis cache for the default full-catalog request (no search/pagination)
+    use_cache = (skip == 0 and limit == 100 and not search)
     cache_key = f"products:{category or 'all'}"
     try:
         from redis_cache import get_redis
         import json as _json
         r = get_redis()
-        if r is not None:
+        if r is not None and use_cache:
             cached = r.get(cache_key)
             if cached:
                 return _json.loads(cached)
     except Exception:
         r = None
 
-    query = {"active": True}
+    query: dict = {"active": True}
     if category and category != "all":
         query["category"] = category
-    products = await db.products.find(query, {"_id": 0}).to_list(100)
+    if search:
+        query["name"] = {"$regex": search, "$options": "i"}
 
-    try:
-        if r is not None:
-            import json as _json
-            r.set(cache_key, _json.dumps(products, default=str), ex=300)
-    except Exception:
-        pass
-    return products
+    total = await db.products.count_documents(query)
+    products = await db.products.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+
+    if use_cache:
+        try:
+            if r is not None:
+                import json as _json
+                r.set(cache_key, _json.dumps(products, default=str), ex=300)
+        except Exception:
+            pass
+    return {"products": products, "total": total, "skip": skip, "limit": limit}
 
 @api_router.get("/products/{product_id}")
 async def get_product(product_id: str):
@@ -1848,6 +1893,23 @@ init_payment(db, freebucks, notif_engine, analytics)
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
+    # ── Phase 6: Validate critical env vars ─────────────────────────────────
+    _critical = {"MONGO_URL": os.environ.get("MONGO_URL"), "DB_NAME": os.environ.get("DB_NAME")}
+    for var, val in _critical.items():
+        if not val:
+            logger.critical(f"STARTUP FATAL: {var} is not set. Server cannot start safely.")
+            raise RuntimeError(f"Missing required environment variable: {var}")
+    # Warn on insecure defaults (don't crash — allows dev mode)
+    if os.environ.get("JWT_SECRET_KEY", "").lower() in ("", "your-secret-key-change-in-production", "secret", "changeme"):
+        logger.warning("SECURITY WARNING: JWT_SECRET_KEY is using an insecure default. "
+                       "Set a cryptographically random value in production: openssl rand -hex 32")
+    if os.environ.get("CORS_ORIGINS", "*") == "*":
+        logger.warning("SECURITY WARNING: CORS_ORIGINS=* allows any domain. "
+                       "Set to 'https://free11.com,https://www.free11.com' in production.")
+    if not os.environ.get("RAZORPAY_KEY_ID", "").startswith("rzp_live_"):
+        logger.warning("PAYMENT WARNING: Razorpay is in TEST mode. Real payments will be rejected.")
+    logger.info(f"Startup env validation complete (env={os.environ.get('FREE11_ENV','production')})")
+
     EmailService.initialize(db, use_mock=not os.environ.get("RESEND_API_KEY"))
     # Inject contest engine into AutoScorer for auto-finalization
     from v2_routes import contests as contest_engine_instance
@@ -1936,6 +1998,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── X-Request-ID + response time middleware ──────────────────────────────────
+import uuid as _uuid_middleware
+import time as _time_middleware
+from starlette.middleware.base import BaseHTTPMiddleware as _BaseHTTPMiddleware
+from starlette.responses import JSONResponse as _JSONResponse
+
+class RequestTracingMiddleware(_BaseHTTPMiddleware):
+    """Attaches X-Request-ID and X-Response-Time to every response."""
+    async def dispatch(self, request, call_next):
+        req_id = request.headers.get("X-Request-ID") or str(_uuid_middleware.uuid4())[:16]
+        request.state.request_id = req_id
+        t0 = _time_middleware.monotonic()
+        response = await call_next(request)
+        elapsed_ms = round((_time_middleware.monotonic() - t0) * 1000, 1)
+        response.headers["X-Request-ID"]    = req_id
+        response.headers["X-Response-Time"] = f"{elapsed_ms}ms"
+        return response
+
+app.add_middleware(RequestTracingMiddleware)
 
 # Rate Limiting Middleware
 app.add_middleware(RateLimitMiddleware)

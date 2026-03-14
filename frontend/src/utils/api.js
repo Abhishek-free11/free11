@@ -19,7 +19,7 @@ export const api = {
 
   // Coins
   getBalance: () => axios.get(`${API}/coins/balance`, { headers: getAuthHeader() }),
-  getTransactions: () => axios.get(`${API}/coins/transactions`, { headers: getAuthHeader() }),
+  getTransactions: (skip = 0, limit = 50) => axios.get(`${API}/coins/transactions?skip=${skip}&limit=${limit}`, { headers: getAuthHeader() }),
   dailyCheckin: () => axios.post(`${API}/coins/checkin`, {}, { headers: getAuthHeader() }),
 
   // Games
@@ -32,7 +32,12 @@ export const api = {
   completeTask: (taskId) => axios.post(`${API}/tasks/complete`, { task_id: taskId }, { headers: getAuthHeader() }),
 
   // Products
-  getProducts: (category) => axios.get(`${API}/products${category ? `?category=${category}` : ''}`),
+  getProducts: (category, skip = 0, limit = 100, search = '') => {
+    const params = new URLSearchParams({ skip, limit });
+    if (category && category !== 'all') params.append('category', category);
+    if (search) params.append('search', search);
+    return axios.get(`${API}/products?${params.toString()}`);
+  },
   getProduct: (id) => axios.get(`${API}/products/${id}`),
   createProduct: (data) => axios.post(`${API}/products`, data, { headers: getAuthHeader() }),
 

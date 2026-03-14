@@ -12,7 +12,8 @@ import QuestModal from '../components/QuestModal';
 import LiveActivityTicker from '../components/LiveActivityTicker';
 import {
   Coins, Zap, Gift, Trophy, TrendingUp, Calendar, Flame,
-  Target, ShoppingBag, ChevronRight, Star, Play, Award, Users
+  Target, ShoppingBag, ChevronRight, Star, Play, Award, Users,
+  CheckCircle, Circle, ArrowRight, Sparkles, X
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
@@ -34,6 +35,158 @@ function IPLCountdown() {
   );
 }
 
+// ── Onboarding Checklist — shows until all steps complete ──────────────────
+const STEPS = [
+  { id: 'checkin',    label: 'Complete daily check-in',       coins: '+15',  path: null },
+  { id: 'predict',   label: 'Make your first prediction',     coins: '+20',  path: '/match-centre' },
+  { id: 'shop',      label: 'Browse the rewards shop',        coins: null,   path: '/shop' },
+  { id: 'earn',      label: 'Play a mini-game',               coins: '+25',  path: '/earn' },
+];
+
+function OnboardingChecklist({ user, hasCheckedIn, onDismiss }) {
+  const navigate = useNavigate();
+  const hasPredicted   = (user?.total_predictions || 0) > 0;
+  const hasPlayedGame  = (user?.xp || 0) > 50;
+  const dismissed      = sessionStorage.getItem('onboarding_dismissed') === '1';
+
+  const done = { checkin: hasCheckedIn, predict: hasPredicted, shop: false, earn: hasPlayedGame };
+  const completedCount = Object.values(done).filter(Boolean).length;
+  const allDone = completedCount === STEPS.length;
+
+  // Don't show if all done or dismissed this session
+  if (allDone || dismissed) return null;
+
+  return (
+    <div
+      className="card-broadcast-gold p-4 relative"
+      style={{ border: '1px solid rgba(198,160,82,0.4)', background: 'linear-gradient(135deg, rgba(198,160,82,0.08) 0%, rgba(15,17,21,0.95) 100%)' }}
+      data-testid="onboarding-checklist"
+    >
+      <button
+        className="absolute top-3 right-3 text-gray-500 hover:text-white"
+        onClick={() => { sessionStorage.setItem('onboarding_dismissed', '1'); onDismiss(); }}
+        data-testid="dismiss-onboarding-btn"
+        aria-label="Dismiss"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles className="h-4 w-4" style={{ color: '#E0B84F' }} />
+        <h3 className="font-bold text-white text-sm">Get Started — Earn Your First Rewards</h3>
+        <span className="ml-auto text-xs font-bold" style={{ color: '#C6A052' }}>{completedCount}/{STEPS.length}</span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-1.5 rounded-full mb-3" style={{ background: 'rgba(255,255,255,0.06)' }}>
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${(completedCount / STEPS.length) * 100}%`, background: 'linear-gradient(90deg,#C6A052,#E0B84F)' }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        {STEPS.map((step) => {
+          const isComplete = done[step.id];
+          return (
+            <div
+              key={step.id}
+              onClick={() => !isComplete && step.path && navigate(step.path)}
+              className={`flex items-center gap-3 p-2.5 rounded-xl transition-all ${!isComplete && step.path ? 'cursor-pointer hover:bg-white/5' : ''}`}
+              style={{ background: isComplete ? 'rgba(74,222,128,0.06)' : 'rgba(255,255,255,0.02)', border: `1px solid ${isComplete ? 'rgba(74,222,128,0.2)' : 'rgba(255,255,255,0.05)'}` }}
+              data-testid={`onboarding-step-${step.id}`}
+            >
+              {isComplete
+                ? <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-400" />
+                : <Circle className="h-4 w-4 flex-shrink-0" style={{ color: '#8A9096' }} />
+              }
+              <span className={`text-xs flex-1 ${isComplete ? 'line-through' : 'text-white'}`} style={{ color: isComplete ? '#8A9096' : undefined }}>
+                {step.label}
+              </span>
+              {step.coins && !isComplete && (
+                <span className="text-xs font-bold" style={{ color: '#4ade80' }}>{step.coins}</span>
+              )}
+              {!isComplete && step.path && (
+                <ArrowRight className="h-3.5 w-3.5" style={{ color: '#C6A052' }} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── First Prediction Hero Banner ────────────────────────────────────────────
+function FirstPredictionBanner({ liveMatch, onNavigate }) {
+  const [dismissed, setDismissed] = useState(
+    () => sessionStorage.getItem('first_pred_banner_dismissed') === '1'
+  );
+  if (dismissed) return null;
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl p-5"
+      style={{
+        background: 'linear-gradient(135deg, #1a1300 0%, #2a1f00 50%, #1a1300 100%)',
+        border: '1px solid rgba(198,160,82,0.5)',
+        boxShadow: '0 0 30px rgba(198,160,82,0.12)'
+      }}
+      data-testid="first-prediction-banner"
+    >
+      {/* Dismiss button */}
+      <button
+        className="absolute top-3 right-3 text-gray-600 hover:text-white"
+        onClick={() => { sessionStorage.setItem('first_pred_banner_dismissed', '1'); setDismissed(true); }}
+        aria-label="Dismiss"
+      >
+        <X className="h-4 w-4" />
+      </button>
+
+      {/* Glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% -20%, rgba(198,160,82,0.15) 0%, transparent 70%)' }} />
+
+      <div className="relative">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg,#C6A052,#E0B84F)' }}>
+            <Target className="h-5 w-5 text-[#0F1115]" />
+          </div>
+          <div>
+            <h3 className="font-heading text-lg text-white tracking-wide" style={{ fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.06em' }}>
+              MAKE YOUR FIRST PREDICTION
+            </h3>
+            <p className="text-xs mt-0.5" style={{ color: '#8A9096' }}>Predict cricket outcomes and earn FREE Coins</p>
+          </div>
+        </div>
+
+        {/* How it works - 3 steps */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[
+            { step: '1', text: 'Pick a live or upcoming match' },
+            { step: '2', text: 'Make your prediction (free)' },
+            { step: '3', text: 'Win up to +100 coins if correct' },
+          ].map(({ step, text }) => (
+            <div key={step} className="text-center p-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
+              <div className="w-6 h-6 rounded-full mx-auto mb-1.5 flex items-center justify-center text-xs font-black"
+                style={{ background: 'linear-gradient(135deg,#C6A052,#E0B84F)', color: '#0F1115' }}>{step}</div>
+              <p className="text-[10px] leading-tight" style={{ color: '#8A9096' }}>{text}</p>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={() => onNavigate(liveMatch?.match_id ? `/match/${liveMatch.match_id}` : '/match-centre')}
+          className="btn-gold w-full h-11 rounded-xl text-sm font-bold ripple"
+          style={{ fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.08em', fontSize: '15px' }}
+          data-testid="first-prediction-cta"
+        >
+          {liveMatch ? `PREDICT ${liveMatch.team1_short} vs ${liveMatch.team2_short}` : 'VIEW UPCOMING MATCHES'} →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const Dashboard = () => {
   const { user, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -47,6 +200,10 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showQuestModal, setShowQuestModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(true);
+
+  const isNewUser   = !user?.total_predictions || user.total_predictions === 0;
+  const hasCheckedIn = user?.last_checkin === new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const checkTutorialStatus = async () => {
@@ -94,12 +251,15 @@ const Dashboard = () => {
       setLoading(true);
       const [progressRes, transactionsRes, leaderboardRes, matchesRes] = await Promise.all([
         api.getDemandProgress(),
-        api.getTransactions(),
+        api.getTransactions(0, 5),
         api.getLeaderboard(),
         api.v2EsGetMatches('3', 5).catch(() => ({ data: [] }))
       ]);
       setDemandProgress(progressRes.data);
-      setTransactions(transactionsRes.data.slice(0, 5));
+      // Handle both paginated ({transactions: []}) and legacy ([]) response shapes
+      const txData = transactionsRes.data;
+      const txList = Array.isArray(txData) ? txData : (txData?.transactions || []);
+      setTransactions(txList.slice(0, 5));
       setLeaderboard(leaderboardRes.data);
       const esMatches = Array.isArray(matchesRes.data) ? matchesRes.data : [];
       if (esMatches.length > 0) {
@@ -154,6 +314,23 @@ const Dashboard = () => {
 
         {/* ── IPL Carousel ── */}
         <IPLCarousel />
+
+        {/* ── ONBOARDING CHECKLIST — show for new users until dismissed ── */}
+        {showOnboarding && (
+          <OnboardingChecklist
+            user={user}
+            hasCheckedIn={hasCheckedIn}
+            onDismiss={() => setShowOnboarding(false)}
+          />
+        )}
+
+        {/* ── FIRST PREDICTION HERO BANNER — users with 0 predictions ── */}
+        {isNewUser && (
+          <FirstPredictionBanner
+            liveMatch={liveMatch}
+            onNavigate={navigate}
+          />
+        )}
 
         {/* ── User Header ── */}
         <div className="card-broadcast-gold p-4 flex items-center gap-3" data-testid="user-header">
