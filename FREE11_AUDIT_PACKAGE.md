@@ -8,7 +8,7 @@
 # 1) LIVE ACCESS
 
 ## Public URL (PWA/Web)
-**🔗 https://play-store-ready-8.preview.emergentagent.com**
+**🔗 https://play-store-launch-4.preview.emergentagent.com**
 
 ## Android Build
 **⚠️ NOT YET AVAILABLE**

@@ -273,7 +273,7 @@ async def run_all():
 
         # 11.2 Payment checkout (test mode)
         r = await c.post("/payments/checkout", json={
-            "package_id": "starter", "origin_url": "https://play-store-ready-8.preview.emergentagent.com"
+            "package_id": "starter", "origin_url": "https://play-store-launch-4.preview.emergentagent.com"
         }, headers=admin_headers)
         record("Stripe checkout creates session", r.status_code == 200 and "url" in r.json(),
                r.text[:150] if r.status_code != 200 else "")

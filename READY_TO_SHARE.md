@@ -18,7 +18,7 @@ Your friends and family can:
 
 ### **Live URL:**
 ```
-https://play-store-ready-8.preview.emergentagent.com/
+https://play-store-launch-4.preview.emergentagent.com/
 ```
 
 ### **Test Credentials** (or create new account):
@@ -291,7 +291,7 @@ When testing with friends/family, ask:
 
 ## 🔗 **Quick Links**
 
-- **Live App**: https://play-store-ready-8.preview.emergentagent.com/
+- **Live App**: https://play-store-launch-4.preview.emergentagent.com/
 - **Backend API**: Running on port 8001
 - **Test Account**: demo@free11.com / password123
 

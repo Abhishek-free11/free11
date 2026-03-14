@@ -212,9 +212,8 @@ const Login = () => {
     const e164 = phone.startsWith('+') ? phone : `+91${phone.replace(/\D/g, '')}`;
     setPhoneLoading(true);
     try {
-      if (!recaptchaRef.current) {
-        recaptchaRef.current = await createRecaptchaVerifier('recaptcha-container');
-      }
+      // Always create a fresh verifier — reusing a stale one causes "already rendered" error
+      recaptchaRef.current = await createRecaptchaVerifier('recaptcha-container');
       const confirmation = await sendPhoneOTP(e164, recaptchaRef.current);
       confirmationResultRef.current = confirmation;
       setPhoneStage('verifying');

@@ -122,10 +122,15 @@ export async function createRecaptchaVerifier(containerId) {
     try { _recaptchaVerifier.clear(); } catch (_) {}
     _recaptchaVerifier = null;
   }
+  // Also wipe the DOM container so no stale rendered widget remains
+  const container = document.getElementById(containerId);
+  if (container) container.innerHTML = '';
+
   const { RecaptchaVerifier } = await import('firebase/auth');
   const auth = await getFirebaseAuth();
   _recaptchaVerifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
-  await _recaptchaVerifier.render();
+  // Do NOT call .render() here — signInWithPhoneNumber calls it internally.
+  // Calling it twice on the same element causes "already rendered" error.
   return _recaptchaVerifier;
 }
 
