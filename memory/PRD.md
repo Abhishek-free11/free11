@@ -554,4 +554,10 @@ Location: `/app/android-twa/play_store_assets/`
   - Marathi (`mr.json`) — Complete with all sections
   - Malayalam (`ml.json`) — Complete with all sections
 - All translation files include: nav, auth, match_centre, wallet_page, freebucks, predict_page, games, earn, earn_page, dashboard, profile_page, ledger_page, shop_page, footer_links, legal, engagement, common, footer, landing, leaderboard_page, referrals_page, cardgames_page, support_page, notifications
+- **Enhanced LanguageSelector component** in Profile Settings:
+  - Full variant with "Select Language" header
+  - Displays native script + English name for each language
+  - Gold accent styling matching app theme
+  - Checkmark indicator for selected language
+  - Language persists via localStorage
 - PRD updated to reflect all completed work
