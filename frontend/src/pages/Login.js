@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Loader2, Fingerprint, X, Mail, ArrowRight, Phone } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Fingerprint, X, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 import { createRecaptchaVerifier, sendPhoneOTP, confirmPhoneOTP, clearRecaptchaVerifier } from '../firebase';
@@ -15,8 +15,6 @@ import {
   enableBiometric,
   disableBiometric,
 } from '../utils/biometric';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,16 +31,8 @@ const Login = () => {
   const [showEnableBiometric, setShowEnableBiometric] = useState(false);
   const [pendingLoginData, setPendingLoginData] = useState(null);
 
-  // OTP magic-link mode state
-  const [loginMode, setLoginMode] = useState('password'); // 'password' | 'otp' | 'phone'
-  const [otpEmail, setOtpEmail] = useState('');
-  const [otpStage, setOtpStage] = useState('email'); // 'email' | 'code'
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [otpLoading, setOtpLoading] = useState(false);
-  const [resendTimer, setResendTimer] = useState(0);
-  const [devOtp, setDevOtp] = useState('');
-  const otpRefs = useRef([]);
-  const timerRef = useRef(null);
+  // Login mode: 'password' | 'phone'
+  const [loginMode, setLoginMode] = useState('password');
 
   // Phone OTP state
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -131,73 +121,6 @@ const Login = () => {
     navigate('/match-centre');
   };
 
-  // ── OTP Magic-link helpers ──
-  const startResendTimer = () => {
-    setResendTimer(30);
-    timerRef.current = setInterval(() => {
-      setResendTimer(s => { if (s <= 1) { clearInterval(timerRef.current); return 0; } return s - 1; });
-    }, 1000);
-  };
-
-  const sendOtp = async () => {
-    if (!otpEmail.trim()) { toast.error('Enter your email first'); return; }
-    setOtpLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: otpEmail.toLowerCase().trim() }),
-      });
-      if (res.status === 429) { toast.error('Too many requests — wait a minute and try again'); setOtpLoading(false); return; }
-      if (!res.ok) { toast.error('Failed to send OTP'); setOtpLoading(false); return; }
-      const data = await res.json();
-      if (data.dev_otp) setDevOtp(String(data.dev_otp));
-      setOtpStage('code');
-      setOtp(['', '', '', '', '', '']);
-      startResendTimer();
-      setTimeout(() => otpRefs.current[0]?.focus(), 100);
-      toast.success('OTP sent to your email');
-    } catch { toast.error('Failed to send OTP'); }
-    setOtpLoading(false);
-  };
-
-  const handleOtpKey = (i, e) => {
-    if (e.key === 'Backspace' && !otp[i] && i > 0) otpRefs.current[i - 1]?.focus();
-  };
-
-  const handleOtpChange = (i, val) => {
-    const digit = val.replace(/\D/g, '').slice(-1);
-    const next = [...otp];
-    next[i] = digit;
-    setOtp(next);
-    if (digit && i < 5) otpRefs.current[i + 1]?.focus();
-  };
-
-  const verifyOtp = async () => {
-    const code = otp.join('');
-    if (code.length !== 6 || otpLoading) return;
-    setOtpLoading(true);
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp-register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: otpEmail.toLowerCase().trim(), otp: code }),
-      });
-      if (!res.ok) {
-        let detail = 'Incorrect code';
-        try { detail = (await res.json()).detail || detail; } catch {}
-        toast.error(detail);
-        setOtpLoading(false);
-        return;
-      }
-      const data = await res.json();
-      await loginWithToken(data.access_token);
-      toast.success(t('auth.welcome_back'));
-      navigate('/match-centre');
-    } catch { toast.error('Network error'); }
-    setOtpLoading(false);
-  };
-
   // ── Phone OTP handlers ──────────────────────────────────────────────
   const startPhoneResendTimer = () => {
     setPhoneResendTimer(30);
@@ -230,7 +153,16 @@ const Login = () => {
           .catch(() => {}); // silent fail — user types manually
       }
     } catch (err) {
-      toast.error(err?.message || 'Failed to send OTP. Try again.');
+      const code = err?.code || '';
+      if (code === 'auth/network-request-failed') {
+        toast.error('Network error — check your internet connection and try again.');
+      } else if (code === 'auth/too-many-requests') {
+        toast.error('Too many attempts. Please wait a few minutes and try again.');
+      } else if (code === 'auth/invalid-phone-number') {
+        toast.error('Invalid phone number. Please enter a valid 10-digit Indian number.');
+      } else {
+        toast.error(err?.message || 'Failed to send OTP. Please try again.');
+      }
       clearRecaptchaVerifier();
       recaptchaRef.current = null;
     }
@@ -310,20 +242,16 @@ const Login = () => {
           style={{ background: '#1B1E23', border: '1px solid rgba(198,160,82,0.18)', boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
           data-testid="login-card">
 
-          {/* Mode toggle tabs */}
+          {/* Mode toggle tabs — EMAIL and PHONE only */}
           <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
             <button onClick={() => setLoginMode('password')}
-              className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
+              className="flex-1 py-2.5 rounded-lg text-sm font-bold tracking-wider transition-all"
               style={loginMode === 'password' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
-              data-testid="mode-password-tab">PASSWORD</button>
-            <button onClick={() => { setLoginMode('phone'); setPhoneStage('number'); setPhoneNumber(''); }}
-              className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
+              data-testid="mode-password-tab">EMAIL</button>
+            <button onClick={() => { setLoginMode('phone'); setPhoneStage('number'); setPhoneNumber(''); clearRecaptchaVerifier(); recaptchaRef.current = null; }}
+              className="flex-1 py-2.5 rounded-lg text-sm font-bold tracking-wider transition-all"
               style={loginMode === 'phone' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
               data-testid="mode-phone-tab">PHONE</button>
-            <button onClick={() => { setLoginMode('otp'); setOtpStage('email'); setOtp(['','','','','','']); setDevOtp(''); }}
-              className="flex-1 py-2 rounded-lg text-xs font-bold tracking-wider transition-all"
-              style={loginMode === 'otp' ? { background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' } : { color: '#8A9096' }}
-              data-testid="mode-otp-tab">EMAIL OTP</button>
           </div>
 
           {/* Invisible reCAPTCHA container */}
@@ -425,79 +353,7 @@ const Login = () => {
                 </div>
               )}
             </div>
-          ) : (
-            /* ── OTP magic-link mode ── */
-            <div data-testid="otp-login-section">
-              <p className="text-xs mb-5" style={{ color: '#8A9096' }}>
-                No password needed — we'll send a one-time code to your email.
-              </p>
-              {otpStage === 'email' ? (
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#8A9096' }}>Email</label>
-                    <Input type="email" placeholder="you@example.com" value={otpEmail}
-                      onChange={e => setOtpEmail(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && sendOtp()}
-                      className="h-11 text-white placeholder:text-slate-600 border"
-                      style={{ background: '#0F1115', borderColor: 'rgba(198,160,82,0.2)' }}
-                      data-testid="otp-email-input" />
-                  </div>
-                  <button onClick={sendOtp} disabled={otpLoading || !otpEmail.trim()}
-                    className="w-full h-12 rounded-xl font-heading text-lg tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
-                    style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
-                    data-testid="send-otp-btn">
-                    {otpLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Mail className="h-4 w-4" /> Send OTP</>}
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-5">
-                  <div>
-                    <p className="text-xs mb-3" style={{ color: '#8A9096' }}>
-                      Code sent to <span style={{ color: '#C6A052' }}>{otpEmail}</span>
-                      <button onClick={() => setOtpStage('email')} className="ml-2 underline" style={{ color: '#8A9096' }}>Change</button>
-                    </p>
-                    <div className="flex gap-2 justify-between" data-testid="otp-boxes">
-                      {otp.map((digit, i) => (
-                        <input key={i} ref={el => otpRefs.current[i] = el}
-                          type="text" inputMode="numeric" maxLength={1} value={digit}
-                          onChange={e => handleOtpChange(i, e.target.value)}
-                          onKeyDown={e => handleOtpKey(i, e)}
-                          className="w-11 h-12 rounded-xl text-center text-lg font-bold text-white focus:outline-none"
-                          style={{ background: '#0F1115', border: `1px solid ${digit ? '#C6A052' : 'rgba(255,255,255,0.12)'}` }}
-                          data-testid={`otp-box-${i}`} />
-                      ))}
-                    </div>
-                  </div>
-                  <button onClick={verifyOtp} disabled={otpLoading || otp.join('').length !== 6}
-                    className="w-full h-12 rounded-xl font-heading text-lg tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
-                    style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
-                    data-testid="verify-otp-btn">
-                    {otpLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Verify &amp; Sign In <ArrowRight className="h-4 w-4" /></>}
-                  </button>
-                  {devOtp && (
-                    <div className="rounded-xl px-4 py-3 text-center"
-                      style={{ background: 'rgba(198,160,82,0.08)', border: '1px solid rgba(198,160,82,0.25)' }}>
-                      <p className="text-xs mb-1" style={{ color: '#8A9096' }}>Email delivery delayed — use this code:</p>
-                      <p className="font-mono font-black text-2xl tracking-[0.4em] cursor-pointer select-all"
-                        style={{ color: '#C6A052' }}
-                        onClick={() => {
-                          const digits = devOtp.split('').slice(0, 6);
-                          setOtp(digits.concat(Array(6 - digits.length).fill('')));
-                        }}
-                        data-testid="dev-otp-display">{devOtp}</p>
-                      <p className="text-xs mt-1" style={{ color: '#8A9096' }}>Tap to auto-fill</p>
-                    </div>
-                  )}
-                  <div className="text-center">
-                    {resendTimer > 0
-                      ? <span className="text-xs" style={{ color: '#8A9096' }}>Resend in {resendTimer}s</span>
-                      : <button onClick={sendOtp} className="text-xs underline" style={{ color: '#C6A052' }} data-testid="resend-otp-btn">Resend OTP</button>
-                    }
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          ) : null}
 
           {/* ── Biometric Login ── */}
           {biometricAvailable && (
