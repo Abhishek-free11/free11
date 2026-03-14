@@ -893,10 +893,7 @@ async def get_transactions(current_user: User = Depends(get_current_user)):
 async def daily_checkin(current_user: User = Depends(get_current_user)):
     today = datetime.now(timezone.utc).date().isoformat()
     
-    if current_user.last_checkin == today:
-        raise HTTPException(status_code=400, detail="Already checked in today")
-    
-    # Calculate streak
+    # Calculate streak based on current user data
     yesterday = (datetime.now(timezone.utc).date() - timedelta(days=1)).isoformat()
     new_streak = current_user.streak_days + 1 if current_user.last_checkin == yesterday else 1
     
@@ -905,11 +902,14 @@ async def daily_checkin(current_user: User = Depends(get_current_user)):
     streak_bonus = min(new_streak * 5, 50)  # Max 50 bonus
     total_reward = base_reward + streak_bonus
     
-    # Update user
-    await db.users.update_one(
-        {"id": current_user.id},
-        {"$set": {"last_checkin": today, "streak_days": new_streak}}
+    # ATOMIC check: only update if last_checkin != today (prevents race condition)
+    result = await db.users.find_one_and_update(
+        {"id": current_user.id, "last_checkin": {"$ne": today}},
+        {"$set": {"last_checkin": today, "streak_days": new_streak}},
+        projection={"_id": 0, "id": 1}
     )
+    if result is None:
+        raise HTTPException(status_code=400, detail="Already checked in today")
     
     # Add coins
     transaction = await add_coins(
@@ -1169,7 +1169,8 @@ async def get_product(product_id: str):
 
 @api_router.post("/products", response_model=Product)
 async def create_product(product: ProductCreate, current_user: User = Depends(get_current_user)):
-    # Simple admin check (in production, use proper role-based access)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required to create products")
     product_obj = Product(**product.model_dump())
     await db.products.insert_one(product_obj.model_dump())
     return product_obj
@@ -1183,29 +1184,31 @@ async def create_redemption(redemption_data: RedemptionCreate, current_user: Use
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    # Check if user has enough coins
-    if current_user.coins_balance < product['coin_price']:
-        raise HTTPException(status_code=400, detail=f"Insufficient coins. Need {product['coin_price']}, have {current_user.coins_balance}")
+    coin_price = product['coin_price']
     
-    # Check stock
-    if product['stock'] <= 0:
+    # ATOMIC stock check + decrement to prevent race conditions on limited stock
+    stock_result = await db.products.find_one_and_update(
+        {"id": redemption_data.product_id, "stock": {"$gt": 0}},
+        {"$inc": {"stock": -1}},
+        projection={"_id": 0, "stock": 1}
+    )
+    if stock_result is None:
         raise HTTPException(status_code=400, detail="Product out of stock")
     
-    # Spend coins
-    await spend_coins(current_user.id, product['coin_price'], f"Redeemed: {product['name']}")
-    
-    # Update stock
-    await db.products.update_one(
-        {"id": redemption_data.product_id},
-        {"$inc": {"stock": -1}}
-    )
+    # ATOMIC coin deduction (spend_coins already uses find_one_and_update with balance check)
+    try:
+        await spend_coins(current_user.id, coin_price, f"Redeemed: {product['name']}")
+    except HTTPException:
+        # Rollback stock if coin deduction fails
+        await db.products.update_one({"id": redemption_data.product_id}, {"$inc": {"stock": 1}})
+        raise HTTPException(status_code=400, detail=f"Insufficient coins. Need {coin_price} coins.")
     
     # Create redemption
     redemption = Redemption(
         user_id=current_user.id,
         product_id=product['id'],
         product_name=product['name'],
-        coins_spent=product['coin_price'],
+        coins_spent=coin_price,
         delivery_address=redemption_data.delivery_address
     )
     await db.redemptions.insert_one(redemption.model_dump())
@@ -1224,7 +1227,7 @@ async def create_redemption(redemption_data: RedemptionCreate, current_user: Use
     return {
         "message": "Redemption successful!",
         "redemption": redemption.model_dump(),
-        "new_balance": current_user.coins_balance - product['coin_price']
+        "new_balance": current_user.coins_balance - coin_price
     }
 
 @api_router.get("/redemptions")
@@ -1469,7 +1472,9 @@ async def get_faq():
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/analytics")
-async def get_analytics():
+async def get_analytics(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
     total_users = await db.users.count_documents({})
     total_redemptions = await db.redemptions.count_documents({})
     total_products = await db.products.count_documents({"active": True})
@@ -1489,8 +1494,10 @@ async def get_analytics():
     }
 
 @api_router.get("/admin/beta-metrics")
-async def get_beta_metrics():
+async def get_beta_metrics(current_user: User = Depends(get_current_user)):
     """Comprehensive Beta Metrics Dashboard"""
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
     
     # === USER METRICS ===
     total_users = await db.users.count_documents({})
@@ -1671,11 +1678,13 @@ async def get_beta_metrics():
     }
 
 @api_router.get("/admin/brand-roas")
-async def get_brand_roas():
+async def get_brand_roas(current_user: User = Depends(get_current_user)):
     """
     Placeholder Brand ROAS Dashboard
     Shows redemption attribution by brand for partner reporting
     """
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
     # Aggregate redemptions by brand
     pipeline = [
         {"$group": {
@@ -1853,6 +1862,21 @@ async def startup_event():
         )
     except Exception as e:
         logger.info(f"Unique payout index: {e}")
+    # Critical performance indexes for scale (300k users)
+    try:
+        await db.users.create_index("email", unique=True, sparse=True, name="users_email_unique")
+        await db.users.create_index("id", unique=True, name="users_id_unique")
+        await db.coin_transactions.create_index("user_id", name="txn_user_id")
+        await db.coin_transactions.create_index([("user_id", 1), ("timestamp", -1)], name="txn_user_time")
+        await db.predictions.create_index("user_id", name="pred_user_id")
+        await db.predictions.create_index([("user_id", 1), ("match_id", 1)], name="pred_user_match")
+        await db.redemptions.create_index("user_id", name="redempt_user_id")
+        await db.redemptions.create_index([("user_id", 1), ("order_date", -1)], name="redempt_user_date")
+        await db.missions.create_index([("user_id", 1), ("type", 1)], name="mission_user_type")
+        await db.router_orders.create_index("user_id", name="router_user_id")
+        logger.info("DB indexes created/verified")
+    except Exception as e:
+        logger.warning(f"Index creation (non-fatal): {e}")
     # Feature 4: Pre-generate today's AI puzzle on startup (warm cache, non-blocking)
     # Note: Wrapped in try-except to prevent startup failures in production
     try:

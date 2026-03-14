@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 
 class FREE11APITester:
-    def __init__(self, base_url="https://free11-launch.preview.emergentagent.com"):
+    def __init__(self, base_url="https://app-recovery-91.preview.emergentagent.com"):
         self.base_url = base_url
         self.user_token = None
         self.admin_token = None

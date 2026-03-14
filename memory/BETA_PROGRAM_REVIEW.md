@@ -85,7 +85,7 @@ You're invited to try FREE11 — Make the right calls. Get real products.
 
 🔑 Your invite code: [FREE11-XXXXXXXX]
 
-👉 Sign up here: https://free11-launch.preview.emergentagent.com/register
+👉 Sign up here: https://app-recovery-91.preview.emergentagent.com/register
 
 ⚠️ Important:
 - This is a closed beta — things may break
