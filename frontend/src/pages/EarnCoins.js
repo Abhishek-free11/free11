@@ -111,12 +111,12 @@ const EarnCoins = () => {
   ];
 
   const howToItems = [
-    { icon: Trophy, label: 'Fantasy Contests', desc: 'Build your dream team and compete. Top performers win big!', reward: 'Up to 500 coins', color: '#C6A052' },
-    { icon: Target, label: t('earn_page.match_winner'), desc: t('earn_page.match_winner_desc'), reward: t('earn_page.fifty_per'), color: '#60a5fa' },
-    { icon: Zap, label: t('earn_page.over_outcome'), desc: t('earn_page.over_desc'), reward: t('earn_page.twenty_five'), color: '#a78bfa' },
-    { icon: Gift, label: t('earn_page.ball_by_ball'), desc: t('earn_page.ball_desc'), reward: t('earn_page.five_fifteen'), color: '#4ade80' },
-    { icon: Heart, label: 'Card Games', desc: 'Win at Teen Patti vs AI or clear Solitaire for daily coin rewards.', reward: '+25–40 coins/win', color: '#a855f7' },
-    { icon: Star, label: t('earn_page.mini_tasks'), desc: t('earn_page.mini_desc'), reward: t('earn_page.ten_hundred'), color: '#f87171' },
+    { icon: Trophy,  label: 'Fantasy Contests',       desc: 'Build a dream team & win big',        reward: 'Up to 500 coins',    color: '#C6A052', path: '/fantasy'      },
+    { icon: Target,  label: 'Match Predictions',       desc: 'Predict the winning team',            reward: '+50 per correct',    color: '#60a5fa', path: '/predict'      },
+    { icon: Zap,     label: 'Over Outcome',            desc: 'Predict runs each over (live)',        reward: '+25 per correct',    color: '#a78bfa', path: '/match-centre' },
+    { icon: Gift,    label: 'Ball-by-Ball',            desc: 'Predict every ball outcome',          reward: '+5–15 per correct',  color: '#4ade80', path: '/match-centre' },
+    { icon: Heart,   label: 'Card Games',              desc: 'Win Teen Patti, Rummy or Poker',      reward: '+25–60 coins/win',   color: '#a855f7', path: '/games'        },
+    { icon: Star,    label: 'Daily Tasks',             desc: 'Complete quick tasks each day',       reward: '+10–100 coins',      color: '#f87171', path: '/earn'         },
   ];
 
   const miniGames = [
@@ -157,18 +157,25 @@ const EarnCoins = () => {
 
         {/* How to Earn */}
         {activeTab === 'howto' && (
-          <div className="space-y-3" data-testid="how-to-earn-section">
-            {howToItems.map(({ icon: Icon, label, desc, reward, color }) => (
-              <div key={label} className="card-broadcast p-4 flex items-start gap-4">
-                <div className="p-2.5 rounded-xl flex-shrink-0" style={{ background: `${color}15` }}>
-                  <Icon className="h-6 w-6" style={{ color }} />
+          <div className="space-y-2" data-testid="how-to-earn-section">
+            {howToItems.map(({ icon: Icon, label, desc, reward, color, path }) => (
+              <button key={label}
+                className="w-full text-left card-broadcast p-3 flex items-center gap-3 cursor-pointer hover-lift transition-all active:scale-95"
+                data-testid={`earn-item-${label.replace(/\s+/g, '-').toLowerCase()}`}
+                onClick={() => { if (path === '/earn') setActiveTab('tasks'); else navigate(path); }}
+              >
+                <div className="p-2 rounded-xl flex-shrink-0" style={{ background: `${color}18` }}>
+                  <Icon className="h-5 w-5" style={{ color }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-white">{label}</h4>
-                  <p className="text-sm mt-0.5" style={{ color: '#8A9096' }}>{desc}</p>
-                  <span className="coin-indicator inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold mt-2">{reward}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="font-bold text-white text-sm">{label}</h4>
+                    <span className="text-xs font-bold flex-shrink-0" style={{ color }}>{reward}</span>
+                  </div>
+                  <p className="text-xs mt-0.5 truncate" style={{ color: '#8A9096' }}>{desc}</p>
                 </div>
-              </div>
+                <svg className="h-4 w-4 flex-shrink-0" style={{ color: '#8A9096' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
+              </button>
             ))}
           </div>
         )}

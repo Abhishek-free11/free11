@@ -5,17 +5,16 @@ import { useI18n } from '../context/I18nContext';
 import {
   Coins, User, Search, Sparkles, Home, Target, Club, ShoppingBag
 } from 'lucide-react';
-import LanguageSelector from './LanguageSelector';
 import AppSearch from './AppSearch';
 import { trackButtonClick } from '../utils/analytics';
 
 // Bottom nav items
 const BOTTOM_NAV = [
-  { path: '/match-centre', label: 'Home',      icon: Home      },
-  { path: '/predict',      label: 'Play',       icon: Target    },
-  { path: '/games',        label: 'Games',      icon: Club      },
-  { path: '/earn',         label: 'Missions',   icon: Sparkles  },
-  { path: '/profile',      label: 'Profile',    icon: User      },
+  { path: '/match-centre', label: 'Home',     icon: Home    },
+  { path: '/predict',      label: 'Play',      icon: Target  },
+  { path: '/games',        label: 'Games',     icon: Club    },
+  { path: '/earn',         label: 'Missions',  icon: Sparkles },
+  { path: '/profile',      label: 'Profile',   icon: User    },
 ];
 
 const Navbar = () => {
@@ -48,15 +47,8 @@ const Navbar = () => {
             onClick={() => navigate('/match-centre')}
             data-testid="navbar-logo"
           >
-            <img
-              src="/free11_icon_192.png"
-              alt="FREE11"
-              className="h-8 w-8 rounded-xl animate-coin-glow"
-            />
-            <span
-              className="text-xl font-heading tracking-widest hidden sm:inline"
-              style={{ color: '#C6A052', letterSpacing: '0.12em' }}
-            >
+            <img src="/free11_icon_192.png" alt="FREE11" className="h-8 w-8 rounded-xl animate-coin-glow" />
+            <span className="text-xl font-heading tracking-widest hidden sm:inline" style={{ color: '#C6A052', letterSpacing: '0.12em' }}>
               FREE11
             </span>
           </button>
@@ -64,61 +56,48 @@ const Navbar = () => {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
             {BOTTOM_NAV.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive(item.path)
-                    ? 'text-gold font-semibold'
-                    : 'text-silver-muted hover:text-white'
-                }`}
-                style={isActive(item.path) ? { color: '#C6A052' } : { color: '#8A9096' }}
-              >
+              <button key={item.path} onClick={() => navigate(item.path)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+                style={isActive(item.path) ? { color: '#C6A052' } : { color: '#8A9096' }}>
                 <item.icon className="h-4 w-4" />
                 {item.label}
               </button>
             ))}
           </div>
 
-          {/* Right: search + shop + coins */}
-          <div className="flex items-center gap-1.5">
-            <LanguageSelector />
-
-            <button
-              onClick={() => navigate('/shop')}
-              className="h-8 w-8 flex items-center justify-center rounded-full transition-all"
-              style={{ background: isActive('/shop') ? 'rgba(198,160,82,0.15)' : 'rgba(255,255,255,0.06)' }}
-              data-testid="shop-btn"
-              title="Free Shop"
-            >
+          {/* Right: icon buttons with labels */}
+          <div className="flex items-center gap-1">
+            {/* Shop */}
+            <button onClick={() => navigate('/shop')}
+              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
+              style={{ background: isActive('/shop') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
+              data-testid="shop-btn">
               <ShoppingBag className="h-4 w-4" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }} />
+              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }}>Shop</span>
             </button>
 
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="h-8 w-8 flex items-center justify-center rounded-full transition-all"
-              style={{ background: 'rgba(255,255,255,0.06)' }}
-              data-testid="search-btn"
-            >
+            {/* Search */}
+            <button onClick={() => setSearchOpen(true)}
+              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
+              style={{ background: 'transparent' }}
+              data-testid="search-btn">
               <Search className="h-4 w-4" style={{ color: '#8A9096' }} />
+              <span className="text-[9px] mt-0.5 font-medium" style={{ color: '#8A9096' }}>Search</span>
             </button>
 
-            <button
-              onClick={() => navigate('/ledger')}
-              className="h-8 w-8 flex items-center justify-center rounded-full transition-all"
-              style={{ background: isActive('/ledger') ? 'rgba(198,160,82,0.15)' : 'rgba(255,255,255,0.06)' }}
-              data-testid="wallet-btn"
-            >
+            {/* Wallet */}
+            <button onClick={() => navigate('/ledger')}
+              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
+              style={{ background: isActive('/ledger') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
+              data-testid="wallet-btn">
               <Coins className="h-4 w-4" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }} />
+              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }}>Wallet</span>
             </button>
 
             {/* Coin Balance Pill */}
             {user && (
-              <button
-                className="coin-indicator flex items-center gap-1 px-2.5 py-1 transition-all"
-                onClick={() => navigate('/ledger')}
-                data-testid="coin-balance-display"
-              >
+              <button className="coin-indicator flex items-center gap-1 px-2.5 py-1 transition-all"
+                onClick={() => navigate('/ledger')} data-testid="coin-balance-display">
                 <Coins className="h-3.5 w-3.5 animate-coin-glow" />
                 <span className="font-numbers font-semibold text-xs">{user.coins_balance || 0}</span>
               </button>
@@ -128,58 +107,31 @@ const Navbar = () => {
       </nav>
 
       {/* ─── MOBILE BOTTOM NAV ─── */}
-      <div
-        className="md:hidden fixed bottom-0 left-0 right-0 z-[9999]"
-        style={{
-          background: 'rgba(15, 17, 21, 0.97)',
-          borderTop: '1px solid rgba(198, 160, 82, 0.12)',
-          backdropFilter: 'blur(20px)',
-          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        }}
-        data-testid="bottom-navbar"
-      >
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[9999]"
+        style={{ background: 'rgba(15, 17, 21, 0.97)', borderTop: '1px solid rgba(198, 160, 82, 0.12)', backdropFilter: 'blur(20px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        data-testid="bottom-navbar">
         <div className="flex items-center justify-around py-2 px-1">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.path);
             return (
-              <button
-                key={item.path}
+              <button key={item.path}
                 onClick={() => { navigate(item.path); trackButtonClick(`bottom_nav_${item.label.toLowerCase()}`); }}
                 className="flex flex-col items-center py-1 px-3 rounded-xl transition-all relative"
                 style={{ minWidth: 52 }}
-                data-testid={`bottom-nav-${item.label.toLowerCase()}`}
-              >
-                {/* "NEW" badge on Games tab */}
-                {item.label === 'Games' && !isActive(item.path) && (
+                data-testid={`bottom-nav-${item.label.toLowerCase()}`}>
+                {item.label === 'Games' && !active && (
                   <span className="absolute top-0.5 right-1.5 text-[8px] font-black px-1 rounded-full animate-live-pulse"
-                    style={{ background: '#C6A052', color: '#0F1115', letterSpacing: '0.02em' }}>
-                    NEW
-                  </span>
+                    style={{ background: '#C6A052', color: '#0F1115' }}>NEW</span>
                 )}
-                <div
-                  className="flex items-center justify-center h-7 w-7 rounded-lg mb-0.5 transition-all"
-                  style={{
-                    background: active ? 'rgba(198,160,82,0.15)' : 'transparent',
-                  }}
-                >
-                  <item.icon
-                    className="h-5 w-5 transition-all"
-                    style={{ color: active ? '#C6A052' : '#8A9096' }}
-                    strokeWidth={active ? 2 : 1.5}
-                  />
+                <div className="flex items-center justify-center h-7 w-7 rounded-lg mb-0.5 transition-all"
+                  style={{ background: active ? 'rgba(198,160,82,0.15)' : 'transparent' }}>
+                  <item.icon className="h-5 w-5 transition-all"
+                    style={{ color: active ? '#C6A052' : '#8A9096' }} strokeWidth={active ? 2 : 1.5} />
                 </div>
-                <span
-                  className="text-[10px] font-medium transition-all"
-                  style={{ color: active ? '#C6A052' : '#8A9096' }}
-                >
+                <span className="text-[10px] font-medium transition-all" style={{ color: active ? '#C6A052' : '#8A9096' }}>
                   {item.label}
                 </span>
-                {active && (
-                  <div
-                    className="h-0.5 w-4 rounded-full mt-0.5"
-                    style={{ background: '#C6A052', boxShadow: '0 0 6px rgba(198,160,82,0.6)' }}
-                  />
-                )}
+                {active && <div className="h-0.5 w-4 rounded-full mt-0.5" style={{ background: '#C6A052', boxShadow: '0 0 6px rgba(198,160,82,0.6)' }} />}
               </button>
             );
           })}
@@ -193,3 +145,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+

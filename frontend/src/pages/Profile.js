@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import Navbar from '../components/Navbar';
 import NotificationSettings from '../components/NotificationSettings';
+import LanguageSelector from '../components/LanguageSelector';
 import WishlistGoal from '../components/WishlistGoal';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
@@ -208,6 +209,11 @@ const Profile = () => {
             </h3>
           </div>
           <div className="px-4 py-3">
+            {/* Language */}
+            <div className="flex items-center justify-between mb-3 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span className="text-white">Language</span>
+              <LanguageSelector />
+            </div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 {soundsEnabled ? <Volume2 className="h-5 w-5 text-green-400" /> : <VolumeX className="h-5 w-5" style={{ color: '#8A9096' }} />}
