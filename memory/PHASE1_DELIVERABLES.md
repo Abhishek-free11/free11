@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://multilingual-preview.preview.emergentagent.com**
+**https://free11-launch.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**

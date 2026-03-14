@@ -10,7 +10,7 @@
 ## 1) LIVE ACCESS (No Gating)
 
 ### Public URL (PWA/Web)
-- **Live URL:** https://multilingual-preview.preview.emergentagent.com
+- **Live URL:** https://free11-launch.preview.emergentagent.com
 - **PWA Install:** Supported on Chrome Android/iOS Safari
 - **Status:** ✅ Live and accessible
 

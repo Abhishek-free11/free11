@@ -8,7 +8,7 @@ import os
 import json
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://multilingual-preview.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://free11-launch.preview.emergentagent.com')
 
 # Test credentials
 TEST_EMAIL = "abhishek@free11.com"

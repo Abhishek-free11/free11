@@ -18,7 +18,7 @@ Your friends and family can:
 
 ### **Live URL:**
 ```
-https://multilingual-preview.preview.emergentagent.com/
+https://free11-launch.preview.emergentagent.com/
 ```
 
 ### **Test Credentials** (or create new account):
@@ -291,7 +291,7 @@ When testing with friends/family, ask:
 
 ## 🔗 **Quick Links**
 
-- **Live App**: https://multilingual-preview.preview.emergentagent.com/
+- **Live App**: https://free11-launch.preview.emergentagent.com/
 - **Backend API**: Running on port 8001
 - **Test Account**: demo@free11.com / password123
 

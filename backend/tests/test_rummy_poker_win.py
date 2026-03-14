@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://multilingual-preview.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://free11-launch.preview.emergentagent.com').rstrip('/')
 
 # Test user credentials (use test user, not admin - admin may have already claimed today)
 TEST_EMAIL = "test_redesign_ui26@free11test.com"
