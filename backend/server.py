@@ -545,6 +545,7 @@ class OTPRegisterRequest(BaseModel):
     email: EmailStr
     otp: str
     phone_number: Optional[str] = None
+    date_of_birth: Optional[str] = None  # YYYY-MM-DD, required for new users
 
 @api_router.post("/auth/verify-otp-register")
 async def verify_otp_register(req: OTPRegisterRequest):
@@ -552,11 +553,10 @@ async def verify_otp_register(req: OTPRegisterRequest):
     Magic-link registration/login:
     - Verifies OTP
     - If user exists → returns JWT (magic link signin for existing users)
-    - If user doesn't exist → creates account then returns JWT
+    - If user doesn't exist → creates account then returns JWT (requires 18+ DOB)
     """
     email = req.email.strip().lower()
     phone = req.phone_number.strip() if req.phone_number else None
-    # Normalize phone to E.164
     if phone and not phone.startswith('+'):
         phone = f"+91{phone.replace(' ', '').replace('-', '')}"
 
@@ -565,7 +565,7 @@ async def verify_otp_register(req: OTPRegisterRequest):
     if not result.get("verified"):
         raise HTTPException(status_code=400, detail=result.get("error", "Incorrect OTP code"))
 
-    # 2. Find existing user
+    # 2. Find existing user (login flow — no age check needed)
     existing = await db.users.find_one({"email": email}, {"_id": 0})
     if existing:
         user_id = existing["id"]
@@ -579,8 +579,24 @@ async def verify_otp_register(req: OTPRegisterRequest):
         safe_user = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
         return {"access_token": token, "token_type": "bearer", "user": safe_user}
 
-    # 3. New user — auto-create account
-    # Derive a display name from the email prefix
+    # 3. New user — validate 18+ age before creating account
+    if not req.date_of_birth:
+        raise HTTPException(status_code=400, detail="Date of birth is required for registration.")
+    try:
+        dob = datetime.strptime(req.date_of_birth, "%Y-%m-%d")
+        today = datetime.now(timezone.utc)
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        if age < 18:
+            raise HTTPException(
+                status_code=403,
+                detail={"error": "age_restricted", "message": "You must be 18 years or older to use FREE11."}
+            )
+        if age > 120:
+            raise HTTPException(status_code=400, detail="Invalid date of birth.")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date of birth format. Use YYYY-MM-DD.")
+
+    # 4. Auto-create account
     name_raw = email.split("@")[0].replace(".", " ").replace("_", " ").replace("-", " ")
     name = " ".join(w.capitalize() for w in name_raw.split())
 
@@ -592,8 +608,8 @@ async def verify_otp_register(req: OTPRegisterRequest):
         "phone": phone,
         "phone_verified": False if phone else None,
         "name": name,
+        "date_of_birth": req.date_of_birth,
         "password_hash": None,
-        "date_of_birth": None,
         "google_id": None,
         "is_admin": False,
         "coins_balance": 50,
@@ -627,6 +643,7 @@ class PhoneFirebaseRequest(BaseModel):
     firebase_id_token: str
     name: Optional[str] = None
     email: Optional[str] = None
+    date_of_birth: Optional[str] = None  # YYYY-MM-DD, required for new users
 
 FIREBASE_WEB_API_KEY = os.environ.get("REACT_APP_FIREBASE_API_KEY", "AIzaSyBMRjuuazsPK8YXaKuI93v6yTE96k3Z0Gg")
 
@@ -668,11 +685,23 @@ async def phone_firebase_verify(req: PhoneFirebaseRequest):
         safe = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
         return {"access_token": token, "token_type": "bearer", "user": safe, "is_new_user": False}
 
-    # New user — auto-create
+    # New user — validate 18+ before creating
+    if not req.date_of_birth:
+        raise HTTPException(status_code=400, detail={"error": "dob_required", "message": "Date of birth is required for new accounts."})
+    try:
+        dob = datetime.strptime(req.date_of_birth, "%Y-%m-%d")
+        today = datetime.now(timezone.utc)
+        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        if age < 18:
+            raise HTTPException(status_code=403, detail={"error": "age_restricted", "message": "You must be 18 years or older to use FREE11."})
+        if age > 120:
+            raise HTTPException(status_code=400, detail="Invalid date of birth.")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date of birth format.")
+
     user_id = str(uuid.uuid4())
     display_name = req.name or f"Player{phone_number[-4:]}"
     email_val = req.email.strip().lower() if req.email else None
-    # Check email not already taken
     if email_val:
         conflict = await db.users.find_one({"email": email_val}, {"_id": 0})
         if conflict:
@@ -681,6 +710,7 @@ async def phone_firebase_verify(req: PhoneFirebaseRequest):
     new_user = {
         "id": user_id, "name": display_name, "email": email_val,
         "phone": phone_number, "phone_verified": True,
+        "date_of_birth": req.date_of_birth,
         "hashed_password": None, "coins_balance": 50,
         "total_earned": 50, "total_redeemed": 0,
         "level": 1, "xp": 0, "prediction_streak": 0,

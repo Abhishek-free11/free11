@@ -43,6 +43,12 @@ const Login = () => {
   const recaptchaRef = useRef(null);
   const phoneTimerRef = useRef(null);
 
+  // Phone OTP — DOB gate for new users, then email capture
+  const [phoneDob, setPhoneDob] = useState('');
+  const [phoneDobError, setPhoneDobError] = useState('');
+  const [showDobGate, setShowDobGate] = useState(false);
+  const [pendingFirebaseToken, setPendingFirebaseToken] = useState(null);
+
   // After phone OTP — collect email for new users
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [captureEmail, setCaptureEmail] = useState('');
@@ -174,15 +180,18 @@ const Login = () => {
     setPhoneLoading(false);
   };
 
-  const verifyPhoneCode = async (code) => {
+  const verifyPhoneCode = async (code, dob = null) => {
     if (!confirmationResultRef.current) return;
     setPhoneLoading(true);
     try {
       const idToken = await confirmPhoneOTP(confirmationResultRef.current, code);
-      const resp = await api.post('/auth/phone-verify', { firebase_id_token: idToken });
+      // First attempt without DOB — backend will tell us if DOB is required
+      const resp = await api.post('/auth/phone-verify', {
+        firebase_id_token: idToken,
+        date_of_birth: dob || undefined,
+      });
       const { access_token, user: userData, is_new_user } = resp.data;
       loginWithToken(access_token, userData);
-      // New phone-only users → prompt for email
       if (is_new_user && !userData?.email) {
         setShowEmailCapture(true);
       } else {
@@ -190,7 +199,56 @@ const Login = () => {
         navigate('/match-centre');
       }
     } catch (err) {
-      toast.error(err?.response?.data?.detail || 'Incorrect OTP. Please try again.');
+      const detail = err?.response?.data?.detail;
+      // Backend requires DOB for new user
+      if (detail?.error === 'dob_required' || detail?.error === 'age_restricted') {
+        const idToken = await confirmPhoneOTP(confirmationResultRef.current, code).catch(() => null);
+        if (idToken) setPendingFirebaseToken(idToken);
+        if (detail?.error === 'age_restricted') {
+          toast.error(detail.message || 'You must be 18+ to use FREE11.');
+        } else {
+          setShowDobGate(true);
+        }
+      } else {
+        toast.error(typeof detail === 'string' ? detail : 'Incorrect OTP. Please try again.');
+      }
+    }
+    setPhoneLoading(false);
+  };
+
+  const handleDobSubmit = async () => {
+    if (!phoneDob) { setPhoneDobError('Please enter your date of birth.'); return; }
+    const dob = new Date(phoneDob);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) { setPhoneDobError('You must be 18 or older to use FREE11.'); return; }
+    if (age > 120) { setPhoneDobError('Please enter a valid date of birth.'); return; }
+    setPhoneDobError('');
+    if (!pendingFirebaseToken) return;
+    setPhoneLoading(true);
+    try {
+      const resp = await api.post('/auth/phone-verify', {
+        firebase_id_token: pendingFirebaseToken,
+        date_of_birth: phoneDob,
+      });
+      const { access_token, user: userData, is_new_user } = resp.data;
+      loginWithToken(access_token, userData);
+      setShowDobGate(false);
+      if (is_new_user && !userData?.email) {
+        setShowEmailCapture(true);
+      } else {
+        toast.success('Welcome to FREE11!');
+        navigate('/match-centre');
+      }
+    } catch (err) {
+      const detail = err?.response?.data?.detail;
+      if (detail?.error === 'age_restricted') {
+        setPhoneDobError(detail.message || 'You must be 18+ to use FREE11.');
+      } else {
+        toast.error(typeof detail === 'string' ? detail : 'Registration failed. Please try again.');
+      }
     }
     setPhoneLoading(false);
   };
@@ -223,6 +281,38 @@ const Login = () => {
       <div className="absolute pointer-events-none"
         style={{ top: '-10%', left: '50%', transform: 'translateX(-50%)', width: '80vw', height: '40vh', background: 'radial-gradient(ellipse, rgba(198,160,82,0.08) 0%, transparent 70%)' }}
       />
+
+      {/* ── DOB Gate Modal (new phone users — 18+ check) ── */}
+      {showDobGate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(8px)' }}>
+          <div className="w-full max-w-xs rounded-2xl p-6 text-center animate-slide-up"
+            style={{ background: '#1B1E23', border: '1px solid rgba(198,160,82,0.25)' }}>
+            <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, rgba(198,160,82,0.15), rgba(224,184,79,0.1))', border: '1px solid rgba(198,160,82,0.3)' }}>
+              <span className="text-2xl font-black" style={{ color: '#C6A052' }}>18+</span>
+            </div>
+            <h3 className="font-heading text-xl tracking-wider text-white mb-1">AGE VERIFICATION</h3>
+            <p className="text-xs mb-5" style={{ color: '#8A9096' }}>
+              FREE11 is for adults only. Please confirm your date of birth.
+            </p>
+            <input
+              type="date"
+              value={phoneDob}
+              onChange={e => { setPhoneDob(e.target.value); setPhoneDobError(''); }}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+              className="w-full h-11 px-4 rounded-xl text-sm text-white outline-none mb-1"
+              style={{ background: '#0F1115', border: `1px solid ${phoneDobError ? '#ef4444' : 'rgba(198,160,82,0.2)'}`, colorScheme: 'dark' }}
+              data-testid="phone-dob-input" />
+            {phoneDobError && <p className="text-xs mb-2" style={{ color: '#ef4444' }}>{phoneDobError}</p>}
+            <button onClick={handleDobSubmit} disabled={!phoneDob || phoneLoading}
+              className="w-full h-11 rounded-xl font-bold text-sm mt-3 disabled:opacity-40 transition-all"
+              style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
+              data-testid="confirm-dob-btn">
+              {phoneLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Confirm Age & Continue'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Email Capture Modal (new phone users) ── */}
       {showEmailCapture && (

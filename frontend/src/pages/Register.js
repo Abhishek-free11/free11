@@ -17,6 +17,8 @@ export default function Register() {
   const [stage, setStage] = useState('email'); // 'email' | 'otp'
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [dob, setDob] = useState('');
+  const [dobError, setDobError] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -52,7 +54,22 @@ export default function Register() {
     if (stage === 'otp') otpRefs[0].current?.focus();
   }, [stage]); // eslint-disable-line
 
+  const validateAge = (dateStr) => {
+    if (!dateStr) return 'Date of birth is required.';
+    const dob = new Date(dateStr);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) return 'You must be 18 or older to use FREE11.';
+    if (age > 120) return 'Please enter a valid date of birth.';
+    return '';
+  };
+
   const sendOtp = async () => {
+    const ageErr = validateAge(dob);
+    if (ageErr) { setDobError(ageErr); return; }
+    setDobError('');
     if (!email.trim() || sending) return;
     setSending(true);
     try {
@@ -79,7 +96,7 @@ export default function Register() {
       const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp-register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.toLowerCase().trim(), otp: code, phone_number: phone.trim() || null }),
+        body: JSON.stringify({ email: email.toLowerCase().trim(), otp: code, phone_number: phone.trim() || null, date_of_birth: dob }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -204,6 +221,23 @@ export default function Register() {
             <motion.div key="email"
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}>
+              {/* Date of birth — 18+ verification */}
+              <div className="mb-3">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#8A9096' }}>
+                  Date of Birth <span style={{ color: '#C6A052' }}>*</span>
+                </label>
+                <input
+                  type="date"
+                  value={dob}
+                  onChange={e => { setDob(e.target.value); setDobError(''); }}
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+                  className="w-full h-12 px-4 rounded-xl text-sm text-white outline-none"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${dobError ? '#ef4444' : 'rgba(255,255,255,0.1)'}`, colorScheme: 'dark' }}
+                  data-testid="register-dob-input"
+                />
+                {dobError && <p className="text-xs mt-1" style={{ color: '#ef4444' }}>{dobError}</p>}
+                <p className="text-xs mt-1" style={{ color: '#8A9096' }}>You must be 18+ to use FREE11</p>
+              </div>
               <div className="relative mb-3">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#8A9096' }} />
                 <input
@@ -238,7 +272,7 @@ export default function Register() {
                   autoComplete="tel"
                 />
               </div>
-              <button onClick={sendOtp} disabled={!email || phone.length < 10 || sending}
+              <button onClick={sendOtp} disabled={!email || phone.length < 10 || !dob || sending}
                 className="w-full h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
                 style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
                 data-testid="send-otp-btn">
