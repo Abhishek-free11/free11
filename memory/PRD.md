@@ -1,11 +1,11 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: December 2025 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. PWA auto-install prompt implemented. Full i18n translations completed for 8 languages. -->
+<!-- Last updated: March 2026 — Production Security Audit completed. Critical vulnerabilities patched. DB indexes added. -->
 
 ## What is FREE11?
 
 FREE11 is a free skill-based gaming and rewards platform. Users play cricket predictions, card games, daily quests, and puzzles — earn FREE Coins — then redeem them for real groceries, vouchers, and digital rewards.
 
-**Tagline:** "Play Games. Earn Real Rewards." *(formerly "Play Cricket. Earn Essentials." — updated to reflect multi-game nature)*
+**Tagline:** "Play Games. Earn Real Rewards."
 
 **Monetization:**
 - AdMob engagement revenue (banner + rewarded ads, 20 coins/watch, 5/day)
@@ -23,7 +23,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - **Exact disclaimer text:** "FREE11 is a skill-based sports prediction platform. No deposits or cash wagering. Rewards are promotional benefits only."
 - **Fraud Engine** active: device hash detection, duplicate account flagging, ban/unban system.
 - **Geo-fence middleware**: India-only restriction enforced at API level.
-- **Rate limiter**: API rate limiting active.
+- **Rate limiter**: API rate limiting active (in-memory fallback when Redis unavailable).
 - All redemptions are promotional only; no encashable value.
 - FREE Coins: non-withdrawable, no monetary value, 180-day rolling expiry.
 - FREE Bucks: purchasable, non-withdrawable, no monetary value.
@@ -43,7 +43,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - **Backend**: FastAPI (Python), Motor (async MongoDB), APScheduler, Redis
 - **Database**: MongoDB
 - **AI**: Google Gemini Flash via `emergentintegrations` (Emergent LLM Key)
-- **Payments**: Razorpay (test→live pending) + Cashfree (pending compliance approval)
+- **Payments**: Razorpay (TEST MODE → live keys needed) + Cashfree (pending compliance approval)
 - **Notifications**: Firebase FCM (live), Resend email (live, DNS pending)
 - **Analytics**: Sentry (live)
 - **Ads**: AdMob (live)
@@ -51,211 +51,6 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - **Cricket Data**: EntitySport (live)
 - **Gift Cards**: Reloadly (USD live, INR blocked), Xoxoday (mocked)
 - **Commerce**: ONDC/Zepto/BigBasket/Amazon/Flipkart (all mocked/providers ready)
-
----
-
-## Complete Architecture
-
-```
-/app/
-├── android-twa/
-│   ├── build.gradle                   # Fixed Kotlin/AGP versions
-│   ├── local.properties               # SDK path
-│   └── play_store_assets/
-│       ├── play_store_listing.txt     # Full store listing (updated Feb 2026)
-│       ├── feature_graphic_1024x500.png
-│       ├── icon_512x512.png
-│       ├── screenshot_01_predict.png
-│       └── screenshot_02_shop.png
-│
-├── backend/
-│   ├── server.py                      # Main FastAPI entry, scheduler, startup seeding
-│   │
-│   ├── ── AUTH & USER ──
-│   ├── routes/auth_routes.py          # JWT, OTP, Google OAuth, Phone Auth (Firebase)
-│   ├── otp_engine.py                  # OTP generation & verification
-│   ├── progression_engine.py          # XP & tier system (Bronze→Silver→Gold→Platinum→Diamond)
-│   ├── fraud_engine.py                # Device hash, duplicate detection, ban/flag/unban
-│   ├── referral_engine.py             # Referral tracking & coin payouts
-│   │
-│   ├── ── CRICKET & PREDICTIONS ──
-│   ├── cricket_routes.py              # Match data, live scores, prediction endpoints
-│   ├── cricket_data_service.py        # Data aggregation layer
-│   ├── cricket_service.py             # Business logic
-│   ├── entitysport_service.py         # EntitySport API integration (LIVE)
-│   ├── predict_engine.py              # Prediction scoring, Hot Hand multiplier
-│   ├── matchstate_engine.py           # Live match state management
-│   ├── contest_engine.py              # Contest scoring and payout logic
-│   ├── fantasy_engine.py              # Fantasy team scoring
-│   ├── fantasy_routes.py              # Fantasy team API
-│   │
-│   ├── ── GAMES ──
-│   ├── games_routes.py                # Card game earn endpoints + leaderboard + streak
-│   ├── card_game_logic.py             # Teen Patti / Rummy / Poker / Solitaire logic
-│   ├── cards_engine.py                # Card deck utilities
-│   ├── spin_wheel_engine.py           # Daily Lucky Spin (coin prizes, 1/day)
-│   │
-│   ├── ── ECONOMY & COINS ──
-│   ├── economy_engine.py              # Coin earn/spend rules, daily caps
-│   ├── ledger_engine.py               # Transaction ledger (LedgerEngine.get_balance/history)
-│   ├── missions_engine.py             # Daily missions (progress tracking, claim rewards)
-│   ├── quest_engine.py                # Rebound Quest (streak<3, opt-in ad +20 coins)
-│   ├── streak_leaderboard_engine.py   # Streak tracking for leaderboard
-│   │
-│   ├── ── PAYMENTS ──
-│   ├── freebucks_engine.py            # FREE Bucks packages: ₹49/₹149/₹499/₹999
-│   ├── razorpay_routes.py             # Razorpay payment (TEST MODE — live keys pending)
-│   ├── cashfree_routes.py             # Cashfree payment (pending compliance approval)
-│   ├── payment_routes.py              # /api/payments/packages (backward compat)
-│   │
-│   ├── ── REWARDS & SHOP ──
-│   ├── gift_card_routes.py            # Gift card redemption API
-│   ├── reloadly_routes.py             # Reloadly gift cards
-│   ├── reloadly_provider.py           # Legacy Reloadly provider
-│   ├── fulfillment_routes.py          # Voucher fulfillment + order status
-│   ├── providers/
-│   │   ├── reloadly_provider.py       # Reloadly: USD LIVE (Swype/Razer), INR BLOCKED
-│   │   ├── xoxoday_provider.py        # Xoxoday: MOCKED (awaiting API key)
-│   │   ├── ondc_provider.py           # ONDC grocery: MOCKED
-│   │   ├── amazon_provider.py         # Amazon affiliate: MOCKED
-│   │   ├── flipkart_provider.py       # Flipkart affiliate: MOCKED
-│   │   ├── airtime_provider.py        # Mobile recharge: LIVE (via partner API)
-│   │   └── base_provider.py           # Provider interface
-│   ├── services/
-│   │   ├── ads_provider.py            # AdMob reward verification
-│   │   ├── payment_provider.py        # Payment abstraction
-│   │   └── voucher_provider.py        # Voucher dispatch
-│   │
-│   ├── ── ENGAGEMENT ──
-│   ├── engagement_engine.py           # AI Daily Puzzle (Gemini), Weekly Report Card
-│   ├── engagement_routes.py           # /api/v2/puzzles, /api/v2/reports
-│   ├── airtime_routes.py              # Mobile recharge top-up via coins
-│   │
-│   ├── ── SOCIAL ──
-│   ├── clans_routes.py                # Clan creation, join, leaderboard
-│   ├── leagues_routes.py              # Private leagues
-│   ├── leaderboards_routes.py         # Leaderboard (admin/seed filtered)
-│   ├── sponsored_routes.py            # Sponsored brand pools
-│   │
-│   ├── ── NOTIFICATIONS & PUSH ──
-│   ├── fcm_service.py                 # Firebase FCM (fixed: send_each not send_all)
-│   ├── fcm_campaigns.py               # Push campaign management
-│   ├── push_routes.py                 # Push notification API
-│   ├── notification_engine.py         # In-app notification system
-│   ├── email_service.py               # Resend email (live, DNS pending)
-│   │
-│   ├── ── ADMIN & ANALYTICS ──
-│   ├── admin_v2_routes.py             # Admin analytics, ARR forecast, KPIs
-│   ├── kpi_routes.py                  # Platform KPIs (/api/v2/kpis)
-│   ├── analytics_engine.py            # Internal analytics aggregation
-│   ├── reports_routes.py              # Weekly reports
-│   ├── brand_routes.py                # Brand portal for advertisers
-│   │
-│   ├── ── INFRASTRUCTURE ──
-│   ├── v2_routes.py                   # All v2 routes (1300+ lines — P2 refactor needed)
-│   ├── redis_cache.py                 # Redis caching (Crowd Meter + Router)
-│   ├── scheduler_service.py           # APScheduler jobs
-│   ├── websocket_manager.py           # WebSocket for live match updates
-│   ├── rate_limiter.py                # API rate limiting
-│   ├── geo_fence_middleware.py        # India-only geo restriction
-│   ├── feature_gate.py                # Feature flags
-│   ├── feature_routes.py              # Feature flag API
-│   ├── alerting_service.py            # Error alerting
-│   ├── beta_routes.py                 # Beta feature routes
-│   ├── router_service.py              # Smart commerce router (ONDC/Zepto mock)
-│   ├── faq_routes.py                  # FAQ content API
-│   ├── support_routes.py              # User support tickets
-│   └── .env
-│
-└── frontend/src/
-    ├── App.js                         # Root layout, lazy routes, PWA banner, ScrollToTop
-    ├── index.css                      # Design system CSS
-    │
-    ├── ── PAGES ──
-    ├── pages/Landing.js               # Hero, features, SEO, legal footer (no fake stats)
-    ├── pages/Login.js                 # Email/OTP + Google OAuth + Firebase Phone Auth
-    ├── pages/Register.js              # OTP registration flow
-    ├── pages/Dashboard.js             # IPL Carousel + Quest modal hook + LiveActivityTicker
-    │
-    ├── ── CRICKET ──
-    ├── pages/Predict.js               # Match prediction (SkillBadge in header)
-    ├── pages/LiveMatch.js             # Live match view (SkillBadge in header)
-    ├── pages/MatchCentre.js           # Match listing + Card Games promo empty state
-    ├── pages/ContestHub.js            # Contest listing (Sponsored Pools banner)
-    ├── pages/TeamBuilder.js           # Fantasy team builder
-    ├── pages/Cricket.js               # Redirects to /predict
-    │
-    ├── ── GAMES ──
-    ├── pages/CardGames.js             # Games hub (Rummy/Teen Patti/Poker/Solitaire + leaderboard)
-    ├── pages/GameLobby.js             # Per-game lobby (Play vs AI, Quick Play, Create Room)
-    ├── pages/RummyGame.js             # 13-card Rummy vs AI (+50 coins/day)
-    ├── pages/TeenPattiGame.js         # Teen Patti vs AI (+40 coins/day)
-    ├── pages/PokerGame.js             # Texas Hold'em vs AI (+60 coins/day)
-    ├── pages/SolitairePage.js         # Klondike Solitaire (+25 coins/day)
-    ├── pages/GameRoom.js              # Multiplayer game room
-    ├── pages/Cards.js                 # Card utilities page
-    │
-    ├── ── EARN & ECONOMY ──
-    ├── pages/EarnCoins.js             # Earn hub (AdMob, Spin, Scratch, Quiz, Missions, Card Games)
-    ├── pages/RewardedAds.js           # Watch & Earn (/watch-earn)
-    ├── pages/FreeBucks.js             # FREE Bucks purchase (₹49/₹149/₹499/₹999 via Razorpay)
-    ├── pages/Wallet.js                # Coin balance, FREE Bucks balance, transaction history
-    ├── pages/Ledger.js                # Full transaction ledger
-    ├── pages/WalletExplainer.js       # Coin system explainer
-    │
-    ├── ── SHOP & REWARDS ──
-    ├── pages/Shop.js                  # Grocery filter, QR voucher, ShareCard, SkillModal
-    ├── pages/MyOrders.js              # Order history + status
-    ├── pages/SponsoredPools.js        # Sponsored brand pools + SkillBadge/Modal
-    │
-    ├── ── SOCIAL ──
-    ├── pages/Leaderboards.js          # Weekly/monthly leaderboards + ShareCard top-3
-    ├── pages/Clans.js                 # Clan creation, join, clan leaderboard
-    ├── pages/PrivateLeagues.js        # Private prediction leagues
-    ├── pages/Referrals.js             # Referral tracking + rewards
-    ├── pages/InviteFriends.js         # Invite friends + share deep links
-    │
-    ├── ── ADMIN ──
-    ├── pages/Admin.js                 # Admin panel (v1)
-    ├── pages/AdminV2.js               # Admin v2 (Analytics dashboard + ARR Forecast + KPIs)
-    ├── pages/BrandPortal.js           # Advertiser/brand portal (/brand)
-    │
-    ├── ── PROFILE & SETTINGS ──
-    ├── pages/Profile.js               # User profile, WishlistGoal, Install App button (PWA)
-    │
-    ├── ── LEGAL & INFO ──
-    ├── pages/AboutUs.js               # About FREE11 (clean, no fake stats)
-    ├── pages/FAQ.js                   # FAQ (loads from /api/faq)
-    ├── pages/Blog.js                  # SEO blog (/blog/cricket-guide)
-    ├── pages/TermsAndConditions.js    # T&Cs
-    ├── pages/PrivacyPolicy.js         # Privacy policy
-    ├── pages/Disclaimer.js            # Skill-based disclaimer
-    ├── pages/ResponsiblePlay.js       # Responsible gaming page
-    ├── pages/RefundPolicy.js          # Refund policy
-    ├── pages/CommunityGuidelines.js   # Community guidelines
-    ├── pages/Support.js               # Support tickets
-    │
-    └── ── COMPONENTS ──
-        ├── components/Navbar.js               # Bottom nav (Home/Play/Games/Earn/Profile)
-        ├── components/IPLCarousel.js          # 4-slide hero carousel on Dashboard
-        ├── components/QuestModal.js           # Rebound Quest (streak<3, opt-in)
-        ├── components/SkillDisclaimerModal.js # PROGA compliance modal + SkillBadge
-        ├── components/ShareCard.js            # Viral share overlay
-        ├── components/SharePredictionCard.js  # Prediction share card
-        ├── components/LiveActivityTicker.js   # Rotating activity feed (Landing+Dashboard)
-        ├── components/WeeklyReportCard.js     # Weekly performance summary
-        ├── components/WishlistGoal.js         # Wishlist tracker in Profile
-        ├── components/DailyPuzzle.js          # AI puzzle component
-        ├── components/CrowdMeter.js           # Live crowd prediction meter
-        ├── components/HowToPlay.js            # Onboarding tutorial
-        ├── components/FirstTimeTutorial.js    # First-time user tutorial
-        ├── components/AppSearch.js            # Global search
-        ├── components/LanguageSelector.js     # 8-language selector
-        ├── components/NotificationSettings.js # FCM notification preferences
-        ├── components/EmptyState.js           # Empty state UI component
-        ├── components/SiteFooter.js           # Site footer with legal links
-        └── App.js ScrollToTop                 # Inline ScrollToTop (fixes page scroll on nav)
-```
 
 ---
 
@@ -277,31 +72,9 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 | value | Value Pack | ₹499 | 550 | +50 |
 | mega | Mega Pack | ₹999 | 1,200 | +200 |
 
-- Payment via **Razorpay** (currently TEST mode — live keys needed for production)
-- **Cashfree** as fallback (pending compliance approval from Cashfree team)
+- Payment via **Razorpay** (TEST MODE — live keys needed)
+- **Cashfree** as fallback (pending compliance approval)
 - Neither FREE Bucks nor FREE Coins can be withdrawn as cash
-
----
-
-## Coin Earn Sources (all implemented)
-
-| Source | Coins | Limit |
-|---|---|---|
-| Correct cricket prediction | 10–30 (×multiplier) | Per prediction |
-| Hot Hand streak bonus | Up to 3× multiplier | Active during streak |
-| Daily check-in | 10–100 (streak) | 1/day |
-| Lucky Spin Wheel | Variable prize | 1/day |
-| Scratch Card | Variable prize | 1/day |
-| Cricket Quiz | 10 | 1/day |
-| AdMob Rewarded Ad | 20 | 5/day |
-| Rummy win vs AI | 50 | 1/day |
-| Teen Patti win vs AI | 40 | 1/day |
-| Poker win vs AI | 60 | 1/day |
-| Solitaire win | 25 | 1/day |
-| AI Daily Puzzle | Variable | 1/day |
-| Daily Missions | Variable | Multiple/day |
-| Quest (opt-in ad) | 20 | 1/day |
-| Referral | 50 + 50 (referee) | Per referral |
 
 ---
 
@@ -329,6 +102,20 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 | missions | user_id, type, progress, claimed |
 | spin_wheel | user_id, last_spin, history |
 
+### DB Indexes (Added March 2026)
+| Collection | Index | Purpose |
+|---|---|---|
+| users | email (unique, sparse) | Prevent duplicate emails, fast login lookup |
+| users | id (unique) | Fast user lookup by internal ID |
+| coin_transactions | user_id | Fast transaction history |
+| coin_transactions | (user_id, timestamp DESC) | Paginated transaction history |
+| predictions | user_id | Fast user prediction lookup |
+| predictions | (user_id, match_id) | Per-match prediction lookup |
+| redemptions | user_id | Fast redemption history |
+| redemptions | (user_id, order_date DESC) | Paginated order history |
+| missions | (user_id, type) | Mission status lookup |
+| router_orders | user_id | Router order lookup |
+
 ---
 
 ## Key API Endpoints
@@ -339,7 +126,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - POST /api/auth/send-otp
 - POST /api/auth/verify-otp
 - POST /api/auth/google-oauth
-- POST /api/auth/phone-verify *(Firebase phone auth — NEW)*
+- POST /api/auth/phone-verify *(Firebase phone auth)*
 - GET /api/auth/me
 
 ### Cricket & Predictions
@@ -359,7 +146,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 ### Economy
 - GET /api/coins/balance
 - GET /api/coins/transactions
-- POST /api/coins/checkin
+- POST /api/coins/checkin *(atomic race-condition safe)*
 - POST /api/games/spin
 - POST /api/games/scratch
 - POST /api/games/quiz
@@ -374,29 +161,21 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ### Shop & Rewards
 - GET /api/products
-- POST /api/redemptions
+- POST /api/products *(admin only — fixed March 2026)*
+- POST /api/redemptions *(atomic stock+coin deduction)*
 - GET /api/redemptions
 
 ### Quest & Router
 - GET /api/v2/quest/status
 - POST /api/v2/quest/offer, /claim-ad, /ration-viewed, /dismiss
-- GET /api/v2/router/tease, POST /api/v2/router/settle, GET /api/v2/router/skus
+- GET /api/v2/router/tease, POST /api/v2/router/settle *(atomic coin deduction)*, GET /api/v2/router/skus
 
-### Sponsored Pools
-- GET /api/v2/sponsored
-- POST /api/v2/sponsored/join, /create, /{id}/finalize
-
-### Engagement
-- GET /api/v2/puzzles/today
-- GET /api/v2/reports/weekly
-
-### KPIs & Admin
-- GET /api/v2/kpis
+### KPIs & Admin *(all require admin auth — fixed March 2026)*
+- GET /api/admin/analytics *(admin only)*
+- GET /api/admin/beta-metrics *(admin only)*
+- GET /api/admin/brand-roas *(admin only)*
+- GET /api/v2/kpis *(admin only)*
 - GET /api/v2/kpis/cohort-csv
-- GET /api/admin/analytics
-
-### Push
-- POST /api/v2/push/campaign
 
 ---
 
@@ -405,7 +184,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 | Integration | Status | Notes |
 |---|---|---|
 | EntitySport | LIVE | Cricket data, match scores |
-| Redis | LIVE | Crowd Meter + Router caching |
+| Redis | LIVE | Crowd Meter + Router caching. Rate limiter has in-memory fallback |
 | Sentry | LIVE | Error monitoring |
 | Gemini Flash | LIVE | AI puzzle (Emergent LLM Key) |
 | Google Auth | LIVE | Emergent-managed OAuth2 |
@@ -425,54 +204,24 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ---
 
-## Play Store Submission Assets
-
-Location: `/app/android-twa/play_store_assets/`
-
-| File | Purpose | Status |
-|---|---|---|
-| play_store_listing.txt | Full store copy (updated Feb 2026, no fake stats) | Ready |
-| feature_graphic_1024x500.png | Play Store banner | Ready |
-| icon_512x512.png | App icon 512×512 | Ready |
-| screenshot_01_predict.png | Phone screenshot 1 | Ready |
-| screenshot_02_shop.png | Phone screenshot 2 | Ready |
-
-**Store Listing Summary:**
-- App name: FREE11 — Play Games. Earn Real Rewards.
-- Short description: Play skill-based games. Earn coins. Redeem for real rewards.
-- Category: Sports / Entertainment
-- In-app purchases: Yes (FREE Bucks ₹49–₹999)
-- Content rating: Everyone 10+ / India: 18+
-- Privacy URL: https://free11.com/privacy
-
----
-
-## Compliance & Branding (Feb 2026)
-- All user-facing trademark names removed: Pepsi→"Cola Drink", Parle-G→"Glucose Biscuits", IPL→"T20 Season 2026"
-- **Fake stats REMOVED from all pages:** 1.5L+ users, ₹8.2L+ rewards, 73% accuracy, 225M cricket fans, "India's #1", "India's leading", "India's top" — all removed
-- Blog: no fabricated claims, no delivery partner guarantees
-- "India's #1" → "India's Skill-Based Gaming & Rewards Platform"
-- All legal pages live: /terms, /privacy, /disclaimer, /responsible-play, /refund, /guidelines
-- Support email: support@free11.com everywhere
-- © 2026 FREE11
-
----
-
 ## Prioritized Backlog
 
-### P0 — Production (Do Now)
-- [ ] Switch Razorpay test keys → live keys
-- [ ] Complete Resend DNS verification (resend.com/domains)
+### P0 — Production (Do Now — User Action Required)
+- [ ] Switch Razorpay test keys → live keys (user must provide rzp_live_* keys to .env)
+- [ ] Complete Resend DNS verification (user must add DNS records at resend.com/domains)
 - [ ] Cashfree: await compliance approval + activate live keys
+- [ ] Update assetlinks.json with SHA-256 from signed APK (user must run keytool on keystore)
+- [ ] Deploy latest code to free11.com (git pull + build + restart on production server)
+- [ ] Add REACT_APP_FIREBASE_APP_ID to frontend/.env (currently empty)
 - [ ] Google Play: Complete identity verification + closed test (20 testers × 14 days)
-- [ ] Update assetlinks.json with SHA-256 from signed APK
 
 ### P1 — Soon
 - [ ] Reloadly INR: contact support to enable product IDs 18678, 18677, 15714
 - [ ] Woohoo or Gyftr integration (India-first gift card alternative to Reloadly INR)
-- [x] ~~Professional translations (8 non-English locales)~~ — AI-generated complete translations done for all 8 languages (Dec 2025)
 - [ ] FCM push campaigns ("Predict live!")
 - [ ] Better product images in Shop
+- [ ] Fix Xoxoday voucher redeem to use atomic coin deduction (currently non-atomic, low risk since mocked)
+- [ ] Add router settle per-user rate limit to in-memory fallback (currently Redis-only)
 
 ### P2 — Future
 - [ ] Refactor v2_routes.py (1300+ lines → smaller domain routers)
@@ -482,6 +231,26 @@ Location: `/app/android-twa/play_store_assets/`
 - [ ] Squad vs Squad Battles
 - [ ] UTM tracking for growth/reels
 - [ ] Advanced cohort retention analytics
+- [ ] Cashfree live integration (pending compliance)
+
+---
+
+## Security Audit Results (March 2026)
+
+### Fixed
+- ✅ `/api/admin/analytics` — Now requires admin auth (was public)
+- ✅ `/api/admin/beta-metrics` — Now requires admin auth (was public)
+- ✅ `/api/admin/brand-roas` — Now requires admin auth (was public)
+- ✅ `POST /api/products` — Now requires admin role (was any authenticated user)
+- ✅ `POST /api/coins/checkin` — Atomic check-in (was race-condition exploitable)
+- ✅ `POST /api/redemptions` — Atomic stock+coin deduction (was two-step vulnerable)
+- ✅ Rate limiter — In-memory fallback when Redis unavailable (was pass-through)
+- ✅ DB indexes — 10 critical indexes added for performance at scale
+
+### Known Remaining (P1)
+- ⚠️ `POST /api/v2/vouchers/redeem` — Non-atomic coin deduction (low risk: Xoxoday MOCKED)
+- ⚠️ Router settle per-user rate limit only works with Redis (no in-memory fallback)
+- ⚠️ FIREBASE_APP_ID empty in frontend .env (affects FCM push notifications)
 
 ---
 
@@ -491,44 +260,17 @@ Location: `/app/android-twa/play_store_assets/`
 
 ---
 
-## Revenue Model (KPI Targets)
-- AdMob: ~₹5/user/month (₹0.35/ad × 2 ads/day × 30 days)
-- Sponsored Pools: 20% platform cut on brand-funded prize pools
-- FREE Bucks: ₹49–₹999 packs (Razorpay, test mode)
-- Commission: 8–12% on fulfilled redemptions
-- Breakage: >10% coins never redeemed (standard loyalty economics)
-
----
-
 ## CHANGELOG
 
-### Phase 1–6 (Pre-session)
-- Full auth (OTP, WebAuthn, JWT), cricket data, prediction engine, fantasy builder
-- Contest system (Mega/Standard/Practice/H2H + private), coin economy, shop + redemptions
-- Leaderboards, duels, social feed, admin panel, PWA, i18n 8 langs, KYC, referrals, clans
-
-### Phase 7
-- Referral double-payout fix, "TBA vs TBA" bug fix
-- Wishlist Tracker, Streak "Hot Hand" multiplier, Live Crowd Meter, AI Daily Puzzle, Weekly Report Card
-- Full UI/UX redesign: gold/charcoal, Bebas Neue, bottom nav
-
-### Phase 8 — Integrations
-- AdMob rewarded ads (20 coins, 5/day)
-- Resend Email OTP (HTML template)
-- Firebase FCM push
-- Razorpay test payments (FREE Bucks), Wallet history page
-
-### Phase Final — Multi-game Launch Ready
-- Card Games: Rummy, Teen Patti, Poker, Solitaire (all vs AI, all with daily coin rewards)
-- Games tab in bottom nav (replaced Leaderboard)
-- Card Game Leaderboard + Daily Streak in /games hub
-- IPL Carousel (4-slide hero in Dashboard)
-- Quest Engine, Smart Router, Sponsored Pools
-- SEO: Blog, structured data, robots.txt, sitemap.xml
-- Legal pages: Terms, Privacy, Disclaimer, Responsible Play, Refund Policy, Community Guidelines
-- ShareCard viral distribution engine
-- LiveActivityTicker, WishlistGoal, Redemption success dialog
-- MatchCentre empty state → Card Games promo
+### March 2026 — Production Security Audit & Hardening
+- **Security Audit** conducted: 5 critical vulnerabilities found and patched
+- **Admin endpoints secured**: `/api/admin/analytics`, `/api/admin/beta-metrics`, `/api/admin/brand-roas` — now require admin auth
+- **Product creation secured**: `POST /api/products` now requires `is_admin=true`
+- **Check-in race condition fixed**: Atomic `find_one_and_update` prevents double awards
+- **Redemption race condition fixed**: Atomic stock + coin deduction with rollback
+- **Rate limiter hardened**: In-memory fallback added (no longer pass-through without Redis)
+- **DB indexes added**: 10 indexes across 6 collections for 300k-user scale
+- **Test suite created**: 31 security tests passing at `/app/backend/tests/test_security_audit_53.py`
 
 ### Feb–March 2026 — PWA Polish + Auth + Play Store + Full Audit
 - Android TWA build errors resolved; signed AAB generated
@@ -538,43 +280,34 @@ Location: `/app/android-twa/play_store_assets/`
 - PWA Install button added to Profile page
 - Leaderboard admin/seed user filtering
 - Hardcoded brand names removed from UI
-- **All fake stats removed from entire app:** Landing stats bar, Blog, index.html meta tags
+- All fake stats removed from entire app
 - Play Store listing updated: multi-game focus, no fake numbers, correct IAP info
-- In-app purchases correctly declared: FREE Bucks ₹49/₹149/₹499/₹999
 - PRD fully audited and synced with codebase (Feb 2026)
 
-### December 2025 — Full i18n Translations + SEO Overhaul Completed
-- **Complete translations for all 8 Indian languages:**
-  - English (`en.json`) — Reference file
-  - Hindi (`hi.json`) — Complete with all sections
-  - Tamil (`ta.json`) — Complete with all sections
-  - Bengali (`bn.json`) — Complete with all sections
-  - Telugu (`te.json`) — Complete with all sections
-  - Kannada (`kn.json`) — Complete with all sections
-  - Marathi (`mr.json`) — Complete with all sections
-  - Malayalam (`ml.json`) — Complete with all sections
-- All translation files include: nav, auth, match_centre, wallet_page, freebucks, predict_page, games, earn, earn_page, dashboard, profile_page, ledger_page, shop_page, footer_links, legal, engagement, common, footer, landing, leaderboard_page, referrals_page, cardgames_page, support_page, notifications
-- **Enhanced LanguageSelector component** in Profile Settings:
-  - Full variant with "Select Language" header
-  - Displays native script + English name for each language
-  - Gold accent styling matching app theme
-  - Checkmark indicator for selected language
-  - Language persists via localStorage
-- **Comprehensive SEO Strategy Implemented:**
-  - **Massive keyword expansion** in index.html meta tags:
-    - Brand variations: free11, FREE11, free 11, free-11, fre11, free1l, freel1, freee11, free111, f11, free eleven
-    - Game keywords: free rummy, free teen patti, free poker, free solitaire with India-specific terms
-    - Player predictions: Virat Kohli, Rohit Sharma, MS Dhoni, Jasprit Bumrah, KL Rahul, and all India players
-    - Competitor comparisons: dream11 free alternative, my11circle free, mpl free alternative
-    - Intent searches: earn coins india, earn groceries cricket, earn rewards playing games
-    - Regional language keywords: Hindi, Telugu, Tamil, Bengali, Marathi, Kannada, Malayalam
-  - **25 FAQ entries** in Schema.org FAQPage for rich snippets
-  - **New SEO blog articles** added:
-    - "Dream11 Free Alternative" (high-value comparison)
-    - "Virat Kohli Prediction" (player-specific)
-    - "Rohit Sharma Prediction" (player-specific)
-    - "IPL 2026 Predictions" (event-specific)
-    - "Free Solitaire India" (game-specific)
-  - **Expanded sitemap.xml** with all new blog articles
-  - **Enhanced noscript fallback** with comprehensive SEO text for crawlers
-- PRD updated to reflect all completed work
+### December 2025 — Full i18n Translations + SEO Overhaul
+- Complete translations for all 8 Indian languages
+- Comprehensive SEO strategy implemented
+- 25 FAQ entries with Schema.org FAQPage for rich snippets
+- Enhanced sitemap.xml with all blog articles
+
+### Phase Final — Multi-game Launch Ready
+- Card Games: Rummy, Teen Patti, Poker, Solitaire
+- Quest Engine, Smart Router, Sponsored Pools
+- SEO: Blog, structured data, robots.txt, sitemap.xml
+- Legal pages: Terms, Privacy, Disclaimer, Responsible Play, Refund Policy
+
+### Phase 8 — Integrations
+- AdMob rewarded ads (20 coins, 5/day)
+- Resend Email OTP (HTML template)
+- Firebase FCM push
+- Razorpay test payments (FREE Bucks), Wallet history page
+
+### Phase 7
+- Referral double-payout fix, "TBA vs TBA" bug fix
+- Wishlist Tracker, Streak "Hot Hand" multiplier, Live Crowd Meter, AI Daily Puzzle, Weekly Report Card
+- Full UI/UX redesign: gold/charcoal, Bebas Neue, bottom nav
+
+### Phase 1–6 (Pre-session)
+- Full auth (OTP, WebAuthn, JWT), cricket data, prediction engine, fantasy builder
+- Contest system, coin economy, shop + redemptions
+- Leaderboards, duels, social feed, admin panel, PWA, i18n 8 langs, KYC, referrals, clans
