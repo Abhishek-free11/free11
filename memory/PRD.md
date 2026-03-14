@@ -262,7 +262,31 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ## CHANGELOG
 
-### March 2026 — Production Security Audit & Hardening
+### March 2026 — Phase 1-6 Platform Upgrade (Production-Ready)
+- **Phase 1 Security**:
+  - X-Request-ID + X-Response-Time tracing middleware on all responses
+  - Global standardized 422 error handler (clean JSON envelope)
+  - Global 500 error handler with request_id for traceability
+- **Phase 2 Performance**:
+  - `GET /api/products` now paginated: `{products:[], total:N, skip:N, limit:N}` + search param + Redis cache
+  - `GET /api/coins/transactions` now paginated: `{transactions:[], total:N, skip:N, limit:N}`
+  - Frontend api.js and Shop.js updated for paginated response shapes
+- **Phase 3 Refactoring**:
+  - `v2_routes.py` reduced from 1329 lines → 35-line aggregator
+  - 5 new domain-specific route files: `routes/v2_contests.py`, `routes/v2_earn.py`, `routes/v2_matches.py`, `routes/v2_commerce.py`, `routes/v2_engagement.py`
+  - `v2_engines.py` centralizes engine instances; no circular imports
+- **Phase 4 Testing**:
+  - New comprehensive test suite: `/app/backend/tests/test_platform_v2.py` (48 tests, 100% pass)
+  - Covers: auth, security, race conditions, pagination, validation, DB indexes, V2 route health
+- **Phase 5 User Activation**:
+  - `FirstPredictionBanner` component: hero nudge for users with 0 predictions (with 3-step explainer + CTA to live match)
+  - `OnboardingChecklist` component: 4-step guided onboarding (checkin, predict, shop, game) with progress bar + dismiss
+  - Both components use session storage for dismiss — correct ephemeral behavior
+- **Phase 6 Production Readiness**:
+  - Startup env validation: crashes on missing MONGO_URL/DB_NAME; warns on weak JWT, CORS=*, test Razorpay
+  - `v2_routes.py` streamlined to fail-fast on bad import
+
+### March 2026 — Production Security Audit & Hardening (previous)
 - **Security Audit** conducted: 5 critical vulnerabilities found and patched
 - **Admin endpoints secured**: `/api/admin/analytics`, `/api/admin/beta-metrics`, `/api/admin/brand-roas` — now require admin auth
 - **Product creation secured**: `POST /api/products` now requires `is_admin=true`
