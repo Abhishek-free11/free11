@@ -117,20 +117,33 @@ async function getFirebaseAuth() {
  * @param {string} containerId - ID of the DOM element
  */
 export async function createRecaptchaVerifier(containerId) {
-  // Clear any existing verifier before creating a new one
+  // 1. Clear any existing verifier instance
   if (_recaptchaVerifier) {
     try { _recaptchaVerifier.clear(); } catch (_) {}
     _recaptchaVerifier = null;
   }
-  // Also wipe the DOM container so no stale rendered widget remains
-  const container = document.getElementById(containerId);
-  if (container) container.innerHTML = '';
+
+  // 2. Reset grecaptcha widget registry (tracks rendered widgets internally)
+  if (window.grecaptcha) {
+    try { window.grecaptcha.reset(); } catch (_) {}
+  }
+  if (window.grecaptcha?.enterprise) {
+    try { window.grecaptcha.enterprise.reset(); } catch (_) {}
+  }
+
+  // 3. REPLACE the DOM element entirely — clearing innerHTML is not enough
+  // because Firebase tracks widgets by element reference, not DOM content.
+  const oldContainer = document.getElementById(containerId);
+  if (oldContainer && oldContainer.parentNode) {
+    const newContainer = document.createElement('div');
+    newContainer.id = containerId;
+    oldContainer.parentNode.replaceChild(newContainer, oldContainer);
+  }
 
   const { RecaptchaVerifier } = await import('firebase/auth');
   const auth = await getFirebaseAuth();
   _recaptchaVerifier = new RecaptchaVerifier(auth, containerId, { size: 'invisible' });
-  // Do NOT call .render() here — signInWithPhoneNumber calls it internally.
-  // Calling it twice on the same element causes "already rendered" error.
+  // Do NOT call .render() — signInWithPhoneNumber handles it
   return _recaptchaVerifier;
 }
 
