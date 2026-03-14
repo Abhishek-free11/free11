@@ -113,6 +113,75 @@ const ARTICLES = {
       { q: 'Do FREE Coins expire?', a: 'FREE Coins have a 180-day rolling expiry from the date of earning. Stay active to keep your coins fresh.' },
     ],
   },
+  'dream11-free-alternative': {
+    title: 'FREE11 vs Dream11 — Best Free Alternative to Dream11 in India 2026',
+    description: 'FREE11 is the best free alternative to Dream11. No deposits, no entry fees, no cash wagering. Play cricket predictions and card games. Earn real rewards without spending money. PROGA 2025 compliant.',
+    published: '2026-03-12',
+    readTime: '5 min read',
+    keywords: ['dream11 free alternative', 'dream11 without money', 'free dream11', 'dream 11 free', 'fantasy cricket free no deposit', 'free11 vs dream11', 'dream11 alternative free', 'play dream11 free', 'dream11 free version', 'best free fantasy app india'],
+    content: Dream11AlternativeContent,
+    faqs: [
+      { q: 'Is there a free alternative to Dream11?', a: 'Yes. FREE11 is the best free alternative to Dream11. Unlike Dream11, FREE11 requires zero deposits, has no entry fees, and involves no cash wagering. You earn FREE Coins through skill-based predictions and card games, then redeem for real rewards.' },
+      { q: 'Can I play Dream11 for free?', a: 'Dream11 requires real money deposits for most contests. For a truly free experience, use FREE11 — it offers cricket predictions and card games with zero deposits required. Earn rewards, not risk.' },
+      { q: 'What is the difference between FREE11 and Dream11?', a: 'Dream11 requires deposits and involves cash stakes. FREE11 is 100% free — no deposits, no cash wagering. FREE11 rewards you with FREE Coins redeemable for groceries and vouchers. FREE11 also includes Rummy, Teen Patti, and Poker games.' },
+      { q: 'Is FREE11 better than Dream11 for beginners?', a: 'Yes. FREE11 has zero financial risk — perfect for beginners. Learn cricket prediction skills, practice card games, earn rewards, and never worry about losing money.' },
+      { q: 'Does FREE11 have fantasy cricket like Dream11?', a: 'FREE11 focuses on live ball-by-ball and over-by-over predictions rather than traditional fantasy team building. This is faster, more engaging, and earns coins for every correct prediction.' },
+    ],
+  },
+  'virat-kohli-prediction': {
+    title: 'Virat Kohli Prediction on FREE11 — Predict King Kohli\'s Performance & Earn Coins',
+    description: 'Predict Virat Kohli\'s batting performance during live cricket matches on FREE11. Earn FREE Coins for correct predictions. T20, ODI, Test match coverage. No deposits required.',
+    published: '2026-03-13',
+    readTime: '4 min read',
+    keywords: ['virat kohli prediction', 'kohli prediction app', 'virat kohli free11', 'predict virat kohli', 'virat kohli cricket prediction', 'kohli batting prediction', 'virat kohli performance prediction', 'king kohli prediction'],
+    content: ViratKohliContent,
+    faqs: [
+      { q: 'Can I predict Virat Kohli\'s performance on FREE11?', a: 'Yes. During any live cricket match featuring Virat Kohli, FREE11 lets you predict his batting outcomes over-by-over. Every correct prediction earns FREE Coins.' },
+      { q: 'How do I predict Virat Kohli on FREE11?', a: 'Open FREE11 during a live match featuring Virat Kohli. Navigate to Predict and make your over-by-over predictions for runs and wickets. Correct predictions earn 10–30 FREE Coins each.' },
+      { q: 'Which Virat Kohli matches are on FREE11?', a: 'FREE11 covers all India matches — IPL 2026, T20 World Cup, ODI series, Test matches. When Kohli plays, you can predict.' },
+      { q: 'Is predicting Virat Kohli on FREE11 free?', a: 'Yes. 100% free. No deposits, no entry fees. Just your cricket knowledge against real match outcomes.' },
+    ],
+  },
+  'rohit-sharma-prediction': {
+    title: 'Rohit Sharma Prediction on FREE11 — Predict Hitman\'s Innings & Earn Rewards',
+    description: 'Predict Rohit Sharma\'s batting performance during live cricket matches on FREE11. Earn FREE Coins for correct predictions. IPL, T20 World Cup, ODI coverage. No deposits.',
+    published: '2026-03-13',
+    readTime: '4 min read',
+    keywords: ['rohit sharma prediction', 'hitman prediction', 'rohit sharma free11', 'predict rohit sharma', 'rohit sharma cricket prediction', 'rohit sharma batting prediction', 'rohit captain prediction'],
+    content: RohitSharmaContent,
+    faqs: [
+      { q: 'Can I predict Rohit Sharma\'s performance on FREE11?', a: 'Yes. During live matches featuring Rohit Sharma, FREE11 lets you predict over-by-over outcomes including runs and wickets. Earn FREE Coins for correct predictions.' },
+      { q: 'Which Rohit Sharma matches can I predict on FREE11?', a: 'All India matches — IPL 2026 (Mumbai Indians), international T20s, ODIs, Test matches. When Rohit bats or captains, you can predict.' },
+      { q: 'How much do I earn predicting Rohit Sharma on FREE11?', a: 'Earn 10–30 FREE Coins per correct prediction. Streak bonuses (Hot Hand) can multiply earnings up to 3×. No deposits required.' },
+    ],
+  },
+  'ipl-2026-prediction': {
+    title: 'IPL 2026 Predictions on FREE11 — Predict Indian Premier League & Earn FREE Rewards',
+    description: 'Predict IPL 2026 match outcomes on FREE11. Ball-by-ball, over-by-over predictions for all teams — CSK, MI, RCB, KKR. Earn FREE Coins for correct calls. No deposits, no entry fees.',
+    published: '2026-03-14',
+    readTime: '5 min read',
+    keywords: ['ipl 2026 prediction', 'ipl 2026 free prediction', 'ipl prediction app', 'ipl free11', 'predict ipl free', 'ipl 2026 free', 'indian premier league 2026 prediction', 'ipl season 18 prediction', 'ipl match prediction free'],
+    content: IPL2026Content,
+    faqs: [
+      { q: 'Can I predict IPL 2026 matches on FREE11?', a: 'Yes. FREE11 covers all IPL 2026 (Season 18) matches. Make ball-by-ball and over-by-over predictions during live matches. Earn FREE Coins for correct calls.' },
+      { q: 'Which IPL 2026 teams can I predict on FREE11?', a: 'All 10 teams: Chennai Super Kings, Mumbai Indians, Royal Challengers Bangalore, Kolkata Knight Riders, Delhi Capitals, Punjab Kings, Rajasthan Royals, Sunrisers Hyderabad, Gujarat Titans, Lucknow Super Giants.' },
+      { q: 'Is IPL 2026 prediction on FREE11 free?', a: 'Yes. 100% free — no deposits, no entry fees, no cash wagering. Just earn FREE Coins through skill-based predictions.' },
+      { q: 'When does IPL 2026 prediction start on FREE11?', a: 'IPL 2026 predictions will be available from match day one, expected March 26, 2026. Stay tuned on free11.com.' },
+    ],
+  },
+  'free-solitaire-india': {
+    title: 'Free Solitaire Online India — Play Klondike Solitaire & Earn Rewards on FREE11',
+    description: 'Play free Solitaire online in India on FREE11. Klondike Solitaire with coin rewards. Earn 25 FREE Coins per day. Redeem for groceries and vouchers. No deposits required.',
+    published: '2026-03-11',
+    readTime: '3 min read',
+    keywords: ['free solitaire india', 'solitaire online free india', 'klondike solitaire free', 'solitaire earn rewards', 'free solitaire app india', 'patience game free india', 'solitaire free coins'],
+    content: FreeSolitaireContent,
+    faqs: [
+      { q: 'Can I play free Solitaire on FREE11?', a: 'Yes. FREE11 features Klondike Solitaire — the classic card game. Play for free and earn 25 FREE Coins per day when you win. No deposits required.' },
+      { q: 'What type of Solitaire is on FREE11?', a: 'FREE11 has Klondike Solitaire — the most popular variant with 7 tableau columns and foundation piles. Arrange cards in descending order by alternating colors.' },
+      { q: 'How do I earn coins playing Solitaire on FREE11?', a: 'Complete a game of Solitaire on FREE11 and earn 25 FREE Coins per day. Play daily to maximize your earnings alongside other games.' },
+    ],
+  },
 };
 
 // ── Article Content Components ──────────────────────────────
@@ -350,15 +419,173 @@ function EarnCoinsContent() {
   );
 }
 
+function Dream11AlternativeContent() {
+  return (
+    <div className="space-y-5 text-sm leading-relaxed" style={{ color: '#BFC3C8' }}>
+      <p>Looking for a <strong style={{ color: 'white' }}>free alternative to Dream11</strong>? FREE11 is the answer. Unlike Dream11, FREE11 requires <strong style={{ color: '#C6A052' }}>zero deposits</strong>, has no entry fees, and involves no cash wagering — while still letting you earn real rewards through cricket predictions and card games.</p>
+      <h2 className="text-base font-bold text-white mt-6">FREE11 vs Dream11 — Complete Comparison</h2>
+      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+        <table className="w-full text-xs">
+          <thead><tr style={{ background: 'rgba(198,160,82,0.1)' }}><th className="p-2.5 text-left text-white">Feature</th><th className="p-2.5 text-left" style={{ color: '#4ade80' }}>FREE11</th><th className="p-2.5 text-left" style={{ color: '#8A9096' }}>Dream11</th></tr></thead>
+          <tbody>
+            {[['Deposits required', 'Never — 100% free', 'Yes — ₹25 minimum'],['Entry fees', 'None', '₹10–₹1000+'],['Cash prizes', 'No (coin rewards)', 'Yes (cash)'],['Financial risk', 'Zero', 'Real money at stake'],['Card games', 'Rummy, Teen Patti, Poker, Solitaire', 'None'],['Prediction style', 'Ball-by-ball, over-by-over', 'Full match fantasy team'],['PROGA status', 'Fully compliant', 'Regulated differently'],['Daily earnings', 'Up to 500+ coins', 'Depends on investment'],['Best for', 'Beginners, zero risk', 'Experienced, risk-takers']].map(([f,a,b]) => (
+              <tr key={f} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <td className="p-2.5" style={{ color: '#8A9096' }}>{f}</td>
+                <td className="p-2.5 font-medium" style={{ color: '#4ade80' }}>{a}</td>
+                <td className="p-2.5" style={{ color: '#8A9096' }}>{b}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <h2 className="text-base font-bold text-white mt-6">Why Choose FREE11 Over Dream11?</h2>
+      <ul className="list-disc list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li><strong style={{ color: 'white' }}>Zero risk</strong> — Never deposit, never lose money</li>
+        <li><strong style={{ color: 'white' }}>Instant rewards</strong> — Earn coins immediately per correct prediction</li>
+        <li><strong style={{ color: 'white' }}>More games</strong> — Card games (Rummy, Teen Patti, Poker) alongside cricket</li>
+        <li><strong style={{ color: 'white' }}>Real rewards</strong> — Redeem for groceries, recharges, vouchers</li>
+        <li><strong style={{ color: 'white' }}>Beginner-friendly</strong> — Learn prediction skills with no financial pressure</li>
+      </ul>
+      <h2 className="text-base font-bold text-white mt-6">How to Switch from Dream11 to FREE11</h2>
+      <ol className="list-decimal list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>Visit free11.com and register (free)</li>
+        <li>Explore cricket predictions during live matches</li>
+        <li>Play Rummy, Teen Patti, Poker daily</li>
+        <li>Accumulate FREE Coins</li>
+        <li>Redeem in the Shop for real rewards</li>
+      </ol>
+    </div>
+  );
+}
+
+function ViratKohliContent() {
+  return (
+    <div className="space-y-5 text-sm leading-relaxed" style={{ color: '#BFC3C8' }}>
+      <p>Predict <strong style={{ color: 'white' }}>Virat Kohli's</strong> batting performance during live cricket matches on FREE11. Every correct prediction earns you FREE Coins — no deposits required.</p>
+      <h2 className="text-base font-bold text-white mt-6">How to Predict Virat Kohli on FREE11</h2>
+      <ol className="list-decimal list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>Open FREE11 during a live match featuring Virat Kohli</li>
+        <li>Go to Predict → select the current match</li>
+        <li>Make over-by-over predictions (runs, wickets, boundaries)</li>
+        <li>Earn 10–30 FREE Coins per correct prediction</li>
+        <li>Hot Hand streak (3+ correct) → up to 3× multiplier</li>
+      </ol>
+      <h2 className="text-base font-bold text-white mt-6">Virat Kohli Match Coverage</h2>
+      <ul className="list-disc list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>IPL 2026 — Royal Challengers Bangalore matches</li>
+        <li>T20 World Cup 2026 — India matches</li>
+        <li>ODI Series — India tours and home series</li>
+        <li>Test Matches — India Test cricket</li>
+        <li>Asia Cup 2026 — All India games</li>
+      </ul>
+      <h2 className="text-base font-bold text-white mt-6">Kohli Prediction Tips</h2>
+      <p>Watch Kohli's recent form, pitch conditions, opposition bowlers, and match situation. FREE11 uses live EntitySport data for real-time scoring.</p>
+    </div>
+  );
+}
+
+function RohitSharmaContent() {
+  return (
+    <div className="space-y-5 text-sm leading-relaxed" style={{ color: '#BFC3C8' }}>
+      <p>Predict <strong style={{ color: 'white' }}>Rohit Sharma's</strong> (Hitman) batting performance during live cricket matches on FREE11. Earn FREE Coins for every correct prediction.</p>
+      <h2 className="text-base font-bold text-white mt-6">How to Predict Rohit Sharma on FREE11</h2>
+      <ol className="list-decimal list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>Open FREE11 during a live match featuring Rohit Sharma</li>
+        <li>Navigate to Predict section</li>
+        <li>Make over-by-over predictions for runs and wickets</li>
+        <li>Earn 10–30 FREE Coins per correct call</li>
+        <li>Build streaks for Hot Hand multipliers</li>
+      </ol>
+      <h2 className="text-base font-bold text-white mt-6">Rohit Sharma Match Coverage</h2>
+      <ul className="list-disc list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>IPL 2026 — Mumbai Indians captain</li>
+        <li>T20 World Cup 2026 — India captain</li>
+        <li>ODI World Cup qualifiers — India matches</li>
+        <li>Test cricket — India Test captain</li>
+      </ul>
+    </div>
+  );
+}
+
+function IPL2026Content() {
+  const teams = [
+    { name: 'Chennai Super Kings', abbr: 'CSK', color: '#ffcc00' },
+    { name: 'Mumbai Indians', abbr: 'MI', color: '#004ba0' },
+    { name: 'Royal Challengers Bangalore', abbr: 'RCB', color: '#d4171e' },
+    { name: 'Kolkata Knight Riders', abbr: 'KKR', color: '#3a225d' },
+    { name: 'Delhi Capitals', abbr: 'DC', color: '#0078bc' },
+    { name: 'Punjab Kings', abbr: 'PBKS', color: '#ed1b24' },
+    { name: 'Rajasthan Royals', abbr: 'RR', color: '#254aa5' },
+    { name: 'Sunrisers Hyderabad', abbr: 'SRH', color: '#f7a721' },
+    { name: 'Gujarat Titans', abbr: 'GT', color: '#1c1c1c' },
+    { name: 'Lucknow Super Giants', abbr: 'LSG', color: '#a72056' },
+  ];
+  return (
+    <div className="space-y-5 text-sm leading-relaxed" style={{ color: '#BFC3C8' }}>
+      <p>Predict <strong style={{ color: 'white' }}>IPL 2026</strong> (Indian Premier League Season 18) match outcomes on FREE11. Ball-by-ball, over-by-over predictions for all 10 teams. Earn FREE Coins for every correct call.</p>
+      <h2 className="text-base font-bold text-white mt-6">IPL 2026 Teams on FREE11</h2>
+      <div className="grid grid-cols-2 gap-2">
+        {teams.map(t => (
+          <div key={t.abbr} className="p-2 rounded-lg text-xs flex items-center gap-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <span className="w-2 h-2 rounded-full" style={{ background: t.color }} />
+            <span className="text-white font-medium">{t.abbr}</span>
+            <span style={{ color: '#8A9096' }}>{t.name}</span>
+          </div>
+        ))}
+      </div>
+      <h2 className="text-base font-bold text-white mt-6">How IPL 2026 Predictions Work</h2>
+      <ul className="list-disc list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>Open FREE11 during any live IPL match</li>
+        <li>Predict over-by-over outcomes (runs, wickets, boundaries)</li>
+        <li>Earn 10–30 FREE Coins per correct prediction</li>
+        <li>Hot Hand multiplier rewards consecutive correct calls</li>
+        <li>No deposits, no entry fees — 100% free</li>
+      </ul>
+      <h2 className="text-base font-bold text-white mt-6">IPL 2026 Season Timeline</h2>
+      <p>IPL 2026 is expected to start <strong style={{ color: '#C6A052' }}>March 26, 2026</strong> and run through May. All 74 league matches plus playoffs will be available for predictions on FREE11.</p>
+    </div>
+  );
+}
+
+function FreeSolitaireContent() {
+  return (
+    <div className="space-y-5 text-sm leading-relaxed" style={{ color: '#BFC3C8' }}>
+      <p>Play <strong style={{ color: 'white' }}>free Solitaire online</strong> in India on FREE11. Classic Klondike Solitaire with coin rewards. Earn <strong style={{ color: '#C6A052' }}>25 FREE Coins per day</strong> when you win. No deposits required.</p>
+      <h2 className="text-base font-bold text-white mt-6">How to Play Solitaire on FREE11</h2>
+      <ol className="list-decimal list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>Register at free11.com (free)</li>
+        <li>Go to Games → Solitaire</li>
+        <li>Play Klondike Solitaire — move cards to build foundation piles</li>
+        <li>Complete the game to earn 25 FREE Coins (daily limit)</li>
+        <li>Redeem coins for real rewards in the Shop</li>
+      </ol>
+      <h2 className="text-base font-bold text-white mt-6">Klondike Solitaire Rules</h2>
+      <ul className="list-disc list-inside space-y-1.5 pl-2" style={{ color: '#8A9096' }}>
+        <li>7 tableau columns with face-down and face-up cards</li>
+        <li>Build columns in descending order with alternating colors</li>
+        <li>Move Aces to foundation piles, build up by suit</li>
+        <li>Win by moving all cards to the four foundation piles</li>
+      </ul>
+      <h2 className="text-base font-bold text-white mt-6">Combine with Other Card Games</h2>
+      <p>Play Solitaire (+25), Rummy (+50), Teen Patti (+40), and Poker (+60) daily for up to <strong style={{ color: '#C6A052' }}>175 FREE Coins from card games alone</strong>.</p>
+    </div>
+  );
+}
+
 // ── Main Blog Component ──────────────────────────────────────
 
 const BLOG_INDEX = [
   { slug: 'what-is-free11', emoji: '🎯', label: 'What is FREE11?' },
+  { slug: 'dream11-free-alternative', emoji: '🆓', label: 'Dream11 Free Alternative' },
   { slug: 'cricket-guide', emoji: '🏏', label: 'Cricket Prediction Guide' },
+  { slug: 'ipl-2026-prediction', emoji: '🏆', label: 'IPL 2026 Predictions' },
+  { slug: 'virat-kohli-prediction', emoji: '⭐', label: 'Virat Kohli Prediction' },
+  { slug: 'rohit-sharma-prediction', emoji: '🌟', label: 'Rohit Sharma Prediction' },
+  { slug: 'cricket-players-2026', emoji: '👥', label: 'All Cricket Players 2026' },
   { slug: 'free-rummy-india', emoji: '🃏', label: 'Free Rummy India' },
   { slug: 'free-teen-patti', emoji: '🎴', label: 'Free Teen Patti' },
   { slug: 'free-poker-india', emoji: '♠️', label: 'Free Poker India' },
-  { slug: 'cricket-players-2026', emoji: '⭐', label: 'Cricket Players 2026' },
+  { slug: 'free-solitaire-india', emoji: '🎮', label: 'Free Solitaire India' },
   { slug: 'earn-free-coins-india', emoji: '💰', label: 'Earn Free Coins India' },
 ];
 
