@@ -482,13 +482,23 @@ async def google_oauth_callback(session_id: str = Query(...)):
     """
     import httpx
     _oauth_url = os.environ.get("OAUTH_CALLBACK_URL", "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data")
-    async with httpx.AsyncClient(timeout=10) as client:
-        res = await client.get(
-            _oauth_url,
-            headers={"X-Session-ID": session_id}
-        )
-    if res.status_code != 200:
-        raise HTTPException(401, "Invalid or expired session")
+    logger.info(f"[Google OAuth] Processing session_id: {session_id[:20]}...")
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            res = await client.get(
+                _oauth_url,
+                headers={"X-Session-ID": session_id}
+            )
+        logger.info(f"[Google OAuth] Emergent Auth response status: {res.status_code}")
+        if res.status_code != 200:
+            logger.error(f"[Google OAuth] Emergent Auth error: {res.text[:200]}")
+            raise HTTPException(401, "Invalid or expired session")
+    except httpx.TimeoutException:
+        logger.error("[Google OAuth] Timeout connecting to Emergent Auth")
+        raise HTTPException(504, "Authentication service timeout")
+    except Exception as e:
+        logger.error(f"[Google OAuth] Error: {str(e)}")
+        raise HTTPException(500, f"Authentication error: {str(e)}")
 
     gdata = res.json()
     email = gdata.get("email", "").lower()

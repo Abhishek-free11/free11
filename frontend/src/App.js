@@ -80,18 +80,29 @@ function AuthCallback() {
 
     const hash = window.location.hash;
     const match = hash.match(/session_id=([^&]+)/);
-    if (!match) { navigate('/login'); return; }
+    if (!match) { 
+      console.error('[OAuth] No session_id found in URL hash');
+      navigate('/login'); 
+      return; 
+    }
     const sessionId = match[1];
+    console.log('[OAuth] Processing session_id:', sessionId.slice(0, 10) + '...');
 
     (async () => {
       try {
         const res = await fetch(`${API}/api/auth/google-oauth?session_id=${encodeURIComponent(sessionId)}`, { method: 'POST' });
-        if (!res.ok) throw new Error('OAuth failed');
+        console.log('[OAuth] Backend response status:', res.status);
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          console.error('[OAuth] Backend error:', errorData);
+          throw new Error(errorData?.detail || 'OAuth failed');
+        }
         const data = await res.json();
         await loginWithToken(data.token);
         toast.success(`Welcome, ${data.user.name?.split(' ')[0] || 'Champion'}!`);
         navigate('/dashboard', { replace: true });
-      } catch {
+      } catch (err) {
+        console.error('[OAuth] Error:', err.message);
         toast.error('Google sign-in failed. Please try again.');
         navigate('/login', { replace: true });
       }
