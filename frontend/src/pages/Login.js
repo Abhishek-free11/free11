@@ -549,7 +549,7 @@ const Login = () => {
             <button
               onClick={() => {
                 // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-                const redirectUrl = window.location.origin + '/dashboard';
+                const redirectUrl = window.location.origin;
                 window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
               }}
               className="w-full h-12 rounded-xl flex items-center justify-center gap-3 transition-all hover:scale-[1.01] active:scale-[0.99]"

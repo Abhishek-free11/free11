@@ -23,13 +23,16 @@ load_dotenv(ROOT_DIR / '.env')
 # Initialize Sentry for crash monitoring
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 if SENTRY_DSN:
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        traces_sample_rate=0.1,
-        environment=os.environ.get('FREE11_ENV', 'development'),
-        enable_tracing=True,
-    )
-    logging.info("Sentry initialized for backend crash monitoring")
+    try:
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            traces_sample_rate=0.1,
+            environment=os.environ.get('FREE11_ENV', 'development'),
+            enable_tracing=True,
+        )
+        logging.info("Sentry initialized for backend crash monitoring")
+    except Exception as e:
+        logging.warning(f"Sentry init skipped (non-fatal): {e}")
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
