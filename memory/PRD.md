@@ -1,5 +1,5 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: March 2026 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. PWA auto-install prompt implemented. -->
+<!-- Last updated: December 2025 — Full PRD audit & complete codebase sync. All pages, engines, integrations documented. Fake stats removed. Play Store assets ready. PWA auto-install prompt implemented. Full i18n translations completed for 8 languages. -->
 
 ## What is FREE11?
 
@@ -39,7 +39,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 ---
 
 ## Tech Stack
-- **Frontend**: React 18, Tailwind CSS, Framer Motion, PWA (service worker + manifest), i18n 8 langs
+- **Frontend**: React 18, Tailwind CSS, Framer Motion, PWA (service worker + manifest), i18n 8 languages (en, hi, ta, bn, te, kn, mr, ml)
 - **Backend**: FastAPI (Python), Motor (async MongoDB), APScheduler, Redis
 - **Database**: MongoDB
 - **AI**: Google Gemini Flash via `emergentintegrations` (Emergent LLM Key)
@@ -470,7 +470,7 @@ Location: `/app/android-twa/play_store_assets/`
 ### P1 — Soon
 - [ ] Reloadly INR: contact support to enable product IDs 18678, 18677, 15714
 - [ ] Woohoo or Gyftr integration (India-first gift card alternative to Reloadly INR)
-- [ ] Professional translations (8 non-English locales)
+- [x] ~~Professional translations (8 non-English locales)~~ — AI-generated complete translations done for all 8 languages (Dec 2025)
 - [ ] FCM push campaigns ("Predict live!")
 - [ ] Better product images in Shop
 
@@ -542,3 +542,16 @@ Location: `/app/android-twa/play_store_assets/`
 - Play Store listing updated: multi-game focus, no fake numbers, correct IAP info
 - In-app purchases correctly declared: FREE Bucks ₹49/₹149/₹499/₹999
 - PRD fully audited and synced with codebase (Feb 2026)
+
+### December 2025 — Full i18n Translations Completed
+- **Complete translations for all 8 Indian languages:**
+  - English (`en.json`) — Reference file
+  - Hindi (`hi.json`) — Complete with all sections
+  - Tamil (`ta.json`) — Complete with all sections
+  - Bengali (`bn.json`) — Complete with all sections
+  - Telugu (`te.json`) — Complete with all sections
+  - Kannada (`kn.json`) — Complete with all sections
+  - Marathi (`mr.json`) — Complete with all sections
+  - Malayalam (`ml.json`) — Complete with all sections
+- All translation files include: nav, auth, match_centre, wallet_page, freebucks, predict_page, games, earn, earn_page, dashboard, profile_page, ledger_page, shop_page, footer_links, legal, engagement, common, footer, landing, leaderboard_page, referrals_page, cardgames_page, support_page, notifications
+- PRD updated to reflect all completed work

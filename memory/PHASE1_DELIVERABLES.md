@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://play-store-launch-4.preview.emergentagent.com**
+**https://multilingual-preview.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**
