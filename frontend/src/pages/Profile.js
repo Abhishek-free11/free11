@@ -9,7 +9,7 @@ import WishlistGoal from '../components/WishlistGoal';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { User, Mail, Coins, Trophy, TrendingUp, Shield, HelpCircle, Volume2, VolumeX, Settings, LogOut, ChevronRight, ShoppingBag, Zap, Gift, Star, UserPlus, Fingerprint, Wallet, Target, Download } from 'lucide-react';
+import { User, Mail, Coins, Trophy, TrendingUp, Shield, HelpCircle, Volume2, VolumeX, Settings, LogOut, ChevronRight, ShoppingBag, Zap, Gift, Star, UserPlus, Fingerprint, Wallet, Target, Download, Globe } from 'lucide-react';
 import api from '../utils/api';
 import { toast } from 'sonner';
 import { isSoundEnabled, setSoundEnabled } from '../utils/sounds';
@@ -211,8 +211,11 @@ const Profile = () => {
           <div className="px-4 py-3">
             {/* Language */}
             <div className="flex items-center justify-between mb-3 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <span className="text-white">Language</span>
-              <LanguageSelector />
+              <div className="flex items-center gap-3">
+                <Globe className="h-5 w-5" style={{ color: '#C6A052' }} />
+                <span className="text-white">Language</span>
+              </div>
+              <LanguageSelector variant="full" />
             </div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
