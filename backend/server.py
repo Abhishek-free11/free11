@@ -26,9 +26,12 @@ if SENTRY_DSN:
     try:
         sentry_sdk.init(
             dsn=SENTRY_DSN,
-            traces_sample_rate=0.1,
-            environment=os.environ.get('FREE11_ENV', 'development'),
-            enable_tracing=True,
+            traces_sample_rate=0.05,  # Reduced from 0.1 to minimize overhead
+            environment=os.environ.get('FREE11_ENV', 'production'),
+            enable_tracing=False,  # Disabled to prevent startup hangs in Kubernetes
+            _experiments={
+                "continuous_profiling_auto_start": False,
+            },
         )
         logging.info("Sentry initialized for backend crash monitoring")
     except Exception as e:
@@ -1841,12 +1844,19 @@ async def startup_event():
     except Exception as e:
         logger.info(f"Unique payout index: {e}")
     # Feature 4: Pre-generate today's AI puzzle on startup (warm cache, non-blocking)
-    import asyncio as _asyncio
-    from v2_routes import puzzle_engine as puzzle_eng
-    _asyncio.create_task(puzzle_eng.generate_today())
-    # Seed sponsored pools (idempotent)
-    await seed_sponsored_pools()
-    logger.info("Email service initialized, AutoScorer started, payout index ensured, AI puzzle pre-generating, sponsored pools seeded")
+    # Note: Wrapped in try-except to prevent startup failures in production
+    try:
+        import asyncio as _asyncio
+        from v2_routes import puzzle_engine as puzzle_eng
+        _asyncio.create_task(puzzle_eng.generate_today())
+    except Exception as e:
+        logger.warning(f"AI puzzle pre-generation skipped: {e}")
+    # Seed sponsored pools (idempotent) - wrapped to prevent startup failures
+    try:
+        await seed_sponsored_pools()
+    except Exception as e:
+        logger.warning(f"Sponsored pools seeding skipped: {e}")
+    logger.info("Startup complete: Email service, AutoScorer, payout index, AI puzzle task, sponsored pools")
 
 # Include additional routers under /api prefix
 app.include_router(cricket_router, prefix="/api")
@@ -1961,9 +1971,11 @@ async def health():
 @app.get("/health")
 async def health_root():
     """Lightweight root health check for Kubernetes probes. No external calls."""
+    # Quick DB check with timeout
     db_ok = False
     try:
-        await db.command("ping")
+        import asyncio
+        await asyncio.wait_for(db.command("ping"), timeout=2.0)
         db_ok = True
     except Exception:
         pass
