@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -180,6 +181,7 @@ const TableauColumn = ({ pile, selectedSrc, onCardClick, colIdx }) => {
 
 export default function SolitairePage() {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [game, setGame] = useState(() => initGame());
   const [selected, setSelected] = useState(null); // { area, col?, idx? }
   const [history, setHistory] = useState([]);       // undo stack
@@ -402,12 +404,13 @@ export default function SolitairePage() {
     toast.success('You won Solitaire! +25 coins earned!', { duration: 5000 });
     if (!g.coinsEarned) {
       try {
-        await api.post('/v2/earn/solitaire-win');
+        const res = await api.post('/v2/earn/solitaire-win');
+        if (res.data?.new_balance !== undefined) updateUser({ coins_balance: res.data.new_balance });
       } catch {
-        // Silent fail — coins may require backend endpoint
+        // Silent fail — already claimed today
       }
     }
-  }, []);
+  }, [updateUser]);
 
   // ── Undo ──────────────────────────────────────────────────────────────────
 

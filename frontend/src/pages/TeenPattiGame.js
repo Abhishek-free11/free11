@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 // ── Card constants ──────────────────────────────────────────────────────────
 const SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
@@ -185,6 +186,7 @@ function newGameState() {
 
 export default function TeenPattiGame() {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [game, setGame] = useState(() => newGameState());
   const [claiming, setClaiming] = useState(false);
   const [alreadyClaimed, setAlreadyClaimed] = useState(false);
@@ -281,6 +283,7 @@ export default function TeenPattiGame() {
     try {
       const res = await api.post('/v2/earn/teen-patti-win');
       setCoinsEarned(res.data.coins_earned || 40);
+      if (res.data.new_balance !== undefined) updateUser({ coins_balance: res.data.new_balance });
       toast.success(`+${res.data.coins_earned} coins earned!`, { description: 'Daily Teen Patti win reward' });
     } catch (e) {
       if (e.response?.status === 400) {

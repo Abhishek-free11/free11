@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 const SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
@@ -166,6 +167,7 @@ function newGame() {
 
 export default function PokerGame() {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [game, setGame] = useState(() => newGame());
   const [claiming, setClaiming] = useState(false);
   const [alreadyClaimed, setAlreadyClaimed] = useState(false);
@@ -267,6 +269,7 @@ export default function PokerGame() {
     try {
       const res = await api.post('/v2/earn/poker-win');
       setCoinsEarned(res.data.coins_earned || 60);
+      if (res.data.new_balance !== undefined) updateUser({ coins_balance: res.data.new_balance });
       toast.success(`+${res.data.coins_earned} coins earned!`);
     } catch (e) {
       if (e.response?.status === 400) setAlreadyClaimed(true);
