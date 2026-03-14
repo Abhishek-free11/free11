@@ -544,6 +544,7 @@ async def verify_otp(req: OTPVerifyRequest):
 class OTPRegisterRequest(BaseModel):
     email: EmailStr
     otp: str
+    phone_number: Optional[str] = None
 
 @api_router.post("/auth/verify-otp-register")
 async def verify_otp_register(req: OTPRegisterRequest):
@@ -554,6 +555,10 @@ async def verify_otp_register(req: OTPRegisterRequest):
     - If user doesn't exist → creates account then returns JWT
     """
     email = req.email.strip().lower()
+    phone = req.phone_number.strip() if req.phone_number else None
+    # Normalize phone to E.164
+    if phone and not phone.startswith('+'):
+        phone = f"+91{phone.replace(' ', '').replace('-', '')}"
 
     # 1. Verify OTP
     result = await otp_engine.verify_otp(email, req.otp)
@@ -564,10 +569,11 @@ async def verify_otp_register(req: OTPRegisterRequest):
     existing = await db.users.find_one({"email": email}, {"_id": 0})
     if existing:
         user_id = existing["id"]
-        await db.users.update_one(
-            {"id": user_id},
-            {"$set": {"last_activity": datetime.now(timezone.utc).isoformat(), "email_verified": True}}
-        )
+        update_fields = {"last_activity": datetime.now(timezone.utc).isoformat(), "email_verified": True}
+        if phone and not existing.get("phone"):
+            update_fields["phone"] = phone
+            update_fields["phone_verified"] = False
+        await db.users.update_one({"id": user_id}, {"$set": update_fields})
         user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
         token = create_access_token({"sub": user_id})
         safe_user = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
@@ -583,6 +589,8 @@ async def verify_otp_register(req: OTPRegisterRequest):
     new_user_doc = {
         "id": user_id,
         "email": email,
+        "phone": phone,
+        "phone_verified": False if phone else None,
         "name": name,
         "password_hash": None,
         "date_of_birth": None,
@@ -618,6 +626,7 @@ async def verify_otp_register(req: OTPRegisterRequest):
 class PhoneFirebaseRequest(BaseModel):
     firebase_id_token: str
     name: Optional[str] = None
+    email: Optional[str] = None
 
 FIREBASE_WEB_API_KEY = os.environ.get("REACT_APP_FIREBASE_API_KEY", "AIzaSyBMRjuuazsPK8YXaKuI93v6yTE96k3Z0Gg")
 
@@ -647,21 +656,30 @@ async def phone_firebase_verify(req: PhoneFirebaseRequest):
     # Find existing user by phone
     existing = await db.users.find_one({"phone": phone_number}, {"_id": 0})
     if existing:
-        await db.users.update_one(
-            {"id": existing["id"]},
-            {"$set": {"last_activity": datetime.now(timezone.utc).isoformat(), "phone_verified": True}}
-        )
+        update_fields = {"last_activity": datetime.now(timezone.utc).isoformat(), "phone_verified": True}
+        # Save email if provided and not already set
+        if req.email and not existing.get("email"):
+            conflict = await db.users.find_one({"email": req.email.strip().lower()}, {"_id": 0})
+            if not conflict:
+                update_fields["email"] = req.email.strip().lower()
+        await db.users.update_one({"id": existing["id"]}, {"$set": update_fields})
         user_doc = await db.users.find_one({"id": existing["id"]}, {"_id": 0})
         token = create_access_token({"sub": existing["id"]})
         safe = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
-        return {"access_token": token, "token_type": "bearer", "user": safe}
+        return {"access_token": token, "token_type": "bearer", "user": safe, "is_new_user": False}
 
     # New user — auto-create
     user_id = str(uuid.uuid4())
     display_name = req.name or f"Player{phone_number[-4:]}"
+    email_val = req.email.strip().lower() if req.email else None
+    # Check email not already taken
+    if email_val:
+        conflict = await db.users.find_one({"email": email_val}, {"_id": 0})
+        if conflict:
+            email_val = None
     now = datetime.now(timezone.utc).isoformat()
     new_user = {
-        "id": user_id, "name": display_name, "email": None,
+        "id": user_id, "name": display_name, "email": email_val,
         "phone": phone_number, "phone_verified": True,
         "hashed_password": None, "coins_balance": 50,
         "total_earned": 50, "total_redeemed": 0,
@@ -685,7 +703,37 @@ async def phone_firebase_verify(req: PhoneFirebaseRequest):
     token = create_access_token({"sub": user_id})
     new_user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
     safe = {k: v for k, v in new_user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
-    return {"access_token": token, "token_type": "bearer", "user": safe}
+    return {"access_token": token, "token_type": "bearer", "user": safe, "is_new_user": True}
+
+
+class UpdateContactRequest(BaseModel):
+    email: Optional[str] = None
+    phone: Optional[str] = None
+
+@api_router.post("/auth/update-contact")
+async def update_contact(req: UpdateContactRequest, current_user: User = Depends(get_current_user)):
+    """Add or update email/phone for an existing user (e.g. phone-only users adding email)."""
+    update_fields = {}
+    if req.email:
+        email_val = req.email.strip().lower()
+        conflict = await db.users.find_one({"email": email_val, "id": {"$ne": current_user.id}}, {"_id": 0})
+        if conflict:
+            raise HTTPException(status_code=400, detail="This email is already linked to another account.")
+        update_fields["email"] = email_val
+    if req.phone:
+        phone_val = req.phone.strip()
+        if not phone_val.startswith('+'):
+            phone_val = f"+91{phone_val.replace(' ', '').replace('-', '')}"
+        conflict = await db.users.find_one({"phone": phone_val, "id": {"$ne": current_user.id}}, {"_id": 0})
+        if conflict:
+            raise HTTPException(status_code=400, detail="This phone is already linked to another account.")
+        update_fields["phone"] = phone_val
+    if not update_fields:
+        raise HTTPException(status_code=400, detail="Provide email or phone to update.")
+    await db.users.update_one({"id": current_user.id}, {"$set": update_fields})
+    user_doc = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    safe = {k: v for k, v in user_doc.items() if k not in ("password_hash", "hashed_password", "coin_expiry_date")}
+    return {"success": True, "user": safe}
 
 
 @api_router.get("/auth/email-status")

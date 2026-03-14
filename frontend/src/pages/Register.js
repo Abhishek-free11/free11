@@ -16,6 +16,7 @@ export default function Register() {
 
   const [stage, setStage] = useState('email'); // 'email' | 'otp'
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -78,7 +79,7 @@ export default function Register() {
       const res = await fetch(`${BACKEND_URL}/api/auth/verify-otp-register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.toLowerCase().trim(), otp: code }),
+        body: JSON.stringify({ email: email.toLowerCase().trim(), otp: code, phone_number: phone.trim() || null }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -210,15 +211,34 @@ export default function Register() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && sendOtp()}
+                  onKeyDown={e => e.key === 'Enter' && phone.length >= 10 && sendOtp()}
                   className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-white outline-none focus:ring-1"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', focusRing: 'rgba(198,160,82,0.5)' }}
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
                   data-testid="register-email-input"
                   autoComplete="email"
                   inputMode="email"
                 />
               </div>
-              <button onClick={sendOtp} disabled={!email || sending}
+              {/* Phone number field */}
+              <div className="flex gap-2 mb-3">
+                <div className="flex items-center px-3 rounded-xl text-white text-sm font-medium flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', height: '48px' }}>
+                  +91
+                </div>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="Mobile number (required)"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  onKeyDown={e => e.key === 'Enter' && email && phone.length >= 10 && sendOtp()}
+                  className="w-full h-12 px-4 rounded-xl text-sm text-white outline-none"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                  data-testid="register-phone-input"
+                  autoComplete="tel"
+                />
+              </div>
+              <button onClick={sendOtp} disabled={!email || phone.length < 10 || sending}
                 className="w-full h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40"
                 style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
                 data-testid="send-otp-btn">

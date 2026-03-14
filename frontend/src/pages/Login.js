@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { Input } from '@/components/ui/input';
-import { Eye, EyeOff, Loader2, Fingerprint, X, Phone } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Fingerprint, X, Phone, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 import { createRecaptchaVerifier, sendPhoneOTP, confirmPhoneOTP, clearRecaptchaVerifier } from '../firebase';
@@ -42,6 +42,11 @@ const Login = () => {
   const confirmationResultRef = useRef(null);
   const recaptchaRef = useRef(null);
   const phoneTimerRef = useRef(null);
+
+  // After phone OTP — collect email for new users
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [captureEmail, setCaptureEmail] = useState('');
+  const [captureEmailLoading, setCaptureEmailLoading] = useState(false);
 
   useEffect(() => {
     if (user) navigate('/match-centre', { replace: true });
@@ -175,14 +180,34 @@ const Login = () => {
     try {
       const idToken = await confirmPhoneOTP(confirmationResultRef.current, code);
       const resp = await api.post('/auth/phone-verify', { firebase_id_token: idToken });
-      const { access_token, user: userData } = resp.data;
+      const { access_token, user: userData, is_new_user } = resp.data;
       loginWithToken(access_token, userData);
-      toast.success('Welcome to FREE11! 🎉');
-      navigate('/match-centre');
+      // New phone-only users → prompt for email
+      if (is_new_user && !userData?.email) {
+        setShowEmailCapture(true);
+      } else {
+        toast.success('Welcome back to FREE11!');
+        navigate('/match-centre');
+      }
     } catch (err) {
       toast.error(err?.response?.data?.detail || 'Incorrect OTP. Please try again.');
     }
     setPhoneLoading(false);
+  };
+
+  const handleEmailCapture = async (skip = false) => {
+    if (skip) { navigate('/match-centre'); return; }
+    if (!captureEmail.trim()) return;
+    setCaptureEmailLoading(true);
+    try {
+      await api.post('/auth/update-contact', { email: captureEmail.trim().toLowerCase() });
+      toast.success('Email saved! Welcome to FREE11!');
+      navigate('/match-centre');
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || 'Could not save email. You can add it later in Settings.');
+      navigate('/match-centre');
+    }
+    setCaptureEmailLoading(false);
   };
 
   const handlePhoneOtpInput = (val) => {
@@ -198,6 +223,41 @@ const Login = () => {
       <div className="absolute pointer-events-none"
         style={{ top: '-10%', left: '50%', transform: 'translateX(-50%)', width: '80vw', height: '40vh', background: 'radial-gradient(ellipse, rgba(198,160,82,0.08) 0%, transparent 70%)' }}
       />
+
+      {/* ── Email Capture Modal (new phone users) ── */}
+      {showEmailCapture && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(8px)' }}>
+          <div className="w-full max-w-xs rounded-2xl p-6 text-center animate-slide-up"
+            style={{ background: '#1B1E23', border: '1px solid rgba(198,160,82,0.25)' }}>
+            <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, rgba(198,160,82,0.15), rgba(224,184,79,0.1))', border: '1px solid rgba(198,160,82,0.3)' }}>
+              <Mail className="w-7 h-7" style={{ color: '#C6A052' }} />
+            </div>
+            <h3 className="font-heading text-xl tracking-wider text-white mb-1">ADD YOUR EMAIL</h3>
+            <p className="text-xs mb-5" style={{ color: '#8A9096' }}>
+              Secure your account and receive important updates. You can skip this for now.
+            </p>
+            <Input
+              type="email" placeholder="you@example.com"
+              value={captureEmail} onChange={e => setCaptureEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleEmailCapture(false)}
+              className="h-11 text-white placeholder:text-slate-600 border mb-3"
+              style={{ background: '#0F1115', borderColor: 'rgba(198,160,82,0.2)' }}
+              data-testid="capture-email-input" autoFocus />
+            <button onClick={() => handleEmailCapture(false)} disabled={!captureEmail.trim() || captureEmailLoading}
+              className="w-full h-11 rounded-xl font-bold text-sm mb-2 disabled:opacity-40 transition-all"
+              style={{ background: 'linear-gradient(135deg, #C6A052, #E0B84F)', color: '#0F1115' }}
+              data-testid="save-email-btn">
+              {captureEmailLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Save Email'}
+            </button>
+            <button onClick={() => handleEmailCapture(true)}
+              className="w-full h-9 text-xs transition-colors" style={{ color: '#8A9096' }}
+              data-testid="skip-email-btn">
+              Skip for now
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Enable Biometric Modal ── */}
       {showEnableBiometric && (
