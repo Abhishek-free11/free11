@@ -16,6 +16,24 @@ const _getSessionId = () => {
   return sid;
 };
 
+// Store session start time for time_to_first_prediction tracking
+export const initSessionTimer = () => {
+  if (!sessionStorage.getItem('f11_session_start')) {
+    sessionStorage.setItem('f11_session_start', Date.now().toString());
+  }
+};
+
+// Call this immediately after user's first prediction is submitted
+export const trackFirstPredictionTime = async () => {
+  const start = parseInt(sessionStorage.getItem('f11_session_start') || '0', 10);
+  if (!start) return;
+  const duration_seconds = Math.round((Date.now() - start) / 1000);
+  // Prevent double-firing
+  if (sessionStorage.getItem('f11_first_pred_tracked')) return;
+  sessionStorage.setItem('f11_first_pred_tracked', '1');
+  await trackEvent('time_to_first_prediction', { duration_seconds, under_45s: duration_seconds < 45 });
+};
+
 export const trackEvent = async (event, properties = {}) => {
   try {
     const token = localStorage.getItem('token');

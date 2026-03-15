@@ -1,0 +1,90 @@
+{
+  "summary": "UI Redesign (FREE11 45-second first-prediction journey) full backend + frontend testing. All primary redesign features verified: QuickPredict card shows as FIRST element for new users, 4-tab bottom nav (Home/Predict/Rewards/Profile) confirmed, YES/NO buttons have correct data-testids, OnboardingChecklist shows with animated progress, checkin-btn functional, analytics.js exports verified. Admin analytics-360 regression passes. 7/10 backend tests pass (3 skipped due to rate-limiting, not failures).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/v2/predictions (via QuickPredict YES button)",
+        "issue": "QuickPredict YES button click returns 'Prediction window closed: match_not_found' for the live match fetched from EntitySport (BTS vs LST). The match_id from v2EsGetMatches doesn't correspond to a match with an open prediction window in the oracle. This means real users on the Dashboard will see the QuickPredict card but cannot actually submit a prediction. Main agent should verify match oracle sync with EntitySport match IDs.",
+        "priority": "MEDIUM"
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "QuickPredict prediction submission",
+        "issue": "YES/NO buttons are clickable and fire the API, but backend returns 'match_not_found' error for EntitySport live matches. The QuickPredict card correctly stays open after error (not dismissed). This is a backend data-sync issue, not a frontend bug.",
+        "affected_selectors": ["[data-testid='quick-predict-yes']", "[data-testid='quick-predict-no']"]
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Dashboard console",
+        "issues": [
+          "370 console errors of type net::ERR_NAME_NOT_RESOLVED — pre-existing Firebase/third-party network errors (REACT_APP_FIREBASE_APP_ID is empty in .env). Not related to redesign.",
+          "ERR_BLOCKED_BY_ORB for checkout-static-next.razorpay.com — pre-existing Razorpay issue"
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_ui_redesign_56.py",
+    "/app/test_reports/pytest/ui_redesign_56.xml"
+  ],
+  "action_items": [
+    "Investigate match oracle sync: v2EsGetMatches returns EntitySport match IDs that don't resolve to open prediction windows. QuickPredict shows the match but prediction submission fails with 'match_not_found'. Fix: either sync EntitySport match IDs with the prediction oracle, or filter to only show matches with active prediction windows in the QuickPredict component."
+  ],
+  "critical_code_review_comments": [
+    "QuickPredict (Dashboard.js): When prediction fails with a generic error (not 'already'), the component shows an error toast but stays open. This is correct. However, 'match_not_found' from EntitySport matches suggests the prediction oracle doesn't have entries for these matches. Recommendation: add a check before rendering QuickPredict to only show if the match has an active prediction window.",
+    "analytics.js: initSessionTimer and trackFirstPredictionTime are correctly exported and wired to Dashboard mount and first prediction success event. ✓",
+    "Navbar.js: BOTTOM_NAV correctly has 4 items only (lines 12-17). data-testid uses item.label.toLowerCase() which produces bottom-nav-home, bottom-nav-predict, bottom-nav-rewards, bottom-nav-profile. ✓",
+    "Dashboard.js isNewUser logic: uses user.total_predictions === 0. The test_redesign_ui26 user currently has total_predictions=0 so IS a new user and DOES see QuickPredict. Main agent context note was incorrect about this user having predictions > 0."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (7/7 executed tests pass, 3 skipped due to rate-limiting not failures)",
+    "frontend": "100% (all 13 data-testid elements verified, navigation works, checkin works)"
+  },
+  "test_credentials": {
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234 (total_predictions=0, IS new user)",
+    "admin": "admin@free11.com / Admin@123"
+  },
+  "data_testid_verification": {
+    "quick-predict-card": "FOUND ✓ (first element above fold for new user with live match)",
+    "quick-predict-yes": "FOUND ✓",
+    "quick-predict-no": "FOUND ✓",
+    "bottom-nav-home": "FOUND ✓",
+    "bottom-nav-predict": "FOUND ✓ (gold elevated pill button style)",
+    "bottom-nav-rewards": "FOUND ✓",
+    "bottom-nav-profile": "FOUND ✓",
+    "bottom-nav-games": "CORRECTLY ABSENT ✓",
+    "bottom-nav-missions": "CORRECTLY ABSENT ✓",
+    "onboarding-checklist": "FOUND ✓ (shows for user with 2/4 steps done)",
+    "checkin-card": "FOUND ✓",
+    "checkin-btn": "FOUND ✓ (works - triggers check-in with toast + confetti)",
+    "first-prediction-banner": "NOT SHOWN (QuickPredict shown instead due to live match availability)"
+  },
+  "dom_order_verification": "QuickPredict card (index 13) appears BEFORE OnboardingChecklist (index 20) in DOM. Container children order: quick-predict-card → ipl-carousel → onboarding-checklist → user-header",
+  "analytics_exports": {
+    "initSessionTimer": "EXPORTED ✓ - stored in sessionStorage(f11_session_start), called on Dashboard mount",
+    "trackFirstPredictionTime": "EXPORTED ✓ - calls trackEvent with duration_seconds, fired after first successful prediction"
+  },
+  "bottom_nav_count": "4 buttons confirmed (Home, Predict, Rewards, Profile)",
+  "navigation_test": {
+    "predict_tab": "/predict ✓",
+    "rewards_tab": "/shop ✓",
+    "profile_tab": "/profile ✓",
+    "home_tab": "/match-centre ✓"
+  },
+  "admin_analytics_regression": {
+    "GET /api/admin/analytics-360 (admin)": "200 ✓",
+    "GET /api/admin/analytics-360 (no auth)": "401 ✓",
+    "GET /api/admin/analytics-360 (non-admin)": "403 ✓"
+  },
+  "seed_data_creation": "",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "UI redesign iteration 56 fully tested. All data-testids verified. test_redesign_ui26@free11test.com is a NEW user (total_predictions=0) so QuickPredict card DOES show. Main issue: QuickPredict YES/NO click returns 'match_not_found' from backend because EntitySport match IDs don't map to prediction oracle matches. All other features (bottom nav 4 tabs, onboarding checklist, checkin btn, analytics exports) work correctly. Admin analytics-360 regression still passing (auth enforced)."
+}
