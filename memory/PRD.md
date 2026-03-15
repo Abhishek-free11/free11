@@ -1,5 +1,5 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: March 2026 — Analytics 360° dashboard, UI/UX redesign (45s first-prediction), Activation Trigger + Streak-at-Risk notifications, production hardening complete. -->
+<!-- Last updated: March 2026 — Analytics 360° dashboard, UI/UX redesign (45s first-prediction), Activation Trigger + Streak-at-Risk notifications, PWA nudges + biometric nudge restored. -->
 
 ## What is FREE11?
 
@@ -340,6 +340,18 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - All fake stats removed from entire app
 - Play Store listing updated: multi-game focus, no fake numbers, correct IAP info
 - PRD fully audited and synced with codebase (Feb 2026)
+
+### March 2026 — Analytics 360°, UI/UX Redesign, Notification Engine, PWA Nudge Fixes
+- Analytics 360° Dashboard (`/admin/analytics`): 5 tabs, Recharts, AgGridReact, CSV export
+- UI/UX Redesign: QuickPredict above-the-fold, OnboardingChecklist with Framer Motion
+- Notification Engine: activation_trigger + streak_reminder campaigns, NotificationPanel UI
+- Navigation regressions fixed: 5-tab bottom nav + Navbar buttons restored
+- **PWA & Biometric Nudge Fix (P0 regression):**
+  - Restored `PWAInstallButton` FAB in `App.js` (shows after full bottom sheet dismissed)
+  - Added `PWANudge` card in Dashboard for non-installed users (always visible)
+  - Added `BiometricNudge` card in Dashboard for users who haven't set up biometrics
+  - Fixed Login.js race condition: biometric modal now appears after email/password login
+  - Biometric can now be enabled directly from Dashboard without re-login
 
 ### December 2025 — Full i18n Translations + SEO Overhaul
 - Complete translations for all 8 Indian languages

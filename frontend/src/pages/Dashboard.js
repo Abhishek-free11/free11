@@ -21,7 +21,7 @@ import api from '../utils/api';
 import { playCelebrationSound } from '../utils/sounds';
 import confetti from 'canvas-confetti';
 import { trackEvent, trackFirstPredictionTime, initSessionTimer } from '../utils/analytics';
-import { isBiometricEnabled } from '../utils/biometric';
+import { isBiometricEnabled, enableBiometric } from '../utils/biometric';
 
 import dayjs from 'dayjs';
 
@@ -29,8 +29,7 @@ import dayjs from 'dayjs';
 const BIOMETRIC_DISMISS_KEY = 'biometric_nudge_dismissed_at';
 const BIOMETRIC_DISMISS_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-function BiometricNudge({ onDismiss }) {
-  const navigate = useNavigate();
+function BiometricNudge({ onDismiss, user }) {
   const dismissed = localStorage.getItem(BIOMETRIC_DISMISS_KEY);
   if (dismissed && Date.now() - parseInt(dismissed, 10) < BIOMETRIC_DISMISS_TTL) return null;
   if (isBiometricEnabled()) return null;
@@ -38,6 +37,21 @@ function BiometricNudge({ onDismiss }) {
   const handleDismiss = () => {
     localStorage.setItem(BIOMETRIC_DISMISS_KEY, Date.now().toString());
     onDismiss();
+  };
+
+  const handleSetup = async () => {
+    const token = localStorage.getItem('token');
+    if (!token || !user) {
+      toast.error('Please log in first to enable biometric login');
+      return;
+    }
+    try {
+      await enableBiometric(user.email, token, user.name);
+      toast.success('Biometric login enabled! Use fingerprint next time you log in.');
+      onDismiss(); // Hide the nudge after setup
+    } catch {
+      toast.info('Sign out and sign back in with email/password to enable biometric login.');
+    }
   };
 
   return (
@@ -67,7 +81,7 @@ function BiometricNudge({ onDismiss }) {
         <p className="text-xs mt-0.5" style={{ color: '#8A9096' }}>Use fingerprint or face ID — no password needed</p>
       </div>
       <button
-        onClick={() => navigate('/login')}
+        onClick={handleSetup}
         className="text-xs font-bold px-3 py-1.5 rounded-xl flex-shrink-0"
         style={{ background: 'rgba(198,160,82,0.15)', color: '#C6A052', border: '1px solid rgba(198,160,82,0.25)' }}
         data-testid="biometric-nudge-setup-btn"
@@ -942,7 +956,7 @@ const Dashboard = () => {
         {/* ── Biometric Login Nudge ── */}
         <AnimatePresence>
           {showBiometricNudge && (
-            <BiometricNudge onDismiss={() => setShowBiometricNudge(false)} />
+            <BiometricNudge onDismiss={() => setShowBiometricNudge(false)} user={user} />
           )}
         </AnimatePresence>
 
