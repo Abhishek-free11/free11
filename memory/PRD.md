@@ -1,5 +1,5 @@
 # FREE11 — Product Requirements Document
-<!-- Last updated: March 2026 — Analytics 360° dashboard, UI/UX redesign (45s first-prediction), Activation Trigger + Streak-at-Risk notifications, PWA nudges + biometric nudge restored. -->
+<!-- Last updated: Feb 2026 — Firebase config complete, dynamic home page, real card games, PWA nudges restored, full production config done -->
 
 ## What is FREE11?
 
@@ -41,10 +41,10 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 ## Tech Stack
 - **Frontend**: React 18, Tailwind CSS, Framer Motion, PWA (service worker + manifest), i18n 8 languages (en, hi, ta, bn, te, kn, mr, ml)
 - **Backend**: FastAPI (Python), Motor (async MongoDB), APScheduler, Redis
-- **Database**: MongoDB
+- **Database**: MongoDB (managed by Emergent in production)
 - **AI**: Google Gemini Flash via `emergentintegrations` (Emergent LLM Key)
-- **Payments**: Razorpay (TEST MODE → live keys needed) + Cashfree (pending compliance approval)
-- **Notifications**: Firebase FCM (live), Resend email (live, DNS pending)
+- **Payments**: Razorpay (TEST MODE — live keys needed) + Cashfree (pending compliance)
+- **Notifications**: Firebase FCM (live), Resend email (live, DNS verified ✅)
 - **Analytics**: Sentry (live)
 - **Ads**: AdMob (live)
 - **Auth**: JWT + Google OAuth2 (Emergent-managed) + Firebase Phone Auth
@@ -59,7 +59,15 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 - **Base**: Deep Charcoal #0F1115, Graphite Dark #1B1E23
 - **Neutrals**: Steel Silver #BFC3C8, Soft Grey #8A9096
 - **Fonts**: Bebas Neue (headings), Oswald (numbers), Noto Sans (body)
-- **Navigation**: Mobile-first bottom nav (Home/Play/Games/Earn/Profile)
+- **Navigation**: Mobile-first 5-tab bottom nav (Home | Predict | Games | Rewards | Profile)
+
+---
+
+## Production URLs
+- **Live app**: https://free11.com
+- **WWW**: https://www.free11.com
+- **Sandbox/Preview**: https://activation-engine.preview.emergentagent.com
+- **Hosting**: Emergent (managed MongoDB + infra)
 
 ---
 
@@ -72,7 +80,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 | value | Value Pack | ₹499 | 550 | +50 |
 | mega | Mega Pack | ₹999 | 1,200 | +200 |
 
-- Payment via **Razorpay** (TEST MODE — live keys needed)
+- Payment via **Razorpay** (TEST MODE — live keys still needed)
 - **Cashfree** as fallback (pending compliance approval)
 - Neither FREE Bucks nor FREE Coins can be withdrawn as cash
 
@@ -83,7 +91,7 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 ### Existing Collections
 | Collection | Key Fields |
 |---|---|
-| users | coins_balance, free_bucks, xp, level, streak_days, last_checkin, prediction_streak, wishlist_product_id, coin_expiry_date (180d rolling) |
+| users | coins_balance, free_bucks, xp, level, streak_days, last_checkin, prediction_streak, wishlist_product_id, coin_expiry_date (180d rolling), activation_push_sent |
 | matches | EntitySport data + prediction state |
 | predictions | user_id, match_id, choice, result, coins_awarded |
 | contests | type, entry_fee (0=free), prize_pool, participants |
@@ -101,8 +109,9 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 | clans | name, members, total_coins, rank |
 | missions | user_id, type, progress, claimed |
 | spin_wheel | user_id, last_spin, history |
+| notifications | user_id, type, title, message, link, is_read, created_at |
 
-### DB Indexes (Added March 2026)
+### DB Indexes
 | Collection | Index | Purpose |
 |---|---|---|
 | users | email (unique, sparse) | Prevent duplicate emails, fast login lookup |
@@ -131,6 +140,8 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ### Cricket & Predictions
 - GET /api/v2/matches/live
+- GET /api/v2/es/matches?status=3 *(EntitySport live)*
+- GET /api/v2/es/match/:id/live *(live scorecard data)*
 - POST /api/v2/predictions
 - GET /api/v2/contests/join
 - GET /api/v2/crowd-meter
@@ -161,17 +172,23 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ### Shop & Rewards
 - GET /api/products
-- POST /api/products *(admin only — fixed March 2026)*
+- POST /api/products *(admin only)*
 - POST /api/redemptions *(atomic stock+coin deduction)*
 - GET /api/redemptions
 
 ### Quest & Router
 - GET /api/v2/quest/status
 - POST /api/v2/quest/offer, /claim-ad, /ration-viewed, /dismiss
-- GET /api/v2/router/tease, POST /api/v2/router/settle *(atomic coin deduction)*, GET /api/v2/router/skus
+- GET /api/v2/router/tease, POST /api/v2/router/settle, GET /api/v2/router/skus
 
-### KPIs & Admin *(all require admin auth — fixed March 2026)*
+### Notifications
+- GET /api/v2/notifications
+- POST /api/v2/notifications/trigger-test *(admin only)*
+
+### Admin & Analytics
 - GET /api/admin/analytics *(admin only)*
+- GET /api/admin/analytics-360 *(admin only — 10+ collection aggregation)*
+- GET /api/admin/analytics-360/export/csv *(admin only — streaming CSV)*
 - GET /api/admin/beta-metrics *(admin only)*
 - GET /api/admin/brand-roas *(admin only)*
 - GET /api/v2/kpis *(admin only)*
@@ -183,74 +200,77 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 | Integration | Status | Notes |
 |---|---|---|
-| EntitySport | LIVE | Cricket data, match scores |
-| Redis | LIVE | Crowd Meter + Router caching. Rate limiter has in-memory fallback |
-| Sentry | LIVE | Error monitoring |
-| Gemini Flash | LIVE | AI puzzle (Emergent LLM Key) |
-| Google Auth | LIVE | Emergent-managed OAuth2 |
-| Firebase FCM | LIVE | send_each (fixed from send_all) |
-| Firebase Phone Auth | LIVE | Added Feb 2026 |
-| Resend Email | LIVE | API key active; DNS verification pending |
-| AdMob | LIVE | User's own API keys |
-| Razorpay | TEST MODE | Test keys only; live keys needed for production |
-| Cashfree | PENDING | Awaiting compliance approval from Cashfree team |
-| Reloadly (USD) | LIVE | Swype/Razer gift cards working |
-| Reloadly (INR) | BLOCKED | Product IDs 18678, 18677, 15714 need enabling by Reloadly |
-| Xoxoday | MOCKED | Awaiting API key + catalog |
-| ONDC / Zepto | MOCKED | Smart router simulated |
-| Amazon Affiliate | MOCKED | Provider ready, no live key |
-| Flipkart Affiliate | MOCKED | Provider ready, no live key |
-| Airtime (Recharge) | LIVE | Mobile recharge via partner API |
+| EntitySport | ✅ LIVE | Cricket data, match scores, live scorecard |
+| Redis | ✅ LIVE | Crowd Meter + Router caching. In-memory fallback active |
+| Sentry | ✅ LIVE | Error monitoring |
+| Gemini Flash | ✅ LIVE | AI puzzle (Emergent LLM Key) |
+| Google Auth | ✅ LIVE | Emergent-managed OAuth2 |
+| Firebase FCM | ✅ LIVE | send_each (fixed from send_all) |
+| Firebase Phone Auth | ✅ LIVE | Added Feb 2026 |
+| Firebase App ID | ✅ LIVE | `1:725923627857:web:8f5781a890c37c24679d01` |
+| Firebase VAPID Key | ✅ LIVE | Web push certificates configured |
+| Firebase Auth Domains | ✅ LIVE | free11.com, www.free11.com, all preview URLs authorized |
+| Resend Email | ✅ LIVE | API key active + DNS verified |
+| AdMob | ✅ LIVE | User's own API keys |
+| Razorpay | ⚠️ TEST MODE | Test keys only — live keys needed for real payments |
+| Cashfree | 🔴 PENDING | Awaiting compliance approval from Cashfree team |
+| Reloadly (USD) | ✅ LIVE | Swype/Razer gift cards working |
+| Reloadly (INR) | 🔴 BLOCKED | Product IDs 18678, 18677, 15714 need enabling by Reloadly |
+| Xoxoday | 🟡 MOCKED | Awaiting API key + catalog |
+| ONDC / Zepto | 🟡 MOCKED | Smart router simulated |
+| Amazon Affiliate | 🟡 MOCKED | Provider ready, no live key |
+| Flipkart Affiliate | 🟡 MOCKED | Provider ready, no live key |
+| Airtime (Recharge) | ✅ LIVE | Mobile recharge via partner API |
+| MongoDB | ✅ LIVE | Managed by Emergent in production |
 
 ---
 
 ## Prioritized Backlog
 
-### P0 — Production (Do Now — User Action Required)
-- [ ] Switch Razorpay test keys → live keys (user must provide rzp_live_* keys to .env)
-- [ ] Complete Resend DNS verification (user must add DNS records at resend.com/domains)
-- [ ] Cashfree: await compliance approval + activate live keys
-- [ ] Update assetlinks.json with SHA-256 from signed APK (user must run keytool on keystore)
-- [ ] Deploy latest code to free11.com (git pull + build + restart on production server)
-- [ ] Add REACT_APP_FIREBASE_APP_ID to frontend/.env (currently empty)
-- [ ] Google Play: Complete identity verification + closed test (20 testers × 14 days)
+### P0 — Only Remaining Production Blocker
+- [ ] **Razorpay**: Switch test keys → live keys (`rzp_live_*` keys → backend .env). This is the ONLY remaining blocker for real payments.
 
 ### P1 — Soon
 - [ ] Reloadly INR: contact support to enable product IDs 18678, 18677, 15714
+- [ ] Cashfree: await compliance approval + activate live keys
+- [ ] Google Play: Complete identity verification + closed test (20 testers × 14 days)
+- [ ] Update assetlinks.json with SHA-256 from signed APK
 - [ ] Woohoo or Gyftr integration (India-first gift card alternative to Reloadly INR)
 - [ ] FCM push campaigns ("Predict live!")
 - [ ] Better product images in Shop
 - [ ] Fix Xoxoday voucher redeem to use atomic coin deduction (currently non-atomic, low risk since mocked)
-- [ ] Add router settle per-user rate limit to in-memory fallback (currently Redis-only)
 
-### P2 — Future
-- [ ] Refactor v2_routes.py (1300+ lines → smaller domain routers)
-- [ ] iOS App (WKWebView wrapper)
+### P2 — Future Dev Work
+- [ ] Refactor v2_routes.py (large file → smaller domain routers)
+- [ ] iOS App (WKWebView wrapper for App Store)
 - [ ] Live ONDC/Zepto router (replace mocked providers)
 - [ ] Xoxoday integration (API key + catalog needed)
+- [ ] Enhance Rummy/Poker/Solitaire with same animation polish as Teen Patti rewrite
+- [ ] Add live multiplayer via WebSockets (games currently AI-only)
 - [ ] Squad vs Squad Battles
 - [ ] UTM tracking for growth/reels
 - [ ] Advanced cohort retention analytics
-- [ ] Cashfree live integration (pending compliance)
+- [ ] Background job queue (Celery/RQ) for async voucher fulfillment
 
 ---
 
-## Security Audit Results (March 2026)
+## Security Audit Results
 
-### Fixed
-- ✅ `/api/admin/analytics` — Now requires admin auth (was public)
-- ✅ `/api/admin/beta-metrics` — Now requires admin auth (was public)
-- ✅ `/api/admin/brand-roas` — Now requires admin auth (was public)
-- ✅ `POST /api/products` — Now requires admin role (was any authenticated user)
-- ✅ `POST /api/coins/checkin` — Atomic check-in (was race-condition exploitable)
-- ✅ `POST /api/redemptions` — Atomic stock+coin deduction (was two-step vulnerable)
-- ✅ Rate limiter — In-memory fallback when Redis unavailable (was pass-through)
-- ✅ DB indexes — 10 critical indexes added for performance at scale
+### Fixed ✅
+- `/api/admin/analytics` — Now requires admin auth (was public)
+- `/api/admin/beta-metrics` — Now requires admin auth (was public)
+- `/api/admin/brand-roas` — Now requires admin auth (was public)
+- `POST /api/products` — Now requires admin role (was any authenticated user)
+- `POST /api/coins/checkin` — Atomic check-in (was race-condition exploitable)
+- `POST /api/redemptions` — Atomic stock+coin deduction (was two-step vulnerable)
+- Rate limiter — In-memory fallback when Redis unavailable (was pass-through)
+- DB indexes — 10 critical indexes added for performance at scale
+- FIREBASE_APP_ID — Now set in frontend .env ✅
+- FIREBASE_VAPID_KEY — Now set in frontend .env ✅
 
 ### Known Remaining (P1)
 - ⚠️ `POST /api/v2/vouchers/redeem` — Non-atomic coin deduction (low risk: Xoxoday MOCKED)
 - ⚠️ Router settle per-user rate limit only works with Redis (no in-memory fallback)
-- ⚠️ FIREBASE_APP_ID empty in frontend .env (affects FCM push notifications)
 
 ---
 
@@ -262,133 +282,81 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ## CHANGELOG
 
-### March 2026 — Activation Trigger + Streak-at-Risk Notifications
-- **`send_activation_trigger_campaign`** (new): targets users registered 20-28h ago with 0 predictions → personalized FCM push + in-app notification; idempotent via `activation_push_sent` DB flag; runs every scheduler tick
-- **`send_streak_reminder_campaign`** enhanced: upgraded to 3+ day streak (was 2+), 20h inactivity window (was 23h), personalized copy with `hours_left` countdown, fires at 20:00 AND 22:00 IST
-- **In-app notification center**: All campaigns also write to `db.notifications` (same collection as existing `GET /api/v2/notifications` endpoint)
-- **Notification bell**: Added to top Navbar with animated unread badge (polls 60s), `data-testid=notification-bell-btn`
-- **`NotificationPanel.js`**: Slide-in panel (Framer Motion), shows last 20 notifications with type-specific icons/colors, marks all read on open (1.2s delay), deep-links to relevant pages
-- **Admin test trigger**: `POST /api/v2/notifications/trigger-test` — inserts test activation + streak notifications instantly for admin testing (admin-only, 403 for non-admin)
-
-### March 2026 — UI/UX Redesign (45-Second First-Prediction Journey)
-- **QuickPredict inline component** (`Dashboard.js`): Live match with YES/NO boundary prediction buttons is now the FIRST element above the fold. New users see the prediction opportunity in <2 seconds after opening the app.
-- **Content reorder**: Dashboard now shows QuickPredict → IPLCarousel → OnboardingChecklist → User Header → Check-in (was: IPLCarousel → Checklist → Banner → Header → ... → Live Match → at bottom)
-- **Post-prediction state**: After submission, QuickPredict transitions to a "See All Matches →" confirmation card (handles both success and oracle-mismatch gracefully)
-- **OnboardingChecklist enhanced**: Framer Motion animated progress bar + icon-per-step, improved visual hierarchy
-- **FirstPredictionBanner enhanced**: Animated shimmer sweep, Framer Motion entrance, more urgent copy
-- **Bottom navigation simplified**: 4 tabs only — Home | Predict | Rewards | Profile (removed Games, Missions)
-- **Predict tab elevated**: Gold pill button style (larger) to prime tap intent
-- **Analytics tracking**: `initSessionTimer()` fires on Dashboard mount, `trackFirstPredictionTime(duration_seconds)` fires after first successful prediction → feeds `/admin/analytics-360` metrics
-- **Session tracking**: All events now include `session_id` + `platform` (user-agent)
-- **New backend route**: `GET /api/admin/analytics-360` — admin-only (401/403 enforced)
-  - Queries 10+ MongoDB collections in parallel
-  - Filters real external users (excludes all test/seed/admin accounts)
-  - Returns: high_level summary, per-user 360° profiles, 6-stage funnel, DAU 7d, top events, monetization data
-- **CSV export**: `GET /api/admin/analytics-360/export/csv` — streaming CSV, auth-protected
-- **New frontend page**: `src/pages/AdminAnalytics.js` at `/admin/analytics`
-  - 5 tabs: Overview | Users | Funnel | Events | Monetization
-  - Sortable user table with per-row expand (predictions, coins history, orders)
-  - Native CSV export for all tables (fetch+Blob pattern for auth)
-  - Bar charts (DAU, top events, coins by source) via Recharts
-  - Per-user drop-off funnel stage labeling
-- **Security fix**: Both analytics endpoints properly enforce admin JWT auth (fixed during testing)
-- **Tracking improvement**: `src/utils/analytics.js` now includes `session_id` and `platform` (UA) in all tracked events
-- **Navigation**: "Analytics 360°" button added to AdminV2 control panel header
-
-### March 2026 — Phase 1-6 Platform Upgrade (Production-Ready)
-- **Phase 1 Security**:
-  - X-Request-ID + X-Response-Time tracing middleware on all responses
-  - Global standardized 422 error handler (clean JSON envelope)
-  - Global 500 error handler with request_id for traceability
-- **Phase 2 Performance**:
-  - `GET /api/products` now paginated: `{products:[], total:N, skip:N, limit:N}` + search param + Redis cache
-  - `GET /api/coins/transactions` now paginated: `{transactions:[], total:N, skip:N, limit:N}`
-  - Frontend api.js and Shop.js updated for paginated response shapes
-- **Phase 3 Refactoring**:
-  - `v2_routes.py` reduced from 1329 lines → 35-line aggregator
-  - 5 new domain-specific route files: `routes/v2_contests.py`, `routes/v2_earn.py`, `routes/v2_matches.py`, `routes/v2_commerce.py`, `routes/v2_engagement.py`
-  - `v2_engines.py` centralizes engine instances; no circular imports
-- **Phase 4 Testing**:
-  - New comprehensive test suite: `/app/backend/tests/test_platform_v2.py` (48 tests, 100% pass)
-  - Covers: auth, security, race conditions, pagination, validation, DB indexes, V2 route health
-- **Phase 5 User Activation**:
-  - `FirstPredictionBanner` component: hero nudge for users with 0 predictions (with 3-step explainer + CTA to live match)
-  - `OnboardingChecklist` component: 4-step guided onboarding (checkin, predict, shop, game) with progress bar + dismiss
-  - Both components use session storage for dismiss — correct ephemeral behavior
-- **Phase 6 Production Readiness**:
-  - Startup env validation: crashes on missing MONGO_URL/DB_NAME; warns on weak JWT, CORS=*, test Razorpay
-  - `v2_routes.py` streamlined to fail-fast on bad import
-
-### March 2026 — Production Security Audit & Hardening (previous)
-- **Security Audit** conducted: 5 critical vulnerabilities found and patched
-- **Admin endpoints secured**: `/api/admin/analytics`, `/api/admin/beta-metrics`, `/api/admin/brand-roas` — now require admin auth
-- **Product creation secured**: `POST /api/products` now requires `is_admin=true`
-- **Check-in race condition fixed**: Atomic `find_one_and_update` prevents double awards
-- **Redemption race condition fixed**: Atomic stock + coin deduction with rollback
-- **Rate limiter hardened**: In-memory fallback added (no longer pass-through without Redis)
-- **DB indexes added**: 10 indexes across 6 collections for 300k-user scale
-- **Test suite created**: 31 security tests passing at `/app/backend/tests/test_security_audit_53.py`
-
-### Feb–March 2026 — PWA Polish + Auth + Play Store + Full Audit
-- Android TWA build errors resolved; signed AAB generated
-- Firebase Phone Auth added (Login.js + /api/auth/phone-verify)
-- FCM fix: send_all → send_each (deployment blocker resolved)
-- ScrollToTop component (fixes page scroll on navigation)
-- PWA Install button added to Profile page
-- Leaderboard admin/seed user filtering
-- Hardcoded brand names removed from UI
-- All fake stats removed from entire app
-- Play Store listing updated: multi-game focus, no fake numbers, correct IAP info
-- PRD fully audited and synced with codebase (Feb 2026)
-
-### March 2026 — Analytics 360°, UI/UX Redesign, Notification Engine, PWA Nudge Fixes
-- Analytics 360° Dashboard (`/admin/analytics`): 5 tabs, Recharts, AgGridReact, CSV export
-- UI/UX Redesign: QuickPredict above-the-fold, OnboardingChecklist with Framer Motion
-- Notification Engine: activation_trigger + streak_reminder campaigns, NotificationPanel UI
-- Navigation regressions fixed: 5-tab bottom nav + Navbar buttons restored
-- **PWA & Biometric Nudge Fix (P0 regression):**
-  - Restored `PWAInstallButton` FAB in `App.js` (shows after full bottom sheet dismissed)
-  - Added `PWANudge` card in Dashboard for non-installed users (always visible)
-  - Added `BiometricNudge` card in Dashboard for users who haven't set up biometrics
-  - Fixed Login.js race condition: biometric modal now appears after email/password login
-  - Biometric can now be enabled directly from Dashboard without re-login
+### Feb 2026 — Firebase Config Complete + Production Hardening
+- `REACT_APP_FIREBASE_APP_ID` set: `1:725923627857:web:8f5781a890c37c24679d01`
+- `REACT_APP_FIREBASE_VAPID_KEY` set: `BEiusm7D-lciKuezp9PVjtryA8OXGXMiiSsFniUziBSER8Gw65d-XahBRYEuUvEwequaf6slwyKkU8qtuFjNBS`
+- Firebase authorized domains confirmed: free11.com, www.free11.com, all preview URLs ✅
+- Resend DNS confirmed verified ✅
+- Production confirmed live on Emergent at **free11.com** ✅
+- MongoDB confirmed managed by Emergent (no external Atlas needed) ✅
+- Atlas cluster created (free11-prod, ap-south-1) — available as backup/migration option
 
 ### Feb 2026 — Dynamic Home Page + Real Card Games
-- **Dynamic Dashboard (Requirement A):**
-  - `isImportantMatch()` detects IPL/ICC/T20 World Cup/ODI World Cup/Test/India matches
+- **Dynamic Dashboard**: `isImportantMatch()` detects IPL/ICC/T20 WC/ODI WC/Test/India matches
   - IF important live match: QuickPredict first + LiveScorecard (Cricbuzz-style) right below (45s KPI protected)
-  - ELSE: "Play & Earn Now" CardGamesCarousel as first element (4 cards: Teen Patti, Rummy, Poker, Solitaire)
-  - LiveScorecard (`components/LiveScorecard.js`): batsmen, bowlers, run rates, ball-by-ball ticker, EntitySport data
-- **Real-Rules Card Games (Requirement B):**
-  - TeenPattiGame.js completely rewritten: blind/seen modes, boot amount (10/20/50), chaal with increasing bets, sideshow, pack, show, showdown, Framer Motion coin burst
-  - Existing Rummy/Poker/Solitaire games untouched (already had real rules)
-  - Coin economy: win via existing API endpoints (/v2/earn/*-win), daily cap preserved
-- **OnboardingChecklist & FirstPredictionBanner** updated to mention "or win coins in card games"
+  - ELSE: "Play & Earn Now" CardGamesCarousel as first element (Teen Patti, Rummy, Poker, Solitaire)
+  - LiveScorecard (`components/LiveScorecard.js`): batsmen, bowlers, CRR/RRR, ball-by-ball ticker, EntitySport data
+- **Teen Patti Real Rules Rewrite** (`TeenPattiGame.js`):
+  - Boot amount selection (10/20/50 coins)
+  - Blind/Seen mode with proper chaal multipliers (blind=×1, seen=×2)
+  - Sideshow (compare hands with AI, accept/reject logic)
+  - Pack, Show (force reveal), Showdown
+  - AI personalities: conservative vs aggressive
+  - Framer Motion pot burst + confetti on win
+  - +40 coin API reward via `/v2/earn/teen-patti-win`
+- Rummy/Poker/Solitaire untouched (already had real rules)
+- OnboardingChecklist + FirstPredictionBanner updated to mention card games
 
-### December 2025 — Full i18n Translations + SEO Overhaul
+### Feb 2026 — PWA & Biometric Nudge Fix
+- Restored `PWAInstallButton` FAB in `App.js` (shows after full bottom sheet dismissed once)
+- Added `PWANudge` card in Dashboard (always visible for non-installed users)
+- Added `BiometricNudge` card in Dashboard (for users who haven't set up biometrics)
+- Fixed Login.js race condition: biometric modal now appears correctly after email/password login
+- Biometric setup now works directly from Dashboard (no re-login required)
+
+### March 2026 — Notification Engine
+- `send_activation_trigger_campaign`: targets users 20-28h after registration with 0 predictions
+- `send_streak_reminder_campaign` enhanced: 3+ day streak, 20h inactivity, fires 20:00 + 22:00 IST
+- In-app notification center (`NotificationPanel.js`), bell icon in Navbar with unread badge
+- Admin test trigger: `POST /api/v2/notifications/trigger-test`
+
+### March 2026 — Analytics 360° Dashboard
+- `GET /api/admin/analytics-360`: queries 10+ MongoDB collections, real user filter, 6-stage funnel
+- `GET /api/admin/analytics-360/export/csv`: streaming authenticated CSV export
+- `src/pages/AdminAnalytics.js` at `/admin/analytics`: 5 tabs, Recharts, AgGridReact, sortable tables
+- `trackFirstPredictionTime()` fires after first prediction → feeds analytics dashboard
+
+### March 2026 — UI/UX Redesign (45-Second First-Prediction Journey)
+- QuickPredict inline component is FIRST element above the fold for new users
+- OnboardingChecklist + FirstPredictionBanner with Framer Motion animations
+- 5-tab bottom navigation restored: Home | Predict | Games | Rewards | Profile
+- Session tracking: all events include session_id + platform (UA)
+
+### March 2026 — Phase 1-6 Platform Upgrade
+- Security: X-Request-ID tracing, global error handlers
+- Performance: paginated products + transactions, Redis cache
+- Refactoring: v2_routes.py → 5 domain-specific route files
+- Testing: 48-test suite at `/app/backend/tests/test_platform_v2.py`
+- Activation: FirstPredictionBanner + OnboardingChecklist components
+- Production: startup env validation, fail-fast on missing config
+
+### Feb–March 2026 — PWA Polish + Auth + Play Store
+- Android TWA build errors resolved; signed AAB generated
+- Firebase Phone Auth added
+- FCM fix: send_all → send_each
+- ScrollToTop component, PWA Install button in Profile
+- All fake stats removed, Play Store listing updated
+
+### Dec 2025 — i18n + SEO
 - Complete translations for all 8 Indian languages
-- Comprehensive SEO strategy implemented
-- 25 FAQ entries with Schema.org FAQPage for rich snippets
-- Enhanced sitemap.xml with all blog articles
+- Comprehensive SEO: FAQ Schema, sitemap.xml, blog articles
 
-### Phase Final — Multi-game Launch Ready
-- Card Games: Rummy, Teen Patti, Poker, Solitaire
-- Quest Engine, Smart Router, Sponsored Pools
-- SEO: Blog, structured data, robots.txt, sitemap.xml
-- Legal pages: Terms, Privacy, Disclaimer, Responsible Play, Refund Policy
-
-### Phase 8 — Integrations
-- AdMob rewarded ads (20 coins, 5/day)
-- Resend Email OTP (HTML template)
-- Firebase FCM push
-- Razorpay test payments (FREE Bucks), Wallet history page
-
-### Phase 7
-- Referral double-payout fix, "TBA vs TBA" bug fix
-- Wishlist Tracker, Streak "Hot Hand" multiplier, Live Crowd Meter, AI Daily Puzzle, Weekly Report Card
-- Full UI/UX redesign: gold/charcoal, Bebas Neue, bottom nav
-
-### Phase 1–6 (Pre-session)
+### Phase 1–8 (Foundation)
 - Full auth (OTP, WebAuthn, JWT), cricket data, prediction engine, fantasy builder
 - Contest system, coin economy, shop + redemptions
-- Leaderboards, duels, social feed, admin panel, PWA, i18n 8 langs, KYC, referrals, clans
+- Leaderboards, duels, social feed, admin panel, PWA, referrals, clans
+- Card Games: Rummy, Teen Patti, Poker, Solitaire
+- Quest Engine, Smart Router, Sponsored Pools
+- AdMob, Resend, Firebase FCM, Razorpay (test), Wallet
+- Wishlist Tracker, Streak multiplier, Crowd Meter, AI Puzzle, Weekly Report
+- Legal pages: Terms, Privacy, Disclaimer, Responsible Play, Refund Policy
