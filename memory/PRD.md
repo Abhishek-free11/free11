@@ -262,6 +262,14 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ## CHANGELOG
 
+### March 2026 — Activation Trigger + Streak-at-Risk Notifications
+- **`send_activation_trigger_campaign`** (new): targets users registered 20-28h ago with 0 predictions → personalized FCM push + in-app notification; idempotent via `activation_push_sent` DB flag; runs every scheduler tick
+- **`send_streak_reminder_campaign`** enhanced: upgraded to 3+ day streak (was 2+), 20h inactivity window (was 23h), personalized copy with `hours_left` countdown, fires at 20:00 AND 22:00 IST
+- **In-app notification center**: All campaigns also write to `db.notifications` (same collection as existing `GET /api/v2/notifications` endpoint)
+- **Notification bell**: Added to top Navbar with animated unread badge (polls 60s), `data-testid=notification-bell-btn`
+- **`NotificationPanel.js`**: Slide-in panel (Framer Motion), shows last 20 notifications with type-specific icons/colors, marks all read on open (1.2s delay), deep-links to relevant pages
+- **Admin test trigger**: `POST /api/v2/notifications/trigger-test` — inserts test activation + streak notifications instantly for admin testing (admin-only, 403 for non-admin)
+
 ### March 2026 — UI/UX Redesign (45-Second First-Prediction Journey)
 - **QuickPredict inline component** (`Dashboard.js`): Live match with YES/NO boundary prediction buttons is now the FIRST element above the fold. New users see the prediction opportunity in <2 seconds after opening the app.
 - **Content reorder**: Dashboard now shows QuickPredict → IPLCarousel → OnboardingChecklist → User Header → Check-in (was: IPLCarousel → Checklist → Banner → Header → ... → Live Match → at bottom)
