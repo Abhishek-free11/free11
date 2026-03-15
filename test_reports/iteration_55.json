@@ -1,0 +1,90 @@
+{
+  "summary": "Analytics 360° Dashboard full backend + frontend testing. Found and fixed CRITICAL security bug: both /api/admin/analytics-360 and /api/admin/analytics-360/export/csv had NO auth enforcement (the _require_admin helper was defined but never called). Fixed by adding Header dependency and calling _require_admin in both endpoints. All 26 backend tests pass. All frontend features verified.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "GET /api/admin/analytics-360 and GET /api/admin/analytics-360/export/csv",
+        "issue": "CRITICAL SECURITY BUG FIXED: Both endpoints returned 200 for ANY request including unauthenticated and non-admin users. The _require_admin() function was defined in analytics_360_routes.py but never called in the route handlers. Fixed by adding Header(None) parameter and calling _require_admin(token, _db) in both endpoints.",
+        "priority": "CRITICAL",
+        "status": "FIXED"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AdminAnalytics - Users Table",
+        "issue": "React key prop warning: Fragment wrapper <> in sortedUsers.map() had no key. Fixed by using Fragment with key={u.user_id}.",
+        "selector": "tbody tr",
+        "priority": "LOW",
+        "status": "FIXED"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/admin/analytics non-admin redirect",
+        "issues": ["Review request says 'redirect to /login' but actual behavior redirects logged-in non-admin to /match-centre (home). This is CORRECT UX behavior — no fix needed."]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_analytics_360.py",
+    "/app/test_reports/pytest/analytics_360_55.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FIXED: analytics_360_routes.py - _require_admin was defined but never called. Both endpoints were publicly accessible without authentication. Fixed with Header(None) dependency and explicit _require_admin() calls.",
+    "FIXED: AdminAnalytics.js - React Fragment key warning in users table rows map().",
+    "Minor: CSV export endpoint (/export/csv) now requires auth but the Export CSV button in the frontend header uses window.location.href which won't send the Bearer token. This means the export button will fail with 401 after the auth fix. The frontend should use fetch() with Authorization header and handle the download via Blob instead of window.location.href. This is a pre-existing design issue now surfaced by the auth fix."
+  ],
+  "updated_files": [
+    "/app/backend/analytics_360_routes.py",
+    "/app/frontend/src/pages/AdminAnalytics.js"
+  ],
+  "success_rate": {
+    "backend": "100% (26/26 tests pass after fix)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@free11.com / Admin@123",
+    "user": "test_redesign_ui26@free11test.com / Test@1234"
+  },
+  "api_test_results": {
+    "GET /api/admin/analytics-360 (no auth)": "401 ✅ (after fix; was 200 before)",
+    "GET /api/admin/analytics-360 (non-admin user)": "403 ✅ (after fix; was 200 before)",
+    "GET /api/admin/analytics-360 (admin)": "200 ✅ with all required fields",
+    "high_level.real_users_count": "9 (total=71, excluded=62 test/admin) ✅",
+    "high_level.admin/free11test emails excluded": "✅ admin@free11.com and *@free11test.com absent from real_users_360",
+    "funnel": "6 stages, Registered=100% ✅",
+    "dau_7d": "7 entries ✅",
+    "top_actions": "present ✅",
+    "monetization": "all sub-fields present ✅",
+    "GET /api/admin/analytics-360/export/csv (admin)": "200 text/csv with valid header row ✅",
+    "CSV content-disposition": "attachment ✅",
+    "CSV excludes admin/test emails": "✅"
+  },
+  "frontend_component_results": {
+    "/admin/analytics page loads": "PASS - header shows 'FREE11 — Analytics 360°'",
+    "Overview tab KPI cards": "PASS - Real Users=9, Active 7d=1, Activation Rate=11.1%, Redemptions=1, Revenue=₹0",
+    "Users tab sortable table": "PASS - 9 real users, search input, export button all visible",
+    "Funnel tab": "PASS - stages visible",
+    "Export CSV button": "PASS - data-testid=export-csv-btn visible",
+    "AdminV2 Analytics 360 button": "PASS - data-testid=open-analytics-360-btn navigates to /admin/analytics",
+    "Non-admin redirect": "PASS - redirects to /match-centre (correct for logged-in users)"
+  },
+  "seed_data_creation": "",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Analytics 360 backend security fixed (auth now enforced). All 26 backend tests pass. Frontend all features work. ONE outstanding issue: The Export CSV button in AdminAnalytics.js header uses window.location.href (line ~187) which does NOT send the Authorization Bearer token. After the auth fix, clicking 'Export CSV' header button will result in 401. Frontend should use fetch() + Blob download pattern instead. The 'Export {N} users' button in the Users tab uses frontend-generated CSV (arrayToCSV) and works fine.",
+  "rca_of_issue": {
+    "bug": "analytics_360_routes.py - Both endpoints were publicly accessible",
+    "root_cause": "The _require_admin() helper was defined and the authorization parameter was declared as Optional[str] = None (a query param, not a header), but _require_admin was never actually called inside the route handlers. This left both endpoints completely open.",
+    "reproduction_steps": [
+      "curl https://atlas-connection-1.preview.emergentagent.com/api/admin/analytics-360 -> returned 200 with full user data",
+      "curl https://atlas-connection-1.preview.emergentagent.com/api/admin/analytics-360/export/csv -> returned CSV"
+    ],
+    "mitigation": "Fixed by changing Optional[str] = None to Optional[str] = Header(None) and adding await _require_admin(token, _db) as first call in both route handlers."
+  }
+}

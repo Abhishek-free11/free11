@@ -48,6 +48,7 @@ const RewardedAds = lazy(() => import('./pages/RewardedAds'));
 const Referrals = lazy(() => import('./pages/Referrals'));
 const ContestHub = lazy(() => import('./pages/ContestHub'));
 const AdminV2 = lazy(() => import('./pages/AdminV2'));
+const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics'));
 const TeamBuilder = lazy(() => import('./pages/TeamBuilder'));
 const MatchCentre = lazy(() => import('./pages/MatchCentre'));
 const FreeBucks = lazy(() => import('./pages/FreeBucks'));
@@ -322,6 +323,7 @@ function AppRouter() {
         <Route path="/payment/success" element={<PrivateRoute><FreeBucks /></PrivateRoute>} />
         <Route path="/payment/cancel" element={<PrivateRoute><FreeBucks /></PrivateRoute>} />
         <Route path="/admin/v2" element={<AdminRoute><AdminV2 /></AdminRoute>} />
+        <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
         <Route path="/sponsored" element={<PrivateRoute><SponsoredPools /></PrivateRoute>} />
         <Route path="/blog/cricket-guide" element={<Blog />} />
         <Route path="/blog/ipl-guide" element={<Blog />} />

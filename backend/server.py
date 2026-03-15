@@ -1867,6 +1867,7 @@ from freebucks_engine import FreeBucksEngine
 from feature_gate import FeatureGate
 from notification_engine import NotificationEngine
 from analytics_engine import AnalyticsEngine
+from analytics_360_routes import analytics_360_router, init_analytics_360
 from scheduler_service import AutoScorer
 from redis_cache import get_cache_stats
 from entitysport_service import EntitySportService
@@ -1888,6 +1889,8 @@ fcm = FCMService(db)
 
 # Init payment module
 init_payment(db, freebucks, notif_engine, analytics)
+# Init analytics 360
+init_analytics_360(db)
 
 # Initialize email service
 @app.on_event("startup")
@@ -1979,6 +1982,7 @@ app.include_router(razorpay_router)
 init_razorpay(db, freebucks, notif_engine)
 app.include_router(beta_router)  # Beta routes already have /api prefix
 app.include_router(reports_router)  # Reports routes already have /api prefix
+app.include_router(analytics_360_router)  # Analytics 360° dashboard
 
 # New phase: Sponsored Pools, KPI, Router
 from sponsored_routes import sponsored_router, seed_sponsored_pools

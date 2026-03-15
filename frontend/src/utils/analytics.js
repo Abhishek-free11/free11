@@ -4,6 +4,18 @@
  */
 const API = process.env.REACT_APP_BACKEND_URL;
 
+// Persistent session ID for the current browser tab
+const _getSessionId = () => {
+  let sid = sessionStorage.getItem('f11_sid');
+  if (!sid) {
+    sid = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2) + Date.now().toString(36);
+    sessionStorage.setItem('f11_sid', sid);
+  }
+  return sid;
+};
+
 export const trackEvent = async (event, properties = {}) => {
   try {
     const token = localStorage.getItem('token');
@@ -13,7 +25,16 @@ export const trackEvent = async (event, properties = {}) => {
     await fetch(`${API}${endpoint}`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ event, properties: { ...properties, path: window.location.pathname, ts: Date.now() } }),
+      body: JSON.stringify({
+        event,
+        properties: {
+          ...properties,
+          session_id: _getSessionId(),
+          platform: navigator.userAgent,
+          page: window.location.pathname,
+          ts: Date.now(),
+        },
+      }),
     });
   } catch (_) {
     // non-critical — never block UI

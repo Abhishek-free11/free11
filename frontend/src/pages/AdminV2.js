@@ -167,6 +167,14 @@ export default function AdminV2() {
           <ArrowLeft className="w-5 h-5 text-gray-400" />
         </button>
         <h1 className="text-lg font-bold">Admin Control Panel</h1>
+        <button
+          onClick={() => navigate('/admin/analytics')}
+          className="ml-auto flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium"
+          style={{ background: '#C6A05222', border: '1px solid #C6A05244', color: '#C6A052' }}
+          data-testid="open-analytics-360-btn"
+        >
+          <BarChart2 className="w-3.5 h-3.5" /> Analytics 360°
+        </button>
       </div>
 
       {/* Tabs */}
