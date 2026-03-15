@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
+import { AnimatePresence } from 'framer-motion';
 import {
-  Coins, User, Search, Home, Target, ShoppingBag
+  Coins, User, Search, Home, Target, ShoppingBag, Bell
 } from 'lucide-react';
 import AppSearch from './AppSearch';
 import { trackButtonClick } from '../utils/analytics';
+import NotificationPanel, { useNotificationCount } from './NotificationPanel';
 
 // Bottom nav items — 4 focused tabs for 45-second first-prediction journey
 const BOTTOM_NAV = [
@@ -22,6 +24,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const { count: unreadCount, refresh: refreshCount } = useNotificationCount();
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
@@ -64,33 +68,48 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right: icon buttons with labels */}
+          {/* Right: icon buttons */}
           <div className="flex items-center gap-1">
-            {/* Shop */}
-            <button onClick={() => navigate('/shop')}
-              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
-              style={{ background: isActive('/shop') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
-              data-testid="shop-btn">
-              <ShoppingBag className="h-4 w-4" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }} />
-              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }}>Shop</span>
-            </button>
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => { setNotifOpen(o => !o); trackButtonClick('notification_bell'); }}
+                className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all relative"
+                style={{ background: notifOpen ? 'rgba(198,160,82,0.12)' : 'transparent' }}
+                data-testid="notification-bell-btn"
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4" style={{ color: notifOpen ? '#C6A052' : '#8A9096' }} />
+                <span className="text-[9px] mt-0.5 font-medium" style={{ color: notifOpen ? '#C6A052' : '#8A9096' }}>Alerts</span>
+                {/* Unread badge */}
+                {unreadCount > 0 && (
+                  <span
+                    className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] rounded-full text-[9px] font-black flex items-center justify-center px-0.5 animate-pulse"
+                    style={{ background: 'linear-gradient(135deg,#C6A052,#E0B84F)', color: '#0F1115' }}
+                    data-testid="notification-badge"
+                  >
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Slide-in panel */}
+              <AnimatePresence>
+                {notifOpen && (
+                  <NotificationPanel
+                    onClose={() => setNotifOpen(false)}
+                    onRead={() => refreshCount()}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* Search */}
             <button onClick={() => setSearchOpen(true)}
               className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
-              style={{ background: 'transparent' }}
               data-testid="search-btn">
               <Search className="h-4 w-4" style={{ color: '#8A9096' }} />
               <span className="text-[9px] mt-0.5 font-medium" style={{ color: '#8A9096' }}>Search</span>
-            </button>
-
-            {/* Wallet */}
-            <button onClick={() => navigate('/ledger')}
-              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
-              style={{ background: isActive('/ledger') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
-              data-testid="wallet-btn">
-              <Coins className="h-4 w-4" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }} />
-              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }}>Wallet</span>
             </button>
 
             {/* Coin Balance Pill */}

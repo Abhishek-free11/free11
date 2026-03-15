@@ -168,8 +168,10 @@ class AutoScorer:
         Fire FCM campaigns at scheduled IST times (runs every 60s, fires once per slot).
         Slots:
           Every tick  → match_starting (30-60 min window check)
+          Every tick  → activation_trigger (20-28h new-user window check, idempotent)
           09:00 IST   → quest_available
-          20:00 IST   → streak_reminder
+          20:00 IST   → streak_reminder (3+ day streak, 20h inactivity)
+          22:00 IST   → streak_reminder re-check (second nudge for still-at-risk users)
           10:00 IST   → coin_expiry (daily)
         """
         if not self._fcm_service:
@@ -179,6 +181,7 @@ class AutoScorer:
             send_coin_expiry_campaign,
             send_streak_reminder_campaign,
             send_quest_available_campaign,
+            send_activation_trigger_campaign,
         )
         from datetime import timedelta
         IST = timedelta(hours=5, minutes=30)
@@ -188,14 +191,22 @@ class AutoScorer:
         # Match starting — check every tick
         await send_match_starting_campaign(self.db, self._fcm_service)
 
+        # Activation trigger — check every tick (idempotent via activation_push_sent flag)
+        await send_activation_trigger_campaign(self.db, self._fcm_service)
+
         # Quest available — 09:00 IST daily
         if now_ist.hour == 9 and self._last_campaign.get("quest") != hour_key:
             self._last_campaign["quest"] = hour_key
             await send_quest_available_campaign(self.db, self._fcm_service)
 
-        # Streak reminder — 20:00 IST daily
-        if now_ist.hour == 20 and self._last_campaign.get("streak") != hour_key:
-            self._last_campaign["streak"] = hour_key
+        # Streak reminder — 20:00 IST daily (primary)
+        if now_ist.hour == 20 and self._last_campaign.get("streak_20") != hour_key:
+            self._last_campaign["streak_20"] = hour_key
+            await send_streak_reminder_campaign(self.db, self._fcm_service)
+
+        # Streak reminder — 22:00 IST (second nudge for still-at-risk users)
+        if now_ist.hour == 22 and self._last_campaign.get("streak_22") != hour_key:
+            self._last_campaign["streak_22"] = hour_key
             await send_streak_reminder_campaign(self.db, self._fcm_service)
 
         # Coin expiry — 10:00 IST daily

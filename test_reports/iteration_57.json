@@ -1,0 +1,55 @@
+{
+  "summary": "Full backend + frontend testing of FREE11 Notification Center (FREE11 feature). 21/21 backend tests pass. All 9 frontend UI tests pass. Bell badge, panel open/close, both notification types, and read-all confirmed working. CRITICAL code bug found: fcm_campaigns.py has duplicate function definitions — the enhanced versions (send_streak_reminder_campaign, send_coin_expiry_campaign, send_match_starting_campaign, send_quest_available_campaign) are ALL overridden by old versions defined later in the same file.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "fcm_campaigns.py (scheduler)",
+        "issue": "Duplicate function definitions at lines 270-417 override the enhanced versions at lines 39-265. Python uses the LAST definition. So: (1) send_streak_reminder_campaign reverts to old 2+ day streak / 23h inactivity / no personalised hours_left copy — the new 3+ day / 20h version is dead code. (2) send_coin_expiry_campaign old version has no in-app storage (_store_in_app call). (3) send_match_starting_campaign old version drops 'deep_link' from data payload. FIX: Delete lines 270-417 from fcm_campaigns.py (the duplicate old function definitions).",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_notifications_57.py",
+    "/app/test_reports/pytest/notifications_57.xml"
+  ],
+  "action_items": [
+    "CRITICAL: Delete lines 270-417 from /app/backend/fcm_campaigns.py — these are duplicate function definitions that override the enhanced versions. Specifically: lines 270-307 (old send_match_starting_campaign), lines 310-342 (old send_coin_expiry_campaign with no in-app store), lines 345-382 (old send_streak_reminder_campaign with 2+ streak/23h inactivity instead of 3+/20h), lines 385-416 (old send_quest_available_campaign). The correct enhanced functions are at lines 39-265. After fix, send_streak_reminder_campaign will correctly use 3+ day streak threshold and 20h inactivity window with personalised hours_left copy."
+  ],
+  "critical_code_review_comments": [
+    "fcm_campaigns.py CRITICAL BUG: Python module has 4 functions defined TWICE. The second set (lines 270-417) silently overrides the first (enhanced) set (lines 39-265). The enhanced send_streak_reminder_campaign (3+ streak, 20h window, personalised hours_left) never executes — the old 2+/23h version runs instead. Fix: remove the old duplicate block (lines 270-417).",
+    "v2_engagement.py: Route ordering for /notifications/{notif_id}/read vs /notifications/read-all is safe (different URL segment counts, no conflict). Code is correct.",
+    "NotificationPanel.js: read-all fires after 1.2s delay (setTimeout). The onRead callback refreshes the count hook. Works correctly as verified in UI test — badge drops to 0 after panel open+wait.",
+    "useNotificationCount hook: polls every 60s (as documented). Panel internal poll is 30s when open. This is correct.",
+    "trigger-test endpoint: correctly admin-gated, inserts exactly 2 notifications (activation_trigger + streak_reminder), returns {ok, inserted, note}. All verified."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (21/21 tests pass)",
+    "frontend": "100% (all 9 UI tests pass: bell visible, badge shows unread count '8', panel opens on click, activation_trigger item visible, streak_reminder item visible, close button works, badge resets to 0 after read-all)"
+  },
+  "test_credentials": {
+    "admin": "admin@free11.com / Admin@123",
+    "test_user": "test_redesign_ui26@free11test.com / Test@1234"
+  },
+  "data_testid_verification": {
+    "notification-bell-btn": "FOUND ✓ (visible in top navbar with 'Alerts' label)",
+    "notification-badge": "FOUND ✓ (shows '8' unread count, animates with pulse)",
+    "notification-panel": "FOUND ✓ (opens on bell click, AnimatePresence animation works)",
+    "notification-item-activation_trigger": "FOUND ✓ (Target icon in gold, 'Test: Make your first prediction')",
+    "notification-item-streak_reminder": "FOUND ✓ (Flame icon in orange, 'Test: Your 7-day streak breaks in 4h!')",
+    "close-notification-panel": "FOUND ✓ (X button closes panel)",
+    "unread_reset_after_read_all": "PASS ✓ (badge gone after 1.2s delay fires read-all)"
+  },
+  "seed_data_creation": "trigger-test endpoint called multiple times during testing — admin user has 31 total notifications in DB",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iteration 57 fully tested. All notification center features work end-to-end. The only outstanding issue is a CRITICAL bug in fcm_campaigns.py where duplicate function definitions (lines 270-417) override the enhanced implementations. After main agent removes lines 270-417, the streak reminder will correctly use 3+ day streak threshold with 20h inactivity and personalised hours_left copy. All data-testids are present and working. Admin has 31 notifications in DB from testing. test_redesign_ui26 has 0 notifications (non-admin, cannot trigger-test).",
+  "rca_of_issue": "Root cause of fcm_campaigns.py duplicate: The enhanced functions were added at lines 39-265, but the old function definitions (originally at the bottom of the file or copy-pasted) were not removed. Python interprets both, with the last definition winning. This means send_streak_reminder_campaign at lines 345-382 (old: 2+ streak, 23h inactivity, no personalisation) is the one that actually runs — the new version at lines 115-165 is dead code. Mitigation: delete lines 270-417."
+}

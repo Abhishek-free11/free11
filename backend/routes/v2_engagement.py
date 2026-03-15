@@ -37,6 +37,38 @@ async def mark_all_notifications_read(user: User = Depends(get_current_user)):
     )
     return {"ok": True, "updated": result.modified_count}
 
+
+@router.post("/notifications/trigger-test")
+async def trigger_test_notification(user: User = Depends(get_current_user)):
+    """Admin-only: immediately fire a test notification to yourself for both campaign types."""
+    if not user.is_admin:
+        raise HTTPException(403, "Admin only")
+    now = datetime.now(timezone.utc).isoformat()
+    notifs = [
+        {
+            "id": str(__import__("uuid").uuid4()),
+            "user_id": user.id,
+            "type": "activation_trigger",
+            "title": "Test: Make your first prediction",
+            "body": "You're 1 tap away from winning 50 FREE coins. Pick a match — it's FREE!",
+            "deep_link": "/match-centre",
+            "read": False,
+            "created_at": now,
+        },
+        {
+            "id": str(__import__("uuid").uuid4()),
+            "user_id": user.id,
+            "type": "streak_reminder",
+            "title": "🔥 Test: Your 7-day streak breaks in 4h!",
+            "body": "Log in and make a prediction to keep your streak alive!",
+            "deep_link": "/dashboard",
+            "read": False,
+            "created_at": now,
+        },
+    ]
+    await db.notifications.insert_many(notifs)
+    return {"ok": True, "inserted": len(notifs), "note": "Test notifications injected — open the bell icon to see them"}
+
 # ── Analytics Events ───────────────────────────────────────────────────────────
 
 @router.post("/analytics/event")
