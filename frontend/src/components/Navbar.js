@@ -82,10 +82,9 @@ const Navbar = () => {
               >
                 <Bell className="h-4 w-4" style={{ color: notifOpen ? '#C6A052' : '#8A9096' }} />
                 <span className="text-[9px] mt-0.5 font-medium" style={{ color: notifOpen ? '#C6A052' : '#8A9096' }}>Alerts</span>
-                {/* Unread badge */}
                 {unreadCount > 0 && (
                   <span
-                    className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] rounded-full text-[9px] font-black flex items-center justify-center px-0.5 animate-pulse"
+                    className="absolute top-1.5 right-1.5 min-w-[14px] h-[14px] rounded-full text-[9px] font-black flex items-center justify-center px-0.5"
                     style={{ background: 'linear-gradient(135deg,#C6A052,#E0B84F)', color: '#0F1115' }}
                     data-testid="notification-badge"
                   >
@@ -93,8 +92,6 @@ const Navbar = () => {
                   </span>
                 )}
               </button>
-
-              {/* Slide-in panel */}
               <AnimatePresence>
                 {notifOpen && (
                   <NotificationPanel
@@ -105,12 +102,30 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
+            {/* Shop */}
+            <button onClick={() => navigate('/shop')}
+              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
+              style={{ background: isActive('/shop') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
+              data-testid="shop-btn">
+              <ShoppingBag className="h-4 w-4" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }} />
+              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/shop') ? '#C6A052' : '#8A9096' }}>Shop</span>
+            </button>
+
             {/* Search */}
             <button onClick={() => setSearchOpen(true)}
               className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
               data-testid="search-btn">
               <Search className="h-4 w-4" style={{ color: '#8A9096' }} />
               <span className="text-[9px] mt-0.5 font-medium" style={{ color: '#8A9096' }}>Search</span>
+            </button>
+
+            {/* Wallet */}
+            <button onClick={() => navigate('/ledger')}
+              className="flex flex-col items-center justify-center h-10 w-11 rounded-xl transition-all"
+              style={{ background: isActive('/ledger') ? 'rgba(198,160,82,0.12)' : 'transparent' }}
+              data-testid="wallet-btn">
+              <Coins className="h-4 w-4" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }} />
+              <span className="text-[9px] mt-0.5 font-medium" style={{ color: isActive('/ledger') ? '#C6A052' : '#8A9096' }}>Wallet</span>
             </button>
 
             {/* Coin Balance Pill */}
@@ -138,6 +153,10 @@ const Navbar = () => {
                 className="flex flex-col items-center py-1 px-3 rounded-xl transition-all relative"
                 style={{ minWidth: 52 }}
                 data-testid={`bottom-nav-${item.label.toLowerCase()}`}>
+                {item.label === 'Games' && !active && (
+                  <span className="absolute top-0.5 right-1.5 text-[8px] font-black px-1 rounded-full animate-live-pulse"
+                    style={{ background: '#C6A052', color: '#0F1115' }}>NEW</span>
+                )}
                 <div className="flex items-center justify-center h-7 w-7 rounded-lg mb-0.5 transition-all"
                   style={{ background: active ? 'rgba(198,160,82,0.15)' : 'transparent' }}>
                   <item.icon className="h-5 w-5 transition-all"
