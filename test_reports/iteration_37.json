@@ -12,7 +12,7 @@
   "test_results": {
     "referrals_page_loads": "PASS — /referrals loads with gold (#C6A052) theme, 'Invite Friends' heading, Navbar present",
     "referral_code_format": "PASS — F11-F9E983 displayed (format F11-XXXXXX, length 10 correct)",
-    "copy_link_clipboard": "PASS — Click copies 'https://app-recovery-91.preview.emergentagent.com/register?ref=F11-F9E983' to clipboard",
+    "copy_link_clipboard": "PASS — Click copies 'https://atlas-connection-1.preview.emergentagent.com/register?ref=F11-F9E983' to clipboard",
     "copy_link_feedback": "PASS — Button shows 'Copied!' in green for 2.5s then resets to 'Copy Link'",
     "share_invite_button": "PASS — Share Invite button visible (gold gradient), triggers navigator.share or fallback to clipboard",
     "show_qr_toggle": "PASS — 'Show QR' → 'Hide QR' toggle works correctly",

@@ -8,7 +8,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://app-recovery-91.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://atlas-connection-1.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 TEST_EMAIL = "cricket@free11.com"
