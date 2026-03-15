@@ -4,18 +4,19 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { AnimatePresence } from 'framer-motion';
 import {
-  Coins, User, Search, Home, Target, ShoppingBag, Bell
+  Coins, User, Search, Home, Target, ShoppingBag, Bell, Club, Sparkles
 } from 'lucide-react';
 import AppSearch from './AppSearch';
 import { trackButtonClick } from '../utils/analytics';
 import NotificationPanel, { useNotificationCount } from './NotificationPanel';
 
-// Bottom nav items — 4 focused tabs for 45-second first-prediction journey
+// Bottom nav — 5 tabs (original structure restored)
 const BOTTOM_NAV = [
-  { path: '/match-centre', label: 'Home',    icon: Home    },
-  { path: '/predict',      label: 'Predict', icon: Target  },
-  { path: '/shop',         label: 'Rewards', icon: ShoppingBag },
-  { path: '/profile',      label: 'Profile', icon: User    },
+  { path: '/match-centre', label: 'Home',     icon: Home      },
+  { path: '/predict',      label: 'Play',      icon: Target    },
+  { path: '/games',        label: 'Games',     icon: Club      },
+  { path: '/earn',         label: 'Missions',  icon: Sparkles  },
+  { path: '/profile',      label: 'Profile',   icon: User      },
 ];
 
 const Navbar = () => {
@@ -131,31 +132,21 @@ const Navbar = () => {
         <div className="flex items-center justify-around py-2 px-1">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.path);
-            const isPredict = item.label === 'Predict';
             return (
               <button key={item.path}
                 onClick={() => { navigate(item.path); trackButtonClick(`bottom_nav_${item.label.toLowerCase()}`); }}
-                className="flex flex-col items-center py-1 rounded-xl transition-all relative"
-                style={{ minWidth: isPredict ? 64 : 52 }}
+                className="flex flex-col items-center py-1 px-3 rounded-xl transition-all relative"
+                style={{ minWidth: 52 }}
                 data-testid={`bottom-nav-${item.label.toLowerCase()}`}>
-                <div className={`flex items-center justify-center rounded-xl mb-0.5 transition-all ${isPredict ? 'h-10 w-14' : 'h-7 w-7'}`}
-                  style={{
-                    background: isPredict
-                      ? 'linear-gradient(135deg, #C6A052, #E0B84F)'
-                      : active ? 'rgba(198,160,82,0.15)' : 'transparent',
-                    boxShadow: isPredict ? '0 2px 12px rgba(198,160,82,0.4)' : 'none',
-                  }}>
-                  <item.icon
-                    className={`transition-all ${isPredict ? 'h-5 w-5' : 'h-5 w-5'}`}
-                    style={{ color: isPredict ? '#0F1115' : active ? '#C6A052' : '#8A9096' }}
-                    strokeWidth={active || isPredict ? 2 : 1.5}
-                  />
+                <div className="flex items-center justify-center h-7 w-7 rounded-lg mb-0.5 transition-all"
+                  style={{ background: active ? 'rgba(198,160,82,0.15)' : 'transparent' }}>
+                  <item.icon className="h-5 w-5 transition-all"
+                    style={{ color: active ? '#C6A052' : '#8A9096' }} strokeWidth={active ? 2 : 1.5} />
                 </div>
-                <span className="text-[10px] font-medium transition-all"
-                  style={{ color: isPredict ? '#C6A052' : active ? '#C6A052' : '#8A9096', fontWeight: isPredict ? 700 : undefined }}>
+                <span className="text-[10px] font-medium transition-all" style={{ color: active ? '#C6A052' : '#8A9096' }}>
                   {item.label}
                 </span>
-                {active && !isPredict && <div className="h-0.5 w-4 rounded-full mt-0.5" style={{ background: '#C6A052', boxShadow: '0 0 6px rgba(198,160,82,0.6)' }} />}
+                {active && <div className="h-0.5 w-4 rounded-full mt-0.5" style={{ background: '#C6A052', boxShadow: '0 0 6px rgba(198,160,82,0.6)' }} />}
               </button>
             );
           })}
