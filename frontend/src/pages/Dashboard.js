@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import LiveScorecard from '../components/LiveScorecard';
 import FirstTimeTutorial from '../components/FirstTimeTutorial';
 import WishlistGoal from '../components/WishlistGoal';
 import DailyPuzzle from '../components/DailyPuzzle';
@@ -14,7 +15,8 @@ import LiveActivityTicker from '../components/LiveActivityTicker';
 import {
   Coins, Zap, Gift, Trophy, TrendingUp, Calendar, Flame,
   Target, ShoppingBag, ChevronRight, Star, Play, Award, Users,
-  CheckCircle, Circle, ArrowRight, Sparkles, X, Zap as ZapIcon, Fingerprint, Download
+  CheckCircle, Circle, ArrowRight, Sparkles, X, Zap as ZapIcon, Fingerprint, Download,
+  Spade, Heart, Diamond, Layers, Club
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
@@ -371,12 +373,173 @@ function QuickPredict({ match, onPredicted }) {
   );
 }
 
+// ── Important match detection ─────────────────────────────────────────────────
+const IMPORTANT_KEYWORDS = ['ipl', 'icc', 't20 world cup', 't20i world cup', 'odi world cup', 'test', 'india'];
+function isImportantMatch(match) {
+  if (!match) return false;
+  const series = (match.series || '').toLowerCase();
+  const team1 = (match.team1 || '').toLowerCase();
+  const team2 = (match.team2 || '').toLowerCase();
+  return IMPORTANT_KEYWORDS.some(k => series.includes(k) || team1.includes(k) || team2.includes(k));
+}
+
+// ── Play & Earn Now card games carousel (shown when no important live cricket) ─
+const CARD_GAMES_DATA = [
+  {
+    key: 'teen_patti', name: 'Teen Patti', coins: 40, badge: 'HOT',
+    gradient: 'linear-gradient(135deg,#a855f7,#6366f1)', accent: '#a855f7',
+    route: '/games/teen_patti/play', Icon: Heart,
+    desc: '3-card Indian Poker · Real rules',
+  },
+  {
+    key: 'rummy', name: 'Rummy', coins: 50,
+    gradient: 'linear-gradient(135deg,#ef4444,#ec4899)', accent: '#ef4444',
+    route: '/games/rummy/play', Icon: Spade,
+    desc: '13-card Rummy · Sets & runs',
+  },
+  {
+    key: 'poker', name: 'Poker', coins: 60,
+    gradient: 'linear-gradient(135deg,#22c55e,#10b981)', accent: '#22c55e',
+    route: '/games/poker/play', Icon: Diamond,
+    desc: "Texas Hold'em · vs AI",
+  },
+  {
+    key: 'solitaire', name: 'Solitaire', coins: 25, badge: 'NEW',
+    gradient: 'linear-gradient(135deg,#f59e0b,#C6A052)', accent: '#f59e0b',
+    route: '/games/solitaire', Icon: Layers,
+    desc: 'Classic Klondike · Beat the deck',
+  },
+];
+
+function CardGamesCarousel() {
+  const navigate = useNavigate();
+  return (
+    <div data-testid="card-games-carousel">
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div>
+          <h2 style={{
+            color: '#fff', fontWeight: 900, fontSize: 20,
+            fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.06em', lineHeight: 1,
+          }}>
+            PLAY &amp; EARN NOW
+          </h2>
+          <p style={{ color: '#8A9096', fontSize: 11, marginTop: 1 }}>No live cricket? Win coins instantly in card games</p>
+        </div>
+        <button
+          onClick={() => navigate('/games')}
+          style={{ color: '#C6A052', fontSize: 11, fontWeight: 700 }}
+          data-testid="see-all-games-btn"
+        >
+          See all →
+        </button>
+      </div>
+
+      {/* Horizontal scroll cards */}
+      <div style={{
+        display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 6,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+        WebkitOverflowScrolling: 'touch',
+      }}>
+        {CARD_GAMES_DATA.map((game, i) => {
+          const Icon = game.Icon;
+          return (
+            <motion.div
+              key={game.key}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.07, duration: 0.3 }}
+              style={{ flexShrink: 0, width: 152 }}
+            >
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 18, padding: '14px 14px 12px',
+                position: 'relative', overflow: 'hidden',
+                height: '100%',
+              }}>
+                {/* Glow blob */}
+                <div style={{
+                  position: 'absolute', top: -25, right: -25, width: 80, height: 80,
+                  borderRadius: '50%', background: game.gradient, opacity: 0.12, filter: 'blur(22px)',
+                  pointerEvents: 'none',
+                }} />
+
+                {/* Badge */}
+                {game.badge && (
+                  <div style={{
+                    position: 'absolute', top: 8, right: 8,
+                    background: game.gradient, color: '#fff',
+                    fontSize: 8, fontWeight: 800, padding: '2px 6px', borderRadius: 20,
+                    letterSpacing: '0.04em',
+                  }}>
+                    {game.badge}
+                  </div>
+                )}
+
+                {/* Icon */}
+                <div style={{
+                  width: 42, height: 42, borderRadius: 13, background: game.gradient,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10,
+                }}>
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+
+                <p style={{ color: '#fff', fontWeight: 800, fontSize: 14, marginBottom: 2, lineHeight: 1.2 }}>
+                  {game.name}
+                </p>
+                <p style={{ color: '#8A9096', fontSize: 10, marginBottom: 6, lineHeight: 1.4 }}>
+                  {game.desc}
+                </p>
+
+                {/* Coin reward */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
+                  <Coins size={11} style={{ color: '#4ade80' }} />
+                  <span style={{ color: '#4ade80', fontSize: 10, fontWeight: 700 }}>
+                    Win up to +{game.coins} coins
+                  </span>
+                </div>
+
+                {/* Daily cap progress bar */}
+                <div style={{ marginBottom: 3 }}>
+                  <div style={{ height: 3, borderRadius: 3, background: 'rgba(255,255,255,0.06)' }}>
+                    <div style={{
+                      height: '100%', width: '35%', borderRadius: 3,
+                      background: 'linear-gradient(90deg,#C6A052,#E0B84F)',
+                    }} />
+                  </div>
+                  <p style={{ color: '#8A9096', fontSize: 8, marginTop: 2 }}>Daily cap: 35%</p>
+                </div>
+
+                {/* Play Now button */}
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => navigate(game.route)}
+                  style={{
+                    width: '100%', background: 'linear-gradient(135deg,#C6A052,#E0B84F)',
+                    border: 'none', borderRadius: 10, padding: '8px 0',
+                    color: '#0F1115', fontWeight: 900, fontSize: 12, cursor: 'pointer',
+                    marginTop: 4,
+                  }}
+                  data-testid={`carousel-play-${game.key}`}
+                >
+                  Play Now
+                </motion.button>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ── Onboarding Checklist — shows until all steps complete ──────────────────
 const STEPS = [
-  { id: 'checkin',  label: 'Daily check-in done',         coins: '+15',  path: null,            icon: Calendar },
-  { id: 'predict',  label: 'Make your first prediction',  coins: '+20',  path: '/match-centre', icon: Target   },
-  { id: 'shop',     label: 'Browse the rewards shop',     coins: null,   path: '/shop',         icon: ShoppingBag },
-  { id: 'earn',     label: 'Play a mini-game',            coins: '+25',  path: '/earn',         icon: Zap      },
+  { id: 'checkin',  label: 'Daily check-in done',                    coins: '+15',  path: null,                    icon: Calendar },
+  { id: 'predict',  label: 'Make your first prediction',             coins: '+20',  path: '/match-centre',         icon: Target   },
+  { id: 'shop',     label: 'Browse the rewards shop',                coins: null,   path: '/shop',                 icon: ShoppingBag },
+  { id: 'earn',     label: 'Play a card game or mini-game',          coins: '+25',  path: '/games',                icon: Zap      },
 ];
 
 function OnboardingChecklist({ user, hasCheckedIn, onDismiss }) {
@@ -517,7 +680,7 @@ function FirstPredictionBanner({ liveMatch, onNavigate }) {
               MAKE YOUR FIRST PREDICTION
             </h3>
             <p className="text-[11px] mt-0.5" style={{ color: '#8A9096' }}>
-              Predict cricket outcomes and earn FREE Coins
+              Predict cricket outcomes or win coins in card games
             </p>
           </div>
         </div>
@@ -555,6 +718,9 @@ const Dashboard = () => {
   const { t } = useI18n();
   const [demandProgress, setDemandProgress] = useState(null);
   const [liveMatch, setLiveMatch] = useState(null);
+  const [importantLiveMatch, setImportantLiveMatch] = useState(null);
+  const [liveScoreData, setLiveScoreData] = useState(null);
+  const [liveScoreLoading, setLiveScoreLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [checkinLoading, setCheckinLoading] = useState(false);
@@ -630,16 +796,37 @@ const Dashboard = () => {
       setTransactions(txList.slice(0, 5));
       setLeaderboard(leaderboardRes.data);
       const esMatches = Array.isArray(matchesRes.data) ? matchesRes.data : [];
+      let firstMatch = null;
       if (esMatches.length > 0) {
         const m = esMatches[0];
-        setLiveMatch({ team1_short: m.team1_short, team2_short: m.team2_short, team1_score: m.team1_score, team2_score: m.team2_score, venue: m.venue, match_id: m.match_id, status: m.status, short_title: m.short_title, series: m.series });
+        firstMatch = { team1_short: m.team1_short, team2_short: m.team2_short, team1: m.team1, team2: m.team2, team1_score: m.team1_score, team2_score: m.team2_score, venue: m.venue, match_id: m.match_id, status: m.status, short_title: m.short_title, series: m.series, current_ball: m.current_ball };
+        setLiveMatch(firstMatch);
       } else {
         const upcomingRes = await api.v2EsGetMatches('1', 5).catch(() => ({ data: [] }));
         const upMatches = Array.isArray(upcomingRes.data) ? upcomingRes.data : [];
         if (upMatches.length > 0) {
           const m = upMatches[0];
-          setLiveMatch({ team1_short: m.team1_short, team2_short: m.team2_short, team1_score: m.team1_score, team2_score: m.team2_score, venue: m.venue, match_id: m.match_id, status: m.status, short_title: m.short_title, series: m.series });
+          firstMatch = { team1_short: m.team1_short, team2_short: m.team2_short, team1: m.team1, team2: m.team2, team1_score: m.team1_score, team2_score: m.team2_score, venue: m.venue, match_id: m.match_id, status: m.status, short_title: m.short_title, series: m.series, current_ball: m.current_ball };
+          setLiveMatch(firstMatch);
         }
+      }
+
+      // ── Find first "important" live match for conditional home layout ──
+      const allLiveMatches = esMatches.filter(m => m.status === 'live' || m.status === '3');
+      const important = allLiveMatches.find(m => isImportantMatch(m)) || null;
+      if (important) {
+        const imp = { team1_short: important.team1_short, team2_short: important.team2_short, team1: important.team1, team2: important.team2, team1_score: important.team1_score, team2_score: important.team2_score, match_id: important.match_id, status: important.status, series: important.series, current_ball: important.current_ball };
+        setImportantLiveMatch(imp);
+        // Fetch live scorecard data for the important match
+        setLiveScoreLoading(true);
+        try {
+          const liveRes = await api.v2EsGetMatchLive(important.match_id).catch(() => ({ data: null }));
+          setLiveScoreData(liveRes?.data || null);
+        } catch {}
+        finally { setLiveScoreLoading(false); }
+      } else {
+        setImportantLiveMatch(null);
+        setLiveScoreData(null);
       }
     } catch {}
     finally { setLoading(false); }
@@ -681,13 +868,52 @@ const Dashboard = () => {
       <div className="relative z-10 max-w-screen-xl mx-auto px-3 sm:px-4 py-3 space-y-3">
 
         {/* ═══════════════════════════════════════════════════════════════
-            ABOVE THE FOLD — Quick Predict or First Prediction CTA
-            The entire 45-second conversion funnel starts here.
+            ABOVE THE FOLD — Conditional: Cricket live OR Card games
+            IF important live match: QuickPredict + LiveScorecard
+            ELSE: Play & Earn Now card games carousel
+            The 45-second KPI is protected when cricket is live.
         ════════════════════════════════════════════════════════════════ */}
 
-        {/* Quick Predict: show for new users who have a live/upcoming match */}
+        {importantLiveMatch ? (
+          /* ─── Cricket Live Mode ─── */
+          <>
+            {/* QuickPredict: always show when there's an important live match */}
+            <AnimatePresence>
+              {!hasJustPredicted && (
+                <QuickPredict
+                  match={importantLiveMatch}
+                  onPredicted={() => setHasJustPredicted(true)}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* LiveScorecard: Cricbuzz-style, right below QuickPredict */}
+            <AnimatePresence>
+              {!liveScoreLoading && (
+                <LiveScorecard
+                  match={importantLiveMatch}
+                  liveData={liveScoreData}
+                  onTap={() => navigate(importantLiveMatch?.match_id ? `/match/${importantLiveMatch.match_id}` : '/match-centre')}
+                />
+              )}
+            </AnimatePresence>
+          </>
+        ) : (
+          /* ─── No Important Cricket Live: Card Games First ─── */
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CardGamesCarousel />
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        {/* Quick Predict for non-important live match (existing users + first-time users fallback) */}
         <AnimatePresence>
-          {(isNewUser && !hasJustPredicted && liveMatch?.match_id) && (
+          {!importantLiveMatch && (isNewUser && !hasJustPredicted && liveMatch?.match_id) && (
             <QuickPredict
               match={liveMatch}
               onPredicted={() => setHasJustPredicted(true)}
