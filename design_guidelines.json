@@ -1,156 +1,123 @@
 {
-  "project_name": "FREE11 - Premium Sports Experience",
+  "project_name": "FREE11 - Sports Prediction PWA",
   "version": "2.0",
   "theme": "dark",
-  "design_philosophy": {
-    "core_concept": "The High-Stakes Control Room",
-    "emotional_tone": "Premium, Electric, Competitive, Authoritative",
-    "visual_style": "Broadcast Dark Mode with Metallic Gold Accents",
-    "principles": [
-      "Data is Beautiful: Dense information must be scanable.",
-      "Gold is Reward: Use gold only for value (wins, rank, money, action).",
-      "Darkness is Stage: Backgrounds are deep charcoal to let content pop.",
-      "Motion is Live: Everything affecting the game state must animate."
-    ]
-  },
   "typography": {
-    "font_family": {
-      "heading": "Bebas Neue, sans-serif",
-      "body": "Noto Sans, sans-serif",
-      "numbers": "Oswald, sans-serif"
+    "headings": {
+      "family": "Bebas Neue, sans-serif",
+      "weights": ["400"],
+      "letter_spacing": "tracking-wide"
     },
-    "scale": {
-      "h1": "text-4xl md:text-6xl font-heading tracking-wide uppercase",
-      "h2": "text-2xl md:text-4xl font-heading tracking-wide uppercase",
-      "h3": "text-xl md:text-2xl font-heading tracking-wide",
-      "body_lg": "text-lg font-body",
-      "body_base": "text-base font-body",
-      "body_sm": "text-sm font-body text-muted-foreground",
-      "caption": "text-xs font-body tracking-wider uppercase text-muted-foreground",
-      "score": "text-3xl md:text-5xl font-numbers font-bold tabular-nums"
+    "body": {
+      "family": "Noto Sans, sans-serif",
+      "weights": ["400", "500", "700"]
     },
-    "imports": [
-      "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:wght@400;500;700&family=Oswald:wght@400;500;700&display=swap"
-    ]
-  },
-  "colors": {
-    "primary": {
-      "DEFAULT": "#C6A052",
-      "hover": "#E0B84F",
-      "foreground": "#0F1115"
-    },
-    "secondary": {
-      "DEFAULT": "#1B1E23",
-      "foreground": "#FFFFFF"
-    },
-    "accent": {
-      "DEFAULT": "#E0B84F",
-      "foreground": "#0F1115"
-    },
-    "background": {
-      "DEFAULT": "#0F1115",
-      "paper": "#15181C",
-      "card": "#1B1E23",
-      "overlay": "rgba(15, 17, 21, 0.85)"
-    },
-    "neutral": {
-      "100": "#FFFFFF",
-      "200": "#E2E8F0",
-      "300": "#CBD5E1",
-      "400": "#94A3B8",
-      "500": "#64748B",
-      "600": "#475569",
-      "700": "#334155",
-      "800": "#1E293B",
-      "900": "#0F172A"
-    },
-    "status": {
-      "success": "#10B981",
-      "warning": "#F59E0B",
-      "error": "#EF4444",
-      "info": "#3B82F6"
-    },
-    "special": {
-      "gold_gradient": "linear-gradient(135deg, #C6A052 0%, #E0B84F 50%, #C6A052 100%)",
-      "dark_gradient": "linear-gradient(to bottom, #1B1E23, #0F1115)",
-      "glass": "rgba(27, 30, 35, 0.7)"
+    "numbers": {
+      "family": "Oswald, sans-serif",
+      "weights": ["500", "700"]
     }
   },
-  "layout": {
-    "grid_system": {
-      "mobile": "grid-cols-1 gap-4",
-      "desktop": "grid-cols-12 gap-6",
-      "bento_dense": "grid-cols-2 md:grid-cols-4 gap-3"
-    },
+  "colors": {
+    "primary": "#C6A052",
+    "primary_light": "#E0B84F",
+    "primary_dark": "#A8863A",
+    "background": "#0F1115",
+    "surface": "#1B1E23",
+    "surface_highlight": "#2A2D33",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#8A9096",
+    "text_accent": "#C6A052",
+    "success": "#4ade80",
+    "danger": "#f87171",
+    "gradients": {
+      "gold_btn": "linear-gradient(135deg, #C6A052 0%, #E0B84F 100%)",
+      "gold_text": "linear-gradient(135deg, #C6A052 0%, #E0B84F 50%, #C6A052 100%)",
+      "surface_glow": "linear-gradient(135deg, rgba(198,160,82,0.08) 0%, rgba(15,17,21,0.95) 100%)"
+    }
+  },
+  "layout_strategy": {
+    "type": "mobile_first_pwa",
+    "container_width": "max-w-md mx-auto md:max-w-2xl",
     "spacing": {
-      "section_padding": "py-8 md:py-16",
-      "container_padding": "px-4 md:px-8"
+      "section_gap": "gap-4",
+      "card_padding": "p-4",
+      "safe_area_bottom": "pb-28"
     },
-    "container": {
-      "max_width": "max-w-7xl mx-auto"
+    "z_indices": {
+      "bottom_nav": 50,
+      "sticky_header": 40,
+      "modal": 100,
+      "coin_burst": 999
     }
   },
   "components": {
-    "Button": {
-      "variants": {
-        "default": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(198,160,82,0.3)] uppercase font-bold tracking-wider",
-        "outline": "border border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/60 uppercase font-bold tracking-wider",
-        "ghost": "hover:bg-white/5 text-white uppercase tracking-wider",
-        "glass": "bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-white"
-      },
-      "border_radius": "rounded-sm"
+    "Dashboard": {
+      "path": "/app/frontend/src/pages/Dashboard.js",
+      "structure_order": [
+        "Navbar (Top)",
+        "IPLCountdown",
+        "HeroSection (LiveMatchCard + QuickPredict)",
+        "OnboardingChecklist (If incomplete)",
+        "FirstPredictionBanner (If 0 predictions)",
+        "QuickStatsBar",
+        "LeaderboardPreview",
+        "RecentTransactions"
+      ],
+      "instructions": "Reorder the dashboard to prioritize the 'Action Loop'. The Live Match Card MUST be the first element. Embed the 'QuickPredict' component directly inside the Live Match Card for 1-tap interaction."
     },
-    "Card": {
-      "base": "bg-card border border-white/5 shadow-lg",
-      "hover": "hover:border-primary/30 transition-colors duration-300",
-      "variants": {
-        "live": "border-l-4 border-l-red-500 bg-gradient-to-r from-red-500/5 to-transparent",
-        "winner": "border border-primary/50 bg-gradient-to-br from-primary/10 to-transparent"
+    "LiveMatchCard": {
+      "features": [
+        "Live Score Ticker",
+        "Team Logos (Text based shortcuts if images missing)",
+        "QuickPredict Widget (New Feature)"
+      ],
+      "quick_predict_widget": {
+        "description": "Inline 2-button choice UI. DO NOT open a modal.",
+        "options": ["YES (1.5x)", "NO (2.0x)"],
+        "interaction": "On tap -> Show 'Bet Placed' animation -> Update user coin balance locally immediately (optimistic UI)"
       }
     },
-    "Input": {
-      "base": "bg-background/50 border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 placeholder:text-muted-foreground/50 text-white"
+    "OnboardingChecklist": {
+      "style": "Gamified Progress Bar",
+      "visuals": "Use the 'gold-shimmer' animation on the active step.",
+      "behavior": "Auto-collapse completed steps. Show celebration confetti when 4/4 complete."
     },
-    "Navbar": {
-      "style": "sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-white/5",
-      "mobile_bottom": "fixed bottom-0 left-0 right-0 z-50 bg-[#15181C]/95 backdrop-blur-xl border-t border-white/5 pb-safe"
+    "BottomNavbar": {
+      "path": "/app/frontend/src/components/Navbar.js",
+      "items": [
+        { "label": "Home", "icon": "Home", "path": "/match-centre" },
+        { "label": "Predict", "icon": "Target", "path": "/predict" },
+        { "label": "Rewards", "icon": "Gift", "path": "/shop" },
+        { "label": "Profile", "icon": "User", "path": "/profile" }
+      ],
+      "style": "Glassmorphism with Gold active indicator. 4 items ONLY."
     }
   },
-  "effects": {
-    "shadows": {
-      "glow_gold": "0 0 20px rgba(198, 160, 82, 0.15)",
-      "glow_text": "0 0 10px rgba(198, 160, 82, 0.5)",
-      "elevation": "0 10px 30px -10px rgba(0, 0, 0, 0.5)"
-    },
-    "animations": {
-      "pulse_slow": "animate-pulse",
-      "shimmer": "animate-shimmer"
-    }
+  "visual_enhancers": {
+    "glass_effect": "backdrop-blur-md bg-opacity-90 bg-[#0F1115] border-t border-[#C6A052]/20",
+    "glow_effects": "box-shadow: 0 0 20px rgba(198, 160, 82, 0.15)",
+    "coin_burst_animation": "Use Framer Motion to spawn 20-30 small coin icons from the click coordinates that fall down with gravity."
   },
-  "assets": {
-    "icons": {
-      "library": "lucide-react",
-      "style": "stroke-width-1.5",
-      "active_color": "#C6A052",
-      "inactive_color": "#94A3B8"
-    }
+  "image_urls": {
+    "hero_bg": "https://images.unsplash.com/photo-1750716413756-b66624b64ce4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwyfHxjcmlja2V0JTIwc3RhZGl1bSUyMG5pZ2h0JTIwbGlnaHRzJTIwbWF0Y2h8ZW58MHx8fHwxNzczNTY5OTA0fDA&ixlib=rb-4.1.0&q=85",
+    "coin_icon": "https://images.unsplash.com/photo-1708714290523-e9f76878bf53?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODl8MHwxfHNlYXJjaHwzfHxnb2xkJTIwY29pbiUyMDNkJTIwcmVuZGVyJTIwc2hpbnl8ZW58MHx8fHwxNzczNTY5OTA1fDA&ixlib=rb-4.1.0&q=85",
+    "trophy_icon": "https://images.unsplash.com/photo-1764408721535-2dcb912db83e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjB0cm9waHklMjBjdXAlMjBzcG9ydHN8ZW58MHx8fHwxNzczNTY5OTA1fDA&ixlib=rb-4.1.0&q=85",
+    "cheering_fans": "https://images.pexels.com/photos/15862398/pexels-photo-15862398.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
   },
   "instructions_to_main_agent": [
-    "1. FIRST: Install 'lucide-react' if not present.",
-    "2. UPDATE 'tailwind.config.js' with the new color palette (primary, background, card, etc.).",
-    "3. UPDATE 'index.css' to import Google Fonts (Bebas Neue, Oswald, Noto Sans) and set base styles.",
-    "4. CREATE a 'BottomNav' component for mobile navigation. It should be visible only on mobile screens.",
-    "5. REFACTOR the 'MatchCentre' to use a dense grid layout (Bento Grid Mode B) for matches.",
-    "6. APPLY the 'Gold Gradient' text effect to important numbers and rankings.",
-    "7. ENSURE all cards have a subtle border (`border-white/5`) to define edges in dark mode.",
-    "8. REPLACE all purple/blue gradients with Gold/Charcoal themes.",
-    "9. USE 'data-testid' on all interactive elements."
+    "1. MODIFY Dashboard.js: Reorder components. Move 'LiveMatchHero' to the top. Add 'QuickPredict' inline component within it.",
+    "2. MODIFY Navbar.js: Remove 'Games' and 'Missions' tabs. Rename/Repoint tabs to match the 4-tab requirement.",
+    "3. IMPLEMENT 'QuickPredict': It must submit a prediction immediately. Mock the API call if necessary, but show the UI transition.",
+    "4. IMPLEMENT 'WinCelebration': When a prediction is made, trigger a full-screen coin burst.",
+    "5. ENSURE Mobile Responsiveness: The bottom nav must not overlap content. Use 'pb-28' on the main container."
   ],
   "universal_guidelines": [
-    "Do not use gradients for backgrounds unless specified.",
-    "Ensure text contrast is at least 4.5:1.",
-    "Use 'sonner' for notifications.",
-    "Avoid generic 'Inter' font; use 'Bebas Neue' for headings.",
-    "Mobile-first approach is mandatory."
+    "Dark Mode ONLY.",
+    "Gold (#C6A052) is for Primary Actions and Winners.",
+    "Silver (#BFC3C8) is for Secondary info.",
+    "Red is ONLY for Live/Danger.",
+    "Green is ONLY for Success/Cash.",
+    "Font 'Bebas Neue' for all Headings.",
+    "No generic AI emojis."
   ]
 }
