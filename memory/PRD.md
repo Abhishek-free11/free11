@@ -263,20 +263,20 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 ## CHANGELOG
 
 ### March 2026 — Analytics 360° Dashboard (Current Session)
-- **New backend route**: `GET /api/admin/analytics-360` — comprehensive admin-only analytics endpoint
+- **New backend route**: `GET /api/admin/analytics-360` — admin-only (401/403 enforced)
   - Queries 10+ MongoDB collections in parallel
   - Filters real external users (excludes all test/seed/admin accounts)
   - Returns: high_level summary, per-user 360° profiles, 6-stage funnel, DAU 7d, top events, monetization data
-- **CSV export**: `GET /api/admin/analytics-360/export/csv` — streaming CSV of all real user data
+- **CSV export**: `GET /api/admin/analytics-360/export/csv` — streaming CSV, auth-protected
 - **New frontend page**: `src/pages/AdminAnalytics.js` at `/admin/analytics`
   - 5 tabs: Overview | Users | Funnel | Events | Monetization
   - Sortable user table with per-row expand (predictions, coins history, orders)
-  - Native CSV export for all tables
+  - Native CSV export for all tables (fetch+Blob pattern for auth)
   - Bar charts (DAU, top events, coins by source) via Recharts
   - Per-user drop-off funnel stage labeling
-- **Tracking improvement**: `src/utils/analytics.js` now includes `session_id` (stable per-tab ID) and `platform` (user-agent) in all tracked events
+- **Security fix**: Both analytics endpoints properly enforce admin JWT auth (fixed during testing)
+- **Tracking improvement**: `src/utils/analytics.js` now includes `session_id` and `platform` (UA) in all tracked events
 - **Navigation**: "Analytics 360°" button added to AdminV2 control panel header
-- **Route protection**: `/admin/analytics` requires `is_admin=true` via existing AdminRoute guard
 
 ### March 2026 — Phase 1-6 Platform Upgrade (Production-Ready)
 - **Phase 1 Security**:

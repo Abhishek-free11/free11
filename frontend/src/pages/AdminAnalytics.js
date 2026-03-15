@@ -184,7 +184,15 @@ export default function AdminAnalytics() {
               onClick={() => {
                 const API_URL = process.env.REACT_APP_BACKEND_URL;
                 const token = localStorage.getItem('token');
-                window.location.href = `${API_URL}/api/admin/analytics-360/export/csv`;
+                // Use fetch + Blob to send Authorization header
+                fetch(`${API_URL}/api/admin/analytics-360/export/csv`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                }).then(r => r.blob()).then(blob => {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url; a.download = 'free11_users_360.csv'; a.click();
+                  URL.revokeObjectURL(url);
+                }).catch(() => alert('Export failed. Please try again.'));
               }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
               style={{ background: '#1B1E23', border: `1px solid ${GOLD}`, color: GOLD }}
