@@ -353,6 +353,18 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
   - Fixed Login.js race condition: biometric modal now appears after email/password login
   - Biometric can now be enabled directly from Dashboard without re-login
 
+### Feb 2026 — Dynamic Home Page + Real Card Games
+- **Dynamic Dashboard (Requirement A):**
+  - `isImportantMatch()` detects IPL/ICC/T20 World Cup/ODI World Cup/Test/India matches
+  - IF important live match: QuickPredict first + LiveScorecard (Cricbuzz-style) right below (45s KPI protected)
+  - ELSE: "Play & Earn Now" CardGamesCarousel as first element (4 cards: Teen Patti, Rummy, Poker, Solitaire)
+  - LiveScorecard (`components/LiveScorecard.js`): batsmen, bowlers, run rates, ball-by-ball ticker, EntitySport data
+- **Real-Rules Card Games (Requirement B):**
+  - TeenPattiGame.js completely rewritten: blind/seen modes, boot amount (10/20/50), chaal with increasing bets, sideshow, pack, show, showdown, Framer Motion coin burst
+  - Existing Rummy/Poker/Solitaire games untouched (already had real rules)
+  - Coin economy: win via existing API endpoints (/v2/earn/*-win), daily cap preserved
+- **OnboardingChecklist & FirstPredictionBanner** updated to mention "or win coins in card games"
+
 ### December 2025 — Full i18n Translations + SEO Overhaul
 - Complete translations for all 8 Indian languages
 - Comprehensive SEO strategy implemented
