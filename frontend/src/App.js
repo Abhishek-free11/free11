@@ -1,8 +1,9 @@
-import React, { useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { trackButtonClick } from './utils/analytics';
+import { Download } from 'lucide-react';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // Scroll to top on every route change
@@ -206,7 +207,87 @@ function LegacyUserPermissions() {
 
   return null;
 }
-function PWAInstallButton() { return null; }
+// PWA Install FAB — appears as a persistent reminder after the bottom sheet has been dismissed once
+// Complements PWAInstallPrompt: bottom sheet is the featured first experience, FAB is the ongoing nudge
+function PWAInstallButton() {
+  const [visible, setVisible] = useState(false);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('appInstalled')) return;
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) return;
+
+    const tryShow = () => {
+      if (!window.__pwaPrompt) return;
+      // Only show FAB if the full bottom sheet has been dismissed at least once
+      if (localStorage.getItem('pwa_prompt_dismissed_at')) {
+        setVisible(true);
+      }
+    };
+
+    const handler = (e) => {
+      e.preventDefault();
+      window.__pwaPrompt = e;
+      tryShow();
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    if (window.__pwaPrompt) tryShow();
+
+    const installed = () => { localStorage.setItem('appInstalled', 'true'); setVisible(false); };
+    window.addEventListener('appinstalled', installed);
+
+    // Re-check every 5s in case bottom sheet was just dismissed
+    const interval = setInterval(() => {
+      if (!visible && window.__pwaPrompt && localStorage.getItem('pwa_prompt_dismissed_at')) {
+        setVisible(true);
+      }
+      setPulse(p => !p);
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installed);
+      clearInterval(interval);
+    };
+  }, [visible]);
+
+  const handleInstall = async () => {
+    if (!window.__pwaPrompt) return;
+    try { const { trackPWAInstall } = await import('./utils/analytics'); trackPWAInstall(); } catch (_) {}
+    window.__pwaPrompt.prompt();
+    const { outcome } = await window.__pwaPrompt.userChoice;
+    if (outcome === 'accepted') { localStorage.setItem('appInstalled', 'true'); setVisible(false); }
+  };
+
+  if (!visible) return null;
+  return (
+    <button
+      onClick={handleInstall}
+      title="Install FREE11 App"
+      data-testid="pwa-install-fab"
+      aria-label="Install FREE11 App"
+      style={{
+        position: 'fixed',
+        bottom: '80px',
+        right: '16px',
+        zIndex: 9997,
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        background: 'linear-gradient(135deg, #C6A052, #E0B84F)',
+        border: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: pulse ? '0 0 0 6px rgba(198,160,82,0.25), 0 4px 16px rgba(0,0,0,0.5)' : '0 4px 16px rgba(0,0,0,0.5)',
+        transition: 'box-shadow 0.6s ease',
+      }}
+    >
+      <Download size={18} color="#0F1115" strokeWidth={2.5} />
+    </button>
+  );
+}
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -356,6 +437,7 @@ function App() {
             <AppRouter />
             <SiteFooter />
             <PWAInstallPrompt />
+            <PWAInstallButton />
             <GlobalAnalyticsTracker />
             <LegacyUserPermissions />
             <Toaster position="top-center" richColors />

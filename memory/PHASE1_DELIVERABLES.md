@@ -28,7 +28,7 @@
 ## Access Information
 
 ### Web App URL
-**https://atlas-connection-1.preview.emergentagent.com**
+**https://activation-engine.preview.emergentagent.com**
 
 ### Test Credentials
 - **Admin Account:**

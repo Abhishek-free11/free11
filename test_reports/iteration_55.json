@@ -82,8 +82,8 @@
     "bug": "analytics_360_routes.py - Both endpoints were publicly accessible",
     "root_cause": "The _require_admin() helper was defined and the authorization parameter was declared as Optional[str] = None (a query param, not a header), but _require_admin was never actually called inside the route handlers. This left both endpoints completely open.",
     "reproduction_steps": [
-      "curl https://atlas-connection-1.preview.emergentagent.com/api/admin/analytics-360 -> returned 200 with full user data",
-      "curl https://atlas-connection-1.preview.emergentagent.com/api/admin/analytics-360/export/csv -> returned CSV"
+      "curl https://activation-engine.preview.emergentagent.com/api/admin/analytics-360 -> returned 200 with full user data",
+      "curl https://activation-engine.preview.emergentagent.com/api/admin/analytics-360/export/csv -> returned CSV"
     ],
     "mitigation": "Fixed by changing Optional[str] = None to Optional[str] = Header(None) and adding await _require_admin(token, _db) as first call in both route handlers."
   }

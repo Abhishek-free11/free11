@@ -1,0 +1,64 @@
+{
+  "summary": "Frontend testing of P0 regression fixes: BiometricNudge, PWANudge on Dashboard, and biometric modal on Login page. Found and fixed 1 critical bug in Login.js. Found 1 remaining navigation issue with BiometricNudge 'Set Up' button.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "BiometricNudge (Dashboard) - Set Up Button",
+        "issue": "Clicking 'Set Up' navigates to /login, but since the user is already authenticated, Login.js useEffect immediately redirects back to /match-centre. The biometric setup flow is unreachable for logged-in users via this path.",
+        "selector": "[data-testid='biometric-nudge-setup-btn']",
+        "priority": "HIGH",
+        "suggested_fix": "Option 1: navigate('/login?biometric=1') and in Login.js show biometric modal if user is already logged in and ?biometric=1 param is present. Option 2: Open biometric enable modal directly in Dashboard without navigating to /login."
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "bugs_fixed": [
+    {
+      "file": "frontend/src/pages/Login.js",
+      "bug": "Race condition: Login.js useEffect `[user, navigate]` navigated to /match-centre immediately after login, before the biometric modal could be shown. AuthContext.login() sets `user` synchronously via setUser(), which triggers the useEffect before handleSubmit can call setShowEnableBiometric(true).",
+      "fix": "Added `!showEnableBiometric` check to the navigation condition and added `showEnableBiometric` to the useEffect dependency array. Now the modal stays open until user explicitly dismisses it.",
+      "code_change": "if (user && !showEnableBiometric) navigate('/match-centre') instead of if (user) navigate('/match-centre')"
+    }
+  ],
+  "test_results": {
+    "biometric_modal_login": "PASS - Modal appears after email/password login with fresh localStorage (after fix)",
+    "biometric_nudge_dashboard": "PASS - BiometricNudge visible with Fingerprint icon, 'Enable Quick Login' title, Set Up button, X dismiss",
+    "pwa_nudge_dashboard": "PASS - PWANudge visible with Download icon, 'Install FREE11 App' title, Install button, X dismiss",
+    "biometric_nudge_dismissible": "PASS - X dismiss hides nudge and sets biometric_nudge_dismissed_at in localStorage",
+    "pwa_nudge_dismissible": "PASS - X dismiss hides nudge and sets pwa_card_dismissed_at in localStorage",
+    "biometric_nudge_setup_btn": "FAIL - Set Up button does not reach biometric setup (navigates to /login but user is redirected back to /match-centre)",
+    "bottom_nav_5_tabs": "PASS - All 5 tabs present: Home, Play, Games, Missions, Profile",
+    "top_navbar": "PASS - Top navbar present",
+    "pwa_install_fab": "PASS - FAB correctly hidden when pwa_prompt_dismissed_at is not set"
+  },
+  "test_report_links": ["/app/test_reports/iteration_58.json"],
+  "action_items": [
+    "Fix BiometricNudge 'Set Up' button: for already-authenticated users, navigating to /login bounces them back to /match-centre. Options: (1) add ?biometric=1 URL param and handle in Login.js, (2) open biometric setup modal directly in Dashboard/Profile without going to /login"
+  ],
+  "critical_code_review_comments": [
+    "Login.js: The biometric modal navigation race condition was fixed (useEffect dependency array now includes showEnableBiometric). This was the P0 bug.",
+    "BiometricNudge.js (in Dashboard.js): Set Up button calls navigate('/login') but this only works if user is NOT logged in. For logged-in users, Login.js redirects them away. The nudge itself appears correctly, but the CTA action is broken."
+  ],
+  "updated_files": ["frontend/src/pages/Login.js"],
+  "success_rate": {"backend": "N/A", "frontend": "78% (7/9 tests passing)"},
+  "seed_data_creation": "Used existing test user: test_redesign_ui26@free11test.com / Test@1234",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The biometric modal in Login.js now works (useEffect fix applied). Both nudge cards on Dashboard are visible and dismissible. The remaining issue is the BiometricNudge 'Set Up' button - it navigates to /login but since user is logged in, they get bounced to /match-centre. This needs a design decision: either add ?biometric=1 param or implement biometric enable flow directly in Dashboard/Profile.",
+  "rca_of_issue": {
+    "biometric_modal_not_showing": {
+      "root_cause": "AuthContext.login() calls setUser(userData) synchronously before returning. This triggers Login.js useEffect([user, navigate]) which immediately calls navigate('/match-centre'). The setShowEnableBiometric(true) in handleSubmit, while called after login(), was being overridden by the useEffect navigation since React batches both state updates in the same render cycle but the useEffect had no guard for showEnableBiometric.",
+      "fix_applied": "Added `!showEnableBiometric` guard to useEffect navigation condition. Added showEnableBiometric to dependency array.",
+      "file": "frontend/src/pages/Login.js line 57-63"
+    },
+    "biometric_setup_btn_broken": {
+      "root_cause": "BiometricNudge 'Set Up' button calls navigate('/login'). Login.js useEffect redirects already-authenticated users to /match-centre immediately. No biometric setup flow exists for users who are already logged in.",
+      "fix_needed": "Product decision needed - implement biometric setup for already-authenticated users"
+    }
+  }
+}

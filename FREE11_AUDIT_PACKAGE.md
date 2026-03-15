@@ -8,7 +8,7 @@
 # 1) LIVE ACCESS
 
 ## Public URL (PWA/Web)
-**🔗 https://atlas-connection-1.preview.emergentagent.com**
+**🔗 https://activation-engine.preview.emergentagent.com**
 
 ## Android Build
 **⚠️ NOT YET AVAILABLE**

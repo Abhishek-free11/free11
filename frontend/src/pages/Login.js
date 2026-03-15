@@ -55,12 +55,13 @@ const Login = () => {
   const [captureEmailLoading, setCaptureEmailLoading] = useState(false);
 
   useEffect(() => {
-    if (user) navigate('/match-centre', { replace: true });
+    // Don't navigate away if biometric modal is being shown — it handles its own navigation
+    if (user && !showEnableBiometric) navigate('/match-centre', { replace: true });
     // Show biometric button if previously enabled
     setBiometricAvailable(isBiometricEnabled());
     // Cleanup recaptcha on unmount
     return () => { clearRecaptchaVerifier(); };
-  }, [user, navigate]);
+  }, [user, navigate, showEnableBiometric]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

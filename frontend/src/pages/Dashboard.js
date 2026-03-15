@@ -14,15 +14,134 @@ import LiveActivityTicker from '../components/LiveActivityTicker';
 import {
   Coins, Zap, Gift, Trophy, TrendingUp, Calendar, Flame,
   Target, ShoppingBag, ChevronRight, Star, Play, Award, Users,
-  CheckCircle, Circle, ArrowRight, Sparkles, X, Zap as ZapIcon
+  CheckCircle, Circle, ArrowRight, Sparkles, X, Zap as ZapIcon, Fingerprint, Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
 import { playCelebrationSound } from '../utils/sounds';
 import confetti from 'canvas-confetti';
 import { trackEvent, trackFirstPredictionTime, initSessionTimer } from '../utils/analytics';
+import { isBiometricEnabled } from '../utils/biometric';
 
 import dayjs from 'dayjs';
+
+// ── Biometric Setup Nudge — shown on Dashboard if user hasn't enabled biometric login ──
+const BIOMETRIC_DISMISS_KEY = 'biometric_nudge_dismissed_at';
+const BIOMETRIC_DISMISS_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+function BiometricNudge({ onDismiss }) {
+  const navigate = useNavigate();
+  const dismissed = localStorage.getItem(BIOMETRIC_DISMISS_KEY);
+  if (dismissed && Date.now() - parseInt(dismissed, 10) < BIOMETRIC_DISMISS_TTL) return null;
+  if (isBiometricEnabled()) return null;
+
+  const handleDismiss = () => {
+    localStorage.setItem(BIOMETRIC_DISMISS_KEY, Date.now().toString());
+    onDismiss();
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="card-broadcast p-4 flex items-center gap-3 relative"
+      style={{ border: '1px solid rgba(198,160,82,0.2)', background: 'linear-gradient(135deg, rgba(198,160,82,0.05) 0%, rgba(15,17,21,0.97) 100%)' }}
+      data-testid="biometric-nudge"
+    >
+      <button
+        onClick={handleDismiss}
+        className="absolute top-2 right-2 p-1 rounded-full transition-colors"
+        style={{ color: '#8A9096' }}
+        data-testid="biometric-nudge-dismiss"
+        aria-label="Dismiss"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{ background: 'rgba(198,160,82,0.12)', border: '1px solid rgba(198,160,82,0.25)' }}>
+        <Fingerprint className="h-5 w-5" style={{ color: '#C6A052' }} />
+      </div>
+      <div className="flex-1 min-w-0 pr-4">
+        <p className="text-sm font-bold text-white">Enable Quick Login</p>
+        <p className="text-xs mt-0.5" style={{ color: '#8A9096' }}>Use fingerprint or face ID — no password needed</p>
+      </div>
+      <button
+        onClick={() => navigate('/login')}
+        className="text-xs font-bold px-3 py-1.5 rounded-xl flex-shrink-0"
+        style={{ background: 'rgba(198,160,82,0.15)', color: '#C6A052', border: '1px solid rgba(198,160,82,0.25)' }}
+        data-testid="biometric-nudge-setup-btn"
+      >
+        Set Up
+      </button>
+    </motion.div>
+  );
+}
+
+// ── PWA Install Nudge — shown when app hasn't been installed and no standalone mode ──
+const PWA_NUDGE_DISMISS_KEY = 'pwa_card_dismissed_at';
+const PWA_NUDGE_DISMISS_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function PWANudge({ onDismiss }) {
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isAppInstalled = localStorage.getItem('appInstalled');
+  const dismissed = localStorage.getItem(PWA_NUDGE_DISMISS_KEY);
+  const isDismissed = dismissed && Date.now() - parseInt(dismissed, 10) < PWA_NUDGE_DISMISS_TTL;
+
+  if (isInstalled || isAppInstalled || isDismissed) return null;
+
+  const handleInstall = async () => {
+    if (window.__pwaPrompt) {
+      window.__pwaPrompt.prompt();
+      const { outcome } = await window.__pwaPrompt.userChoice;
+      if (outcome === 'accepted') { localStorage.setItem('appInstalled', 'true'); onDismiss(); }
+    } else {
+      toast.info('Tap the browser menu → "Add to Home Screen" to install FREE11');
+    }
+  };
+
+  const handleDismiss = () => {
+    localStorage.setItem(PWA_NUDGE_DISMISS_KEY, Date.now().toString());
+    onDismiss();
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="card-broadcast p-4 flex items-center gap-3 relative"
+      style={{ border: '1px solid rgba(198,160,82,0.2)', background: 'linear-gradient(135deg, rgba(198,160,82,0.05) 0%, rgba(15,17,21,0.97) 100%)' }}
+      data-testid="pwa-nudge-card"
+    >
+      <button
+        onClick={handleDismiss}
+        className="absolute top-2 right-2 p-1 rounded-full transition-colors"
+        style={{ color: '#8A9096' }}
+        data-testid="pwa-nudge-dismiss"
+        aria-label="Dismiss"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+        style={{ background: 'rgba(198,160,82,0.12)', border: '1px solid rgba(198,160,82,0.25)' }}>
+        <Download className="h-5 w-5" style={{ color: '#C6A052' }} />
+      </div>
+      <div className="flex-1 min-w-0 pr-4">
+        <p className="text-sm font-bold text-white">Install FREE11 App</p>
+        <p className="text-xs mt-0.5" style={{ color: '#8A9096' }}>Add to home screen for instant access & rewards</p>
+      </div>
+      <button
+        onClick={handleInstall}
+        className="text-xs font-bold px-3 py-1.5 rounded-xl flex-shrink-0"
+        style={{ background: 'rgba(198,160,82,0.15)', color: '#C6A052', border: '1px solid rgba(198,160,82,0.25)' }}
+        data-testid="pwa-nudge-install-btn"
+      >
+        Install
+      </button>
+    </motion.div>
+  );
+}
 
 // IPL 2026 Countdown banner — shows only while days > 0
 function IPLCountdown() {
@@ -431,6 +550,8 @@ const Dashboard = () => {
   const [showQuestModal, setShowQuestModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [hasJustPredicted, setHasJustPredicted] = useState(false);
+  const [showBiometricNudge, setShowBiometricNudge] = useState(true);
+  const [showPWANudge, setShowPWANudge] = useState(true);
 
   const isNewUser   = !user?.total_predictions || user.total_predictions === 0;
   const hasCheckedIn = user?.last_checkin === new Date().toISOString().split('T')[0];
@@ -817,6 +938,20 @@ const Dashboard = () => {
           </div>
           <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: '#8A9096' }} />
         </div>
+
+        {/* ── Biometric Login Nudge ── */}
+        <AnimatePresence>
+          {showBiometricNudge && (
+            <BiometricNudge onDismiss={() => setShowBiometricNudge(false)} />
+          )}
+        </AnimatePresence>
+
+        {/* ── PWA Install Nudge ── */}
+        <AnimatePresence>
+          {showPWANudge && (
+            <PWANudge onDismiss={() => setShowPWANudge(false)} />
+          )}
+        </AnimatePresence>
 
         {/* Skill disclaimer */}
         <p className="text-center text-xs pb-2" style={{ color: 'rgba(255,255,255,0.2)' }}>

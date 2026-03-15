@@ -7,7 +7,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://atlas-connection-1.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://activation-engine.preview.emergentagent.com')
 
 class TestHealthAndBasics:
     """Basic health and auth tests"""
