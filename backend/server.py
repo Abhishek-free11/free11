@@ -43,7 +43,12 @@ mongo_url = os.environ['MONGO_URL']
 if 'mongodb+srv://' in mongo_url and 'authSource' not in mongo_url:
     separator = '&' if '?' in mongo_url else '?'
     mongo_url = mongo_url + separator + 'authSource=admin'
-client = AsyncIOMotorClient(mongo_url)
+# Atlas requires TLS; allow invalid certs for sandbox environments with older OpenSSL
+_is_atlas = 'mongodb+srv://' in mongo_url or 'mongodb.net' in mongo_url
+if _is_atlas:
+    client = AsyncIOMotorClient(mongo_url, tls=True, tlsAllowInvalidCertificates=True)
+else:
+    client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # JWT Configuration
