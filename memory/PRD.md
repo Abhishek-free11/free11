@@ -262,7 +262,16 @@ FREE11 is a free skill-based gaming and rewards platform. Users play cricket pre
 
 ## CHANGELOG
 
-### March 2026 — Analytics 360° Dashboard (Current Session)
+### March 2026 — UI/UX Redesign (45-Second First-Prediction Journey)
+- **QuickPredict inline component** (`Dashboard.js`): Live match with YES/NO boundary prediction buttons is now the FIRST element above the fold. New users see the prediction opportunity in <2 seconds after opening the app.
+- **Content reorder**: Dashboard now shows QuickPredict → IPLCarousel → OnboardingChecklist → User Header → Check-in (was: IPLCarousel → Checklist → Banner → Header → ... → Live Match → at bottom)
+- **Post-prediction state**: After submission, QuickPredict transitions to a "See All Matches →" confirmation card (handles both success and oracle-mismatch gracefully)
+- **OnboardingChecklist enhanced**: Framer Motion animated progress bar + icon-per-step, improved visual hierarchy
+- **FirstPredictionBanner enhanced**: Animated shimmer sweep, Framer Motion entrance, more urgent copy
+- **Bottom navigation simplified**: 4 tabs only — Home | Predict | Rewards | Profile (removed Games, Missions)
+- **Predict tab elevated**: Gold pill button style (larger) to prime tap intent
+- **Analytics tracking**: `initSessionTimer()` fires on Dashboard mount, `trackFirstPredictionTime(duration_seconds)` fires after first successful prediction → feeds `/admin/analytics-360` metrics
+- **Session tracking**: All events now include `session_id` + `platform` (user-agent)
 - **New backend route**: `GET /api/admin/analytics-360` — admin-only (401/403 enforced)
   - Queries 10+ MongoDB collections in parallel
   - Filters real external users (excludes all test/seed/admin accounts)

@@ -41,6 +41,7 @@ function IPLCountdown() {
 // The 45-second conversion engine: predict without leaving the home screen
 function QuickPredict({ match, onPredicted }) {
   const { user, updateUser } = useAuth();
+  const navigate = useNavigate();
   const [choice, setChoice] = useState(null);   // 'yes' | 'no'
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -48,7 +49,32 @@ function QuickPredict({ match, onPredicted }) {
 
   // Has user already predicted boundary for this over?
   const alreadyPredicted = sessionStorage.getItem(`qp_${match?.match_id}`);
-  if (!match?.match_id || alreadyPredicted || done) return null;
+  if (!match?.match_id) return null;
+  if ((alreadyPredicted || done) && !submitting) {
+    // Post-prediction: show confirmation + "Predict more" CTA
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="rounded-2xl p-4 text-center"
+        style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.25)' }}
+        data-testid="quick-predict-done"
+      >
+        <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-400" />
+        <p className="text-sm font-bold text-white mb-1">
+          {earned > 0 ? `+${earned} coins added!` : 'Prediction recorded!'}
+        </p>
+        <p className="text-xs mb-3" style={{ color: '#8A9096' }}>Head to Match Centre for more predictions</p>
+        <button
+          onClick={() => navigate('/match-centre')}
+          className="btn-gold px-5 h-9 rounded-xl text-xs"
+          style={{ fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '0.06em' }}
+        >
+          SEE ALL MATCHES →
+        </button>
+      </motion.div>
+    );
+  }
 
   const handlePredict = async (value) => {
     if (submitting) return;
@@ -77,6 +103,11 @@ function QuickPredict({ match, onPredicted }) {
     } catch (e) {
       const msg = e?.response?.data?.detail || '';
       if (msg.includes('already')) {
+        sessionStorage.setItem(`qp_${match.match_id}`, '1');
+        setDone(true);
+      } else if (msg.includes('match_not_found') || msg.includes('not found') || msg.includes('window closed')) {
+        // Match not in oracle yet — redirect to Match Centre where oracle matches live
+        toast.info('Predictions open on the Match page', { description: 'Tap to see all live matches →' });
         sessionStorage.setItem(`qp_${match.match_id}`, '1');
         setDone(true);
       } else {
